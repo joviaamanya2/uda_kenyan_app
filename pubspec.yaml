@@ -22,3 +22,15 @@ flutter:
   # Assets section - CORRECT path (no 'lib/' prefix)
   assets:
     - assets/images/logo.png
+    - assets/images/main.PNG
+    - assets/images/main2.PNG
+    - assets/images/Ruto.png
+    - assets/images/H.E Cecily Mbarire.PNG
+    - assets/images/H.E Prof. Kithure Kindiki.PNG
+    - assets/images/Hon. Japheth Nyakundi.PNG
+    - assets/images/Hon. Sen. Hassan Omar.PNG
+    - assets/images/Mr. Kelvin Lunani.PNG
+    - assets/images/Mr. Nicodemus Bore.PNG
+    - assets/images/Omboko Milemba.PNG
+    - assets/images/William Ruto.PNG
+
