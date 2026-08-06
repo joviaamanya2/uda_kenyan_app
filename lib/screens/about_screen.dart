@@ -1,8 +1,7 @@
 // lib/screens/about_uda_screen.dart
 import 'package:flutter/material.dart';
 import 'join_uda.dart';
-import 'videos_screen.dart';
-import 'news_room.dart';
+
 import 'gallery.dart';
 import 'fundraise_screen.dart';
 

@@ -42,78 +42,127 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Card with Profile
+            // Hero Image - Large Banner with Omar's image as background
+            Container(
+              width: double.infinity,
+              height: 300,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Background Image - Omar's photo filling the entire container
+                  Image.asset(
+                    'assets/images/Hon. Sen. Hassan Omar.PNG',
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback to gradient if image fails to load
+                      return Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF1A5C2A), Color(0xFF0D3B1E)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  
+                  // Dark overlay for better text visibility
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.6),
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  
+                     
+                  
+                  // Position badge at bottom
+                  Positioned(
+                    bottom: 24,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFCC00),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Text(
+                          'UDA SECRETARY GENERAL',
+                          style: TextStyle(
+                            color: Color(0xFF1A5C2A),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Name and Title Section
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                  // Profile Image
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFFFCC00), width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network(
-                        'https://via.placeholder.com/100x100/FFFFFF/1A5C2A?text=CM',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[200],
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                color: Color(0xFF1A5C2A),
-                                size: 48,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
                   const Text(
-                    'Hon. Cleophas Malala',
+                    'Hon. Sen. Hassan Omar',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A5C2A),
                       letterSpacing: 1,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFCC00),
+                      color: const Color(0xFFFFCC00).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
-                      'UDA SECRETARY GENERAL',
+                      'SECRETARY GENERAL • UDA PARTY',
                       style: TextStyle(
                         color: Color(0xFF1A5C2A),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
                         letterSpacing: 1,
                       ),
                     ),
@@ -143,7 +192,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'QUESTION AND ANSWER',
+                    'BIOGRAPHY',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -158,32 +207,16 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Hon. Cleophas Malala',
+                    'Hon. Sen. Hassan Omar is a distinguished Kenyan politician and the Secretary General of the United Democratic Alliance (UDA) party. He is also a Member of the East African Legislative Assembly (EALA), representing Kenya with distinction.',
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A5C2A),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFCC00),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'UDA Secretary General',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1A5C2A),
-                      ),
+                      fontSize: 14,
+                      height: 1.6,
+                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Hon. Cleophas Malala is a Kenyan politician born on 10 October 1985 and raised in Kakamega County. Currently serving as the Secretary-General of the United Democratic Alliance (UDA) and executive team leader of the secretariat. He holds a bachelor\'s degree in Political Science and Economics and a Master of Arts in Public Administration from the University of Nairobi.',
+                    'With a strong background in law and governance, Senator Hassan Omar has been at the forefront of political transformation in Kenya. He is known for his eloquence, strategic thinking, and commitment to democratic principles.',
                     style: TextStyle(
                       fontSize: 14,
                       height: 1.6,
@@ -196,7 +229,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Career Section
+            // Career and Achievements Section
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
@@ -215,7 +248,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Career',
+                    'CAREER & ACHIEVEMENTS',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -229,22 +262,30 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                     color: const Color(0xFFFFCC00),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'With the above educational background, Malala\'s career has evolved with time. For over six years, he worked as a political advisor and community organizer, serving in various leadership positions.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.6,
-                      color: Colors.black87,
-                    ),
+                  _buildAchievementItem(
+                    '📜', 
+                    'EALA Member',
+                    'Serving as a Member of the East African Legislative Assembly since 2022'
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Since 2020, he has been serving as a Special Advisor to the UDA party leader and was instrumental in the party\'s grassroots mobilization and electoral success in the 2022 general elections. He is passionate about community development, youth empowerment, and political transformation.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.6,
-                      color: Colors.black87,
-                    ),
+                  _buildAchievementItem(
+                    '🏛️', 
+                    'Secretary General',
+                    'Appointed as the Secretary General of UDA, overseeing party operations'
+                  ),
+                  _buildAchievementItem(
+                    '⚖️', 
+                    'Legal Expert',
+                    'Practiced law with a focus on constitutional and human rights law'
+                  ),
+                  _buildAchievementItem(
+                    '🗣️', 
+                    'Public Speaker',
+                    'Renowned orator and political analyst on national and regional matters'
+                  ),
+                  _buildAchievementItem(
+                    '🌟', 
+                    'Youth Mentor',
+                    'Passionate about mentoring young leaders in politics and governance'
                   ),
                 ],
               ),
@@ -271,7 +312,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Personal Details',
+                    'PERSONAL DETAILS',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -285,10 +326,41 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                     color: const Color(0xFFFFCC00),
                   ),
                   const SizedBox(height: 12),
-                  _buildInfoItem('Born', 'October 10, 1985, Kakamega County'),
-                  _buildInfoItem('Education', 'University of Nairobi\n(M.A. Public Administration & B.A. Political Science)'),
-                  _buildInfoItem('Spouse', 'Married with children'),
-                  _buildInfoItem('Religion', 'Christian'),
+                  _buildPersonalInfoItem(
+                    Icons.person,
+                    'Full Name',
+                    'Hon. Sen. Hassan Omar',
+                  ),
+                  _buildPersonalInfoItem(
+                    Icons.work,
+                    'Position',
+                    'Secretary General, UDA',
+                  ),
+                  _buildPersonalInfoItem(
+                    Icons.location_city,
+                    'Constituency',
+                    'National',
+                  ),
+                  _buildPersonalInfoItem(
+                    Icons.location_on,
+                    'County',
+                    'Nairobi',
+                  ),
+                  _buildPersonalInfoItem(
+                    Icons.email,
+                    'Email',
+                    'hassan.omar@uda.go.ke',
+                  ),
+                  _buildPersonalInfoItem(
+                    Icons.phone,
+                    'Phone',
+                    '+254 700 000 005',
+                  ),
+                  _buildPersonalInfoItem(
+                    Icons.calendar_today,
+                    'Active Since',
+                    '2021',
+                  ),
                 ],
               ),
             ),
@@ -314,7 +386,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Follow The UDA General Secretary',
+                    'FOLLOW THE GENERAL SECRETARY',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -419,16 +491,73 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(String label, String value) {
+  Widget _buildAchievementItem(String emoji, String title, String description) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 4,
-            height: 16,
-            color: const Color(0xFFFFCC00),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFCC00).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                emoji,
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A5C2A),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.black87,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoItem(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A5C2A).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF1A5C2A),
+              size: 18,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -438,18 +567,18 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A5C2A),
+                    fontSize: 11,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
+                    fontSize: 14,
                     color: Colors.black87,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],

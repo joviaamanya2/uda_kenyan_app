@@ -76,8 +76,8 @@ class PresidentProfileScreen extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(6),
-                          child: Image.network(
-                            'https://via.placeholder.com/130x160/FFFFFF/1A5C2A?text=PRESIDENT',
+                          child: Image.asset(
+                            'assets/images/William Ruto.PNG',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(

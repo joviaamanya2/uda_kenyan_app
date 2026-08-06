@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import './elects_details.dart';
 
 class AllElectsScreen extends StatefulWidget {
-  const AllElectsScreen({super.key});
+  final List<Map<String, dynamic>> elects;
+
+  const AllElectsScreen({super.key, required this.elects});
 
   @override
   State<AllElectsScreen> createState() => _AllElectsScreenState();
@@ -12,82 +14,60 @@ class AllElectsScreen extends StatefulWidget {
 class _AllElectsScreenState extends State<AllElectsScreen> {
   String _searchQuery = '';
 
-  // Sample elects data - replace with your actual data
-  final List<Map<String, dynamic>> _allElects = [
-    {
-      'name': 'Hon. Bhoka George Didi',
-      'position': 'Member of Parliament',
-      'constituency': 'Obongi County',
-      'county': 'OBONGI',
-      'bio': 'Hon. Bhoka George Didi is a dedicated public servant committed to the development of Obongi County and the well-being of its people. He has been instrumental in various development projects in the region.',
-      'email': 'bhoka.george@uda.go.ke',
-      'phone': '+254 700 000 000',
-      'office': 'Obongi County Office',
-    },
-    {
-      'name': 'HaJJat Minsa Kabanda',
-      'position': 'Member of Parliament',
-      'constituency': 'KAMPALA CENTRAL',
-      'county': 'KAMPALA',
-      'bio': 'HaJJat Minsa Kabanda is a prominent political figure with extensive experience in governance and community development. She is passionate about women empowerment and education.',
-      'email': 'minsa.kabanda@uda.go.ke',
-      'phone': '+254 700 000 001',
-      'office': 'Kampala Central Office',
-    },
-    {
-      'name': 'Hon. Abablku Jesca',
-      'position': 'District Woman Representative',
-      'constituency': 'Adjumani',
-      'county': 'ADJUMANI',
-      'bio': 'Hon. Abablku Jesca is a strong advocate for women\'s rights and has been at the forefront of promoting gender equality in Adjumani District.',
-      'email': 'abablku.jesca@uda.go.ke',
-      'phone': '+254 700 000 002',
-      'office': 'Adjumani District Office',
-    },
-    {
-      'name': 'Hon. Aber Lilllan',
-      'position': 'District Woman Representative',
-      'constituency': 'KITGUM',
-      'county': 'KITGUM',
-      'bio': 'Hon. Aber Lilllan has been a vocal leader in Kitgum, championing the rights of women and children. She is committed to improving healthcare and education in the region.',
-      'email': 'aber.lilllan@uda.go.ke',
-      'phone': '+254 700 000 003',
-      'office': 'Kitgum District Office',
-    },
-    {
-      'name': 'Hon. Ablgaba Cuthbert Mirembe',
-      'position': 'Member of Parliament',
-      'constituency': 'Kibale County',
-      'county': 'KAMWENGE',
-      'bio': 'Hon. Ablgaba Cuthbert Mirembe is a seasoned politician with a focus on agricultural development and rural transformation in Kibale County.',
-      'email': 'cuthbert.mirembe@uda.go.ke',
-      'phone': '+254 700 000 004',
-      'office': 'Kibale County Office',
-    },
-    {
-      'name': 'Hon. Acan Joyce Okeny',
-      'position': 'Persons With Disabilities Representative',
-      'constituency': 'National',
-      'county': 'KENYA',
-      'bio': 'Hon. Acan Joyce Okeny is a passionate advocate for persons with disabilities, working tirelessly to ensure inclusivity and equal opportunities for all.',
-      'email': 'joyce.okeny@uda.go.ke',
-      'phone': '+254 700 000 005',
-      'office': 'National Disability Office',
-    },
-  ];
+  String? findImage(String name) {
+    final assets = [
+      'assets/images/H.E Cecily Mbarire.PNG',
+      'assets/images/H.E Prof. Kithure Kindiki.PNG',
+      'assets/images/Hon. Japheth Nyakundi.PNG',
+      'assets/images/Hon. Sen. Hassan Omar.PNG',
+      'assets/images/H.E%20Cecily%20Mbarire.PNG',
+      'assets/images/Mr. Kelvin Lunani.PNG',
+      'assets/images/Mr. Nicodemus Bore.PNG',
+      'assets/images/Omboko Milemba.PNG',
+      'assets/images/Ruto.png',
+      'assets/images/William Ruto.PNG',
+      'assets/images/logo.png',
+      'assets/images/main.PNG',
+      'assets/images/main2.PNG',
+    ];
+
+    final norm = name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'), ' ');
+    final words = norm.split(' ').where((w) => w.isNotEmpty).toList();
+
+    for (final asset in assets) {
+      final fname = asset
+          .split('/')
+          .last
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-z0-9 ]'), ' ');
+      final matchesAll = words.every((w) => fname.contains(w));
+      if (matchesAll) return asset;
+    }
+
+    if (words.isNotEmpty) {
+      final last = words.last;
+      for (final asset in assets) {
+        if (asset.toLowerCase().contains(last)) return asset;
+      }
+    }
+
+    return null;
+  }
 
   List<Map<String, dynamic>> get _filteredElects {
     if (_searchQuery.isEmpty) {
-      return _allElects;
+      return widget.elects;
     }
-    return _allElects.where((elect) {
+    return widget.elects.where((elect) {
       final name = (elect['name'] as String).toLowerCase();
       final constituency = (elect['constituency'] as String).toLowerCase();
       final county = (elect['county'] as String).toLowerCase();
+      final position = (elect['position'] as String).toLowerCase();
       final query = _searchQuery.toLowerCase();
       return name.contains(query) || 
              constituency.contains(query) || 
-             county.contains(query);
+             county.contains(query) ||
+             position.contains(query);
     }).toList();
   }
 
@@ -130,7 +110,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                   });
                 },
                 decoration: const InputDecoration(
-                  hintText: 'Search elects...',
+                  hintText: 'Search elects by name, constituency, county...',
                   prefixIcon: Icon(Icons.search, color: Color(0xFF1A5C2A)),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -151,6 +131,11 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                     'No elects found',
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Try adjusting your search',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
                 ],
               ),
             )
@@ -159,6 +144,14 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
               itemCount: _filteredElects.length,
               itemBuilder: (context, index) {
                 final elect = _filteredElects[index];
+                // Get the color from the elect data or use default
+                final color = elect['color'] as int? ?? 0xFF1A5C2A;
+                // Get image path - check explicit image first
+                String? imagePath = elect['image'] as String?;
+                if (imagePath == null) {
+                  imagePath = findImage(elect['name'] as String);
+                }
+
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -182,8 +175,8 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                         ),
                       ],
                       border: Border.all(
-                        color: Colors.grey.shade200,
-                        width: 1,
+                        color: Color(color),
+                        width: 2,
                       ),
                     ),
                     child: Row(
@@ -192,19 +185,49 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                         Container(
                           width: 60,
                           height: 60,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0xFF1A5C2A),
-                          ),
-                          child: Center(
-                            child: Text(
-                              (elect['name'] as String).substring(0, 1),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            border: Border.all(
+                              color: const Color(0xFFFFCC00), 
+                              width: 2,
                             ),
+                          ),
+                          child: ClipOval(
+                            child: imagePath != null
+                                ? Image.asset(
+                                    imagePath,
+                                    fit: BoxFit.cover,
+                                    width: 60,
+                                    height: 60,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Color(color),
+                                        child: Center(
+                                          child: Text(
+                                            (elect['name'] as String).substring(0, 1).toUpperCase(),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    color: Color(color),
+                                    child: Center(
+                                      child: Text(
+                                        (elect['name'] as String).substring(0, 1).toUpperCase(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -222,20 +245,49 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                elect['position'] as String,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey,
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Color(color),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  elect['position'] as String,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: color == 0xFFFFCC00 ? Colors.black : Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              if (elect['bio'] != null)
+                                Text(
+                                  elect['bio'] as String,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              const SizedBox(height: 4),
+                              if (elect['date'] != null)
+                                Text(
+                                  'Date: ${elect['date']}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Color(0xFF1A5C2A),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               const SizedBox(height: 2),
                               Row(
                                 children: [
                                   const Icon(Icons.location_on, size: 12, color: Colors.grey),
                                   const SizedBox(width: 4),
                                   Text(
-                                    '${elect['constituency']} • ${elect['county']}',
+                                    '${elect['constituency'] ?? 'N/A'} • ${elect['county'] ?? 'N/A'}',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
