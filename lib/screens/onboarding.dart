@@ -12,42 +12,46 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _panAnimation;
+  late AnimationController _slideController;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
-    // 20-second slow pan animation
-    _animationController = AnimationController(
+    
+    // Slide animation controller - slides left and right continuously
+    _slideController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
-    )..repeat(reverse: true); // continuously pan left and right smoothly
+      duration: const Duration(seconds: 15),
+    )..repeat(reverse: true);
 
-    _panAnimation = Tween<double>(begin: -1.0, end: 1.0).animate(
+    // Slide from left to right and back
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-0.3, 0),
+      end: const Offset(0.3, 0),
+    ).animate(
       CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.linear,
+        parent: _slideController,
+        curve: Curves.easeInOut,
       ),
     );
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _slideController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Height for the top image banner (halfway down the screen)
-    final bannerHeight = MediaQuery.of(context).size.height * 0.55;
+    final bannerHeight = MediaQuery.of(context).size.height * 0.50; // Exactly half of screen
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1B1D20), // Dark background matching NRM auth screenshot
+      backgroundColor: const Color(0xFF1B1D20),
       body: Stack(
         children: [
-          // Background repeated pattern of small UDA logos (faint watermark)
+          // Background pattern of small UDA logos
           Positioned.fill(
             child: Opacity(
               opacity: 0.08,
@@ -69,27 +73,32 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
           Column(
             children: [
-              // Top Banner Section with UDA Rally Photo & Yellow Gradient Header
+              // Top Banner Section with Sliding Image
               Stack(
                 children: [
-                  // Animated Panning Rally Banner Image
+                  // Sliding Banner Image
                   AnimatedBuilder(
-                    animation: _panAnimation,
+                    animation: _slideAnimation,
                     builder: (context, child) {
-                      return Container(
-                        height: bannerHeight,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: const AssetImage('assets/images/news images/pic14.PNG'),
-                            // Use cover to fill height, and align to pan horizontally
-                            fit: BoxFit.cover,
-                            alignment: Alignment(_panAnimation.value, 0.0),
+                      return ClipRect(
+                        child: Container(
+                          height: bannerHeight,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: const AssetImage('assets/images/news images/18.PNG'),
+                              fit: BoxFit.cover,
+                              alignment: Alignment(
+                                _slideAnimation.value.dx * 0.5,
+                                0.0,
+                              ),
+                            ),
                           ),
                         ),
                       );
                     },
                   ),
+
                   // Yellow Gradient Bar at top
                   Container(
                     height: 90,
@@ -105,12 +114,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ),
                     ),
                   ),
-                  // Dark Fade at bottom of banner
+
+                  // Dark overlay - exactly halfway down the banner
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: 120, // Taller fade for smoother transition
+                    height: bannerHeight / 2, // Half of banner height
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -118,13 +128,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            const Color(0xFF1B1D20).withOpacity(0.9),
+                            const Color(0xFF1B1D20).withOpacity(0.85),
                             const Color(0xFF1B1D20),
                           ],
+                          stops: const [0.0, 0.5, 1.0],
                         ),
                       ),
                     ),
                   ),
+
                   // UDA Logo Emblem Centered
                   Positioned(
                     bottom: 15,
@@ -161,6 +173,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ),
                     ),
                   ),
+
+                  // Slide indicator animation dots
+                  Positioned(
+                    bottom: 110,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildDot(0),
+                        _buildDot(1),
+                        _buildDot(2),
+                      ],
+                    ),
+                  ),
                 ],
               ),
 
@@ -170,7 +197,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               const Text(
                 'UDA App',
                 style: TextStyle(
-                  color: Color(0xFFFFCC00), // Yellow Serif Title matching screenshot
+                  color: Color(0xFFFFCC00),
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
                   fontFamily: 'Serif',
@@ -355,6 +382,41 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDot(int index) {
+    // Animate dots based on slide position
+    double progress = _slideController.value;
+    bool isActive = false;
+    
+    // Determine which dot is active based on slide position
+    if (progress < 0.33) {
+      isActive = index == 0;
+    } else if (progress < 0.66) {
+      isActive = index == 1;
+    } else {
+      isActive = index == 2;
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      width: isActive ? 24 : 8,
+      height: isActive ? 10 : 8,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        color: isActive ? const Color(0xFFFFCC00) : Colors.white.withOpacity(0.4),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFFFCC00).withOpacity(0.5),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                ),
+              ]
+            : null,
       ),
     );
   }

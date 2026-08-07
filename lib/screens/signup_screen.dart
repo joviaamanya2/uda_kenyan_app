@@ -10,7 +10,8 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends State<SignUpScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _districtController = TextEditingController();
@@ -21,6 +22,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _obscureConfirmPassword = true;
   bool _acceptTerms = false;
   bool _isLoading = false;
+
+  late AnimationController _slideController;
+  late Animation<Offset> _slideAnimation;
 
   final List<String> _districts = [
     'Nairobi',
@@ -38,12 +42,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    
+    // Slide animation controller - slides left and right continuously
+    _slideController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 15),
+    )..repeat(reverse: true);
+
+    // Slide from left to right and back
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-0.3, 0),
+      end: const Offset(0.3, 0),
+    ).animate(
+      CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
     _districtController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _slideController.dispose();
     super.dispose();
   }
 
@@ -88,11 +115,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bannerHeight = MediaQuery.of(context).size.height * 0.50; // Exactly half of screen
+
     return Scaffold(
       backgroundColor: const Color(0xFF1B1D20),
       body: Stack(
         children: [
-          // Background repeated pattern of small UDA logos (faint watermark)
+          // Background pattern of small UDA logos
           Positioned.fill(
             child: Opacity(
               opacity: 0.08,
@@ -117,19 +146,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  // Top Banner & Back Button Header
+                  // Top Banner with Sliding Image
                   Stack(
                     children: [
-                      Container(
-                        height: 140,
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/main.PNG'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                      // Sliding Banner Image
+                      AnimatedBuilder(
+                        animation: _slideAnimation,
+                        builder: (context, child) {
+                          return ClipRect(
+                            child: Container(
+                              height: bannerHeight,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: const AssetImage('assets/images/news images/18.PNG'),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment(
+                                    _slideAnimation.value.dx * 0.5,
+                                    0.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
+                      
+                      // Top Yellow Gradient Header
                       Container(
                         height: 70,
                         decoration: BoxDecoration(
@@ -144,18 +187,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                       ),
+                      
+                      // Dark overlay - halfway down the banner
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: bannerHeight / 2, // Half of banner height
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                const Color(0xFF1B1D20).withOpacity(0.85),
+                                const Color(0xFF1B1D20),
+                              ],
+                              stops: const [0.0, 0.5, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      // Slide indicator animation dots
+                      Positioned(
+                        bottom: 12,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildDot(0),
+                            _buildDot(1),
+                            _buildDot(2),
+                          ],
+                        ),
+                      ),
+                      
+                      // Back Button
                       Positioned(
                         top: 10,
                         left: 10,
                         child: IconButton(
                           icon: const Icon(Icons.arrow_back, color: Colors.black, size: 24),
                           onPressed: () => Navigator.pop(context),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.8),
+                            shape: const CircleBorder(),
+                          ),
                         ),
                       ),
                     ],
                   ),
 
-                  // Floating White Auth Form Card (Matching Screenshot 3)
+                  // Floating White Auth Form Card
                   Transform.translate(
                     offset: const Offset(0, -30),
                     child: Padding(
@@ -164,9 +250,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9F9F9), // White form card as requested
+                          color: const Color(0xFFF9F9F9),
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: const Color(0xFF1A5C2A), width: 2), // Green line border
+                          border: Border.all(color: const Color(0xFF1A5C2A), width: 2),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.25),
@@ -431,6 +517,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         fillColor: const Color(0xFFF2F2F2),
         filled: true,
+      ),
+    );
+  }
+
+  Widget _buildDot(int index) {
+    // Animate dots based on slide position
+    double progress = _slideController.value;
+    bool isActive = false;
+    
+    // Determine which dot is active based on slide position
+    if (progress < 0.33) {
+      isActive = index == 0;
+    } else if (progress < 0.66) {
+      isActive = index == 1;
+    } else {
+      isActive = index == 2;
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      width: isActive ? 24 : 8,
+      height: isActive ? 10 : 8,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        color: isActive ? const Color(0xFFFFCC00) : Colors.white.withOpacity(0.4),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFFFCC00).withOpacity(0.5),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                ),
+              ]
+            : null,
       ),
     );
   }

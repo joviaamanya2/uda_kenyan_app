@@ -10,11 +10,13 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  url_launcher: ^6.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.10.0
 
 flutter:
   uses-material-design: true
@@ -51,5 +53,16 @@ flutter:
     - assets/images/news images/18.PNG 
     - assets/images/news images/17.PNG 
     - assets/images/news images/16.PNG 
-    - assets/images/news images/15.PNG 
+    - assets/images/news images/15.PNG
+    - assets/images/events images/grassroots_election.png 
+    - assets/images/events images/Kabuchai by-election.png 
+    - assets/images/events images/rurii_byelection.png 
+    - assets/images/events images/sensitization.png 
+    - assets/images/events images/Training.png 
+
+# flutter_launcher_icons configuration - generates native app icons from a single image
+flutter_icons:
+  android: true
+  ios: true
+  image_path: assets/images/logo.png
 

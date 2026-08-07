@@ -22,10 +22,7 @@ class NewsDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'UDA NEWS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
@@ -54,26 +51,47 @@ class NewsDetailsScreen extends StatelessWidget {
             // Featured Image
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                image,
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 250,
-                    width: double.infinity,
-                    color: const Color(0xFF1A5C2A),
-                    child: const Center(
-                      child: Icon(
-                        Icons.newspaper,
-                        color: Colors.white54,
-                        size: 64,
-                      ),
+              child: (image.startsWith('http') || image.startsWith('https'))
+                  ? Image.network(
+                      image,
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 250,
+                          width: double.infinity,
+                          color: const Color(0xFF1A5C2A),
+                          child: const Center(
+                            child: Icon(
+                              Icons.newspaper,
+                              color: Colors.white54,
+                              size: 64,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      image,
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 250,
+                          width: double.infinity,
+                          color: const Color(0xFF1A5C2A),
+                          child: const Center(
+                            child: Icon(
+                              Icons.newspaper,
+                              color: Colors.white54,
+                              size: 64,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
             const SizedBox(height: 16),
 
@@ -113,10 +131,7 @@ class NewsDetailsScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   date,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const Spacer(),
                 GestureDetector(
@@ -124,7 +139,10 @@ class NewsDetailsScreen extends StatelessWidget {
                     print('📤 Share article');
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFCC00),
                       borderRadius: BorderRadius.circular(20),
@@ -150,10 +168,7 @@ class NewsDetailsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Divider
-            Container(
-              height: 3,
-              color: const Color(0xFFFFCC00),
-            ),
+            Container(height: 3, color: const Color(0xFFFFCC00)),
             const SizedBox(height: 16),
 
             // Content
@@ -183,7 +198,8 @@ class NewsDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             _buildRelatedArticle(
-              title: 'UDA Women\'s League Partners with NGOs for Skills Training',
+              title:
+                  'UDA Women\'s League Partners with NGOs for Skills Training',
               date: 'Thu, 25 Jul 2026',
             ),
             const SizedBox(height: 16),
@@ -205,10 +221,7 @@ class NewsDetailsScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   'BACK TO NEWS',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
             ),
@@ -219,10 +232,7 @@ class NewsDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRelatedArticle({
-    required String title,
-    required String date,
-  }) {
+  Widget _buildRelatedArticle({required String title, required String date}) {
     return GestureDetector(
       onTap: () {
         print('📰 Related article tapped: $title');
@@ -259,10 +269,7 @@ class NewsDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     date,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
                   ),
                 ],
               ),

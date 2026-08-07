@@ -29,11 +29,13 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class _FeatureItem extends StatefulWidget {
   final String title;
   final IconData icon;
+  final bool isSelected;
   final VoidCallback onTap;
 
   const _FeatureItem({
     required this.title,
     required this.icon,
+    required this.isSelected,
     required this.onTap,
     super.key,
   });
@@ -47,6 +49,23 @@ class _FeatureItemState extends State<_FeatureItem> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isActive = widget.isSelected || _isTapped;
+    final Color backgroundColor = widget.isSelected
+        ? const Color(0xFFFFCC00)
+        : _isTapped
+        ? const Color(0xFF1A5C2A)
+        : Colors.black;
+    final Color contentColor = widget.isSelected
+        ? const Color(0xFF1A5C2A)
+        : _isTapped
+        ? const Color(0xFFFFCC00)
+        : Colors.white;
+    final Color shadowColor = widget.isSelected
+        ? const Color(0xFFFFCC00).withOpacity(0.35)
+        : _isTapped
+        ? const Color(0xFF1A5C2A).withOpacity(0.4)
+        : Colors.black.withOpacity(0.2);
+
     return GestureDetector(
       onTapDown: (_) {
         setState(() {
@@ -68,50 +87,32 @@ class _FeatureItemState extends State<_FeatureItem> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: _isTapped 
-              ? const Color(0xFF1A5C2A) // Green when tapped
-              : Colors.black, // Black normally
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: _isTapped
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFF1A5C2A).withOpacity(0.4),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: widget.isSelected
+              ? Border.all(color: const Color(0xFFFFCC00), width: 2)
+              : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              widget.icon,
-              color: _isTapped 
-                  ? const Color(0xFFFFCC00) // Gold when tapped
-                  : Colors.white, // White normally
-              size: 24,
-            ),
+            Icon(widget.icon, color: contentColor, size: 24),
             const SizedBox(height: 4),
             Text(
               widget.title,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: _isTapped 
-                    ? const Color(0xFFFFCC00) // Gold when tapped
-                    : Colors.white, // White normally
+                color: contentColor,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
@@ -133,6 +134,7 @@ class UDAHomeScreen extends StatefulWidget {
 
 class _UDAHomeScreenState extends State<UDAHomeScreen> {
   static bool _mapViewRegistered = false;
+  String _selectedFeature = 'HOME';
 
   void _registerMapView() {
     if (!_mapViewRegistered && kIsWeb) {
@@ -439,11 +441,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 ),
               );
             },
-            child: const Icon(
-              Icons.language,
-              color: Colors.black,
-              size: 22,
-            ),
+            child: const Icon(Icons.language, color: Colors.black, size: 22),
           ),
           const SizedBox(width: 8),
           GestureDetector(
@@ -462,11 +460,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               print('⋮ Menu tapped');
               _showMenuDialog(context);
             },
-            child: const Icon(
-              Icons.more_vert,
-              color: Colors.black,
-              size: 24,
-            ),
+            child: const Icon(Icons.more_vert, color: Colors.black, size: 24),
           ),
         ],
       ),
@@ -828,11 +822,16 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: features.map((feature) {
+            final title = feature['title'] as String;
             return _FeatureItem(
-              title: feature['title'] as String,
+              title: title,
               icon: feature['icon'] as IconData,
+              isSelected: _selectedFeature == title,
               onTap: () {
-                _navigateToFeature(context, feature['title'] as String);
+                setState(() {
+                  _selectedFeature = title;
+                });
+                _navigateToFeature(context, title);
               },
             );
           }).toList(),
@@ -899,245 +898,271 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
     }
   }
 
- // ========== LATEST UPDATES SECTION ==========
-Widget _buildLatestUpdatesSection() {
-  final updates = [
-    {
-      'title': 'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
-      'date': 'July 23, 2026',
-      'color': 0xFFFFCC00,
-      'image': 'assets/images/news images/pic6.PNG',
-    },
-    {
-      'title': 'UDA Party Leader, President William Ruto presided over the party\'s National Executive Committee (NEC) meeting',
-      'date': 'January 14, 2026',
-      'color': 0xFF1A5C2A,
-      'image': 'assets/images/news images/15.PNG',
-    },
-    {
-      'title': 'UDA establish \'2027 Aspirants Forum\'',
-      'date': 'January 21, 2026',
-      'color': 0xFFFFCC00,
-      'image': 'assets/images/news images/pic1.PNG',
-    },
-    {
-      'title': 'UDA Grassroots Sensitization Training in Kiambu County',
-      'date': 'December 15, 2025',
-      'color': 0xFF1A5C2A,
-      'image': 'assets/images/news images/17.PNG',
-    },
-    {
-      'title': 'UDA Grassroots Sensitization Training in Uasin Gishu county',
-      'date': 'December 17, 2025',
-      'color': 0xFFFFCC00,
-      'image': 'assets/images/news images/18.PNG',
-    },
-    {
-      'title': 'Hassan Omar Leads Delegation in Courtesy Call on South Sudan President Salva Kiir',
-      'date': 'July 21, 2026',
-      'color': 0xFF1A5C2A,
-      'image': 'assets/images/news images/pic9.PNG',
-    },
-  ];
+  // ========== LATEST UPDATES SECTION ==========
+  Widget _buildLatestUpdatesSection() {
+    final updates = [
+      {
+        'title':
+            'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
+        'date': 'July 23, 2026',
+        'color': 0xFFFFCC00,
+        'image': 'assets/images/news images/pic6.PNG',
+        'content':
+            'Sen. Hassan Omar Hassan visited the Kenyan Embassy in Juba to strengthen diplomatic ties and discuss future cooperation with South Sudanese leadership.',
+      },
+      {
+        'title':
+            'UDA Party Leader, President William Ruto presided over the party\'s National Executive Committee (NEC) meeting',
+        'date': 'January 14, 2026',
+        'color': 0xFF1A5C2A,
+        'image': 'assets/images/news images/15.PNG',
+        'content':
+            'President Ruto led the NEC meeting to review UDA strategic priorities and reinforce party cohesion ahead of upcoming political engagements.',
+      },
+      {
+        'title': 'UDA establish \'2027 Aspirants Forum\'',
+        'date': 'January 21, 2026',
+        'color': 0xFFFFCC00,
+        'image': 'assets/images/news images/pic1.PNG',
+        'content':
+            'UDA announced a new 2027 Aspirants Forum to support, mentor, and organize potential candidates across the country.',
+      },
+      {
+        'title': 'UDA Grassroots Sensitization Training in Kiambu County',
+        'date': 'December 15, 2025',
+        'color': 0xFF1A5C2A,
+        'image': 'assets/images/news images/17.PNG',
+        'content':
+            'The party hosted a training session in Kiambu County focused on grassroots engagement and voter education for local communities.',
+      },
+      {
+        'title': 'UDA Grassroots Sensitization Training in Uasin Gishu county',
+        'date': 'December 17, 2025',
+        'color': 0xFFFFCC00,
+        'image': 'assets/images/news images/18.PNG',
+        'content':
+            'UDA continued its grassroots outreach with training in Uasin Gishu, empowering volunteers with civic education and mobilization tools.',
+      },
+      {
+        'title':
+            'Hassan Omar Leads Delegation in Courtesy Call on South Sudan President Salva Kiir',
+        'date': 'July 21, 2026',
+        'color': 0xFF1A5C2A,
+        'image': 'assets/images/news images/pic9.PNG',
+        'content':
+            'A delegation led by Hassan Omar met South Sudan President Salva Kiir to discuss bilateral cooperation and regional stability.',
+      },
+    ];
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'LATEST UPDATES',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: Color(0xFF1A5C2A),
-              ),
-            ),
-            Text(
-              'View All',
-              style: TextStyle(
-                color: Color(0xFFFFCC00),
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(height: 8),
-      SizedBox(
-        height: 200, // Increased height to accommodate description
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          physics: const BouncingScrollPhysics(),
-          itemCount: updates.length,
-          itemBuilder: (context, index) {
-            final update = updates[index];
-            final imagePath = update['image'] as String?;
-            
-            return GestureDetector(
-              onTap: () {
-                print('📰 Update ${index + 1} tapped: ${update['title']}');
-              },
-              child: Container(
-                width: 300, // Slightly wider for better text display
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Color(update['color'] as int),
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'LATEST UPDATES',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1A5C2A),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Background Image
-                      if (imagePath != null)
-                        Image.asset(
-                          imagePath,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[200],
-                              child: Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  color: Colors.grey[400],
-                                  size: 40,
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      else
-                        Container(
-                          color: Colors.white,
-                        ),
-                      
-                      // Dark Gradient Overlay - stronger at bottom
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.1),
-                              Colors.black.withOpacity(0.5),
-                              Colors.black.withOpacity(0.85),
-                            ],
-                            stops: const [0.0, 0.5, 1.0],
-                          ),
-                        ),
-                      ),
-                      
-                      // Content - Now with description and date at bottom
-                      Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            // Description/Title at bottom
-                            Text(
-                              update['title'] as String,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                                color: Colors.white,
-                                height: 1.3,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black45,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            
-                            // Date and arrow row
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.calendar_today,
-                                  size: 12,
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  update['date'] as String,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white.withOpacity(0.9),
-                                    shadows: [
-                                      const Shadow(
-                                        color: Colors.black45,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Spacer(),
-                                // Small indicator arrow
-                                Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.white,
-                                    size: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      // Color accent strip at bottom
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 4,
-                        child: Container(
-                          color: Color(update['color'] as int),
-                        ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NewsScreen()),
+                  );
+                },
+                child: const Text(
+                  'View All',
+                  style: TextStyle(
+                    color: Color(0xFFFFCC00),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 200, // Increased height to accommodate description
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            physics: const BouncingScrollPhysics(),
+            itemCount: updates.length,
+            itemBuilder: (context, index) {
+              final update = updates[index];
+              final imagePath = update['image'] as String?;
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NewsScreen(selectedNews: update),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 300, // Slightly wider for better text display
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Color(update['color'] as int),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Background Image
+                        if (imagePath != null)
+                          Image.asset(
+                            imagePath,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[200],
+                                child: Center(
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.grey[400],
+                                    size: 40,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        else
+                          Container(color: Colors.white),
+
+                        // Dark Gradient Overlay - stronger at bottom
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.1),
+                                Colors.black.withOpacity(0.5),
+                                Colors.black.withOpacity(0.85),
+                              ],
+                              stops: const [0.0, 0.5, 1.0],
+                            ),
+                          ),
+                        ),
+
+                        // Content - Now with description and date at bottom
+                        Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Description/Title at bottom
+                              Text(
+                                update['title'] as String,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  height: 1.3,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black45,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+
+                              // Date and arrow row
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 12,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    update['date'] as String,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.white.withOpacity(0.9),
+                                      shadows: [
+                                        const Shadow(
+                                          color: Colors.black45,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  // Small indicator arrow
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                      size: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Color accent strip at bottom
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: 4,
+                          child: Container(
+                            color: Color(update['color'] as int),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   // ========== CHAIRMAN SECTION ==========
   Widget _buildChairmanSection() {
@@ -1319,7 +1344,8 @@ Widget _buildLatestUpdatesSection() {
                             child: Image.asset(
                               'assets/images/logo.png',
                               fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const SizedBox.shrink(),
                             ),
                           ),
                         ),
@@ -1344,9 +1370,8 @@ Widget _buildLatestUpdatesSection() {
                         child: Image.asset(
                           imagePath,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: const Color(0xFF1A5C2A),
-                          ),
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(color: const Color(0xFF1A5C2A)),
                         ),
                       ),
                       // Dark gradient overlay for rich contrast
@@ -1375,7 +1400,10 @@ Widget _buildLatestUpdatesSection() {
                         children: [
                           if (isGenSec) ...[
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFFCC00),
                                 borderRadius: BorderRadius.circular(12),
@@ -1456,7 +1484,11 @@ Widget _buildLatestUpdatesSection() {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.location_on, color: Color(0xFFFFCC00), size: 20),
+                  const Icon(
+                    Icons.location_on,
+                    color: Color(0xFFFFCC00),
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Column(
@@ -1542,7 +1574,11 @@ Widget _buildLatestUpdatesSection() {
             ),
             child: Row(
               children: [
-                const Icon(Icons.location_on, color: Color(0xFFFFCC00), size: 20),
+                const Icon(
+                  Icons.location_on,
+                  color: Color(0xFFFFCC00),
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 const Expanded(
                   child: Column(
@@ -1573,7 +1609,10 @@ Widget _buildLatestUpdatesSection() {
                     }
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFCC00),
                       borderRadius: BorderRadius.circular(16),
@@ -1590,7 +1629,11 @@ Widget _buildLatestUpdatesSection() {
                           ),
                         ),
                         SizedBox(width: 4),
-                        Icon(Icons.open_in_new, color: Color(0xFF1A5C2A), size: 14),
+                        Icon(
+                          Icons.open_in_new,
+                          color: Color(0xFF1A5C2A),
+                          size: 14,
+                        ),
                       ],
                     ),
                   ),
@@ -1607,7 +1650,7 @@ Widget _buildLatestUpdatesSection() {
             child: SizedBox(
               height: 220,
               width: double.infinity,
-              child: kIsWeb 
+              child: kIsWeb
                   ? const HtmlElementView(viewType: 'google-maps-uda')
                   : const SizedBox.shrink(),
             ),
@@ -1724,21 +1767,26 @@ Widget _buildLatestUpdatesSection() {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Support Center Button on the Left
-          FloatingActionButton(
+          FloatingActionButton.extended(
             heroTag: 'support',
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const ContactScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const ContactScreen()),
               );
             },
-            backgroundColor: const Color(0xFF1A5C2A),
-            child: const Icon(Icons.support_agent, color: Colors.white),
+            backgroundColor: const Color.fromARGB(255, 2, 17, 6),
+            icon: const Icon(Icons.support_agent, color: Colors.white),
+            label: const Text(
+              'SUPPORT CENTER',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           // Chat Button on the Right
-          FloatingActionButton(
+          FloatingActionButton.extended(
             heroTag: 'chat',
             onPressed: () {
               Navigator.push(
@@ -1749,7 +1797,14 @@ Widget _buildLatestUpdatesSection() {
               );
             },
             backgroundColor: const Color(0xFFFFCC00),
-            child: const Icon(Icons.chat, color: Color(0xFF1A5C2A)),
+            icon: const Icon(Icons.chat, color: Color(0xFF1A5C2A)),
+            label: const Text(
+              'CHAT',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

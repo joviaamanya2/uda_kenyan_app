@@ -1,9 +1,20 @@
 // lib/screens/about_uda_screen.dart
 import 'package:flutter/material.dart';
 import 'join_uda.dart';
-
 import 'gallery.dart';
 import 'fundraise_screen.dart';
+import 'contact_screen.dart';
+import 'ask_president.dart';
+import 'uda_leadears.dart';
+import 'executive_committe.dart';
+import 'rdcs_and_drdcs.dart';
+import 'uda_candidates.dart';
+import 'achievements_screen.dart';
+import 'events.dart';
+import 'news_room.dart';
+import 'videos_screen.dart';
+import 'Live_tv.dart';
+import 'about_us.dart';
 
 class AboutUDAScreen extends StatelessWidget {
   const AboutUDAScreen({super.key});
@@ -11,12 +22,19 @@ class AboutUDAScreen extends StatelessWidget {
   final List<Map<String, dynamic>> menuItems = const [
     {'title': 'How To Join UDA', 'icon': Icons.person_add},
     {'title': 'About Us', 'icon': Icons.info},
-    {'title': 'Our Constitution', 'icon': Icons.description},
-    {'title': 'Party Structure', 'icon': Icons.account_tree},
-    {'title': 'Our Documents', 'icon': Icons.folder_open},
-    {'title': 'Our History', 'icon': Icons.history},
+    {'title': 'UDA Leaders', 'icon': Icons.people},
+    {'title': 'Executive Committee', 'icon': Icons.account_tree},
+    {'title': 'RDCS & DRDCS', 'icon': Icons.location_city},
+    {'title': 'UDA Candidates', 'icon': Icons.how_to_vote},
     {'title': 'UDA Gallery', 'icon': Icons.photo_library},
     {'title': 'Fundraising', 'icon': Icons.attach_money},
+    {'title': 'Contact Us', 'icon': Icons.contact_mail},
+    {'title': 'Ask President', 'icon': Icons.question_answer},
+    {'title': 'Achievements', 'icon': Icons.emoji_events},
+    {'title': 'Events', 'icon': Icons.event},
+    {'title': 'News Room', 'icon': Icons.article},
+    {'title': 'Videos', 'icon': Icons.video_library},
+    {'title': 'Live TV', 'icon': Icons.live_tv},
   ];
 
   @override
@@ -122,9 +140,38 @@ class AboutUDAScreen extends StatelessWidget {
               ),
             ),
 
-            // Navigation Tabs
-            
-            const SizedBox(height: 16),
+            // Quick Stats Section - FIXED
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: _buildStatItem('Members', '12M+', Icons.people),
+                  ),
+                  Expanded(
+                    child: _buildStatItem('Branches', '290+', Icons.location_city),
+                  ),
+                  Expanded(
+                    child: _buildStatItem('Counties', '47', Icons.map),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 8),
 
             // Menu Items List
             Container(
@@ -157,15 +204,21 @@ class AboutUDAScreen extends StatelessWidget {
                         label: 'SUPPORT CENTER',
                         color: const Color(0xFF1A5C2A),
                         onTap: () {
-                          print('🆘 Support Center tapped');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ContactScreen()),
+                          );
                         },
                       ),
                       _buildFooterButton(
                         icon: Icons.chat,
-                        label: 'CHAT',
+                        label: 'ASK PRESIDENT',
                         color: const Color(0xFFFFCC00),
                         onTap: () {
-                          print('💬 Chat tapped');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AskPresidentScreen()),
+                          );
                         },
                       ),
                     ],
@@ -189,31 +242,30 @@ class AboutUDAScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTabItem(String title, IconData icon, VoidCallback onTap) {
-    final isActive = title == 'ABOUT';
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: isActive ? const Color(0xFFFFCC00) : const Color(0xFF1A5C2A),
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                color: isActive ? const Color(0xFFFFCC00) : const Color(0xFF1A5C2A),
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                fontSize: 11,
-              ),
-            ),
-          ],
+  Widget _buildStatItem(String label, String value, IconData icon) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: const Color(0xFF1A5C2A), size: 24),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Color(0xFF1A5C2A),
+          ),
+          textAlign: TextAlign.center,
         ),
-      ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
@@ -224,7 +276,6 @@ class AboutUDAScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        print('📱 $title tapped');
         _navigateToMenuItem(context, title);
       },
       child: Container(
@@ -321,126 +372,113 @@ class AboutUDAScreen extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const JoinUDAScreen()),
         );
         break;
+        
       case 'About Us':
-        // Show about us dialog or navigate
-        _showAboutDialog(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AboutScreen()),
+        );
         break;
-      case 'Our Constitution':
-        _showDocumentDialog(context, 'UDA Constitution');
+        
+      case 'UDA Leaders':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UDALeadersScreen()),
+        );
         break;
-      case 'Party Structure':
-        _showDocumentDialog(context, 'UDA Party Structure');
+        
+      case 'Executive Committee':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ExecutiveCommitteeScreen()),
+        );
         break;
-      case 'Our Documents':
-        _showDocumentDialog(context, 'UDA Documents');
+        
+      case 'RDCS & DRDCS':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RDCSDRDCSScreen()),
+        );
         break;
-      case 'Our History':
-        _showDocumentDialog(context, 'UDA History');
+        
+      case 'UDA Candidates':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UDACandidatesScreen()),
+        );
         break;
+        
       case 'UDA Gallery':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const GalleryScreen()),
         );
         break;
+        
       case 'Fundraising':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const FundraiseScreen()),
         );
         break;
+        
+      case 'Contact Us':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ContactScreen()),
+        );
+        break;
+        
+      case 'Ask President':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AskPresidentScreen()),
+        );
+        break;
+        
+      case 'Achievements':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AchievementsScreen()),
+        );
+        break;
+        
+      case 'Events':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EventsScreen()),
+        );
+        break;
+        
+      case 'News Room':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NewsScreen()),
+        );
+        break;
+        
+      case 'Videos':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const VideosScreen()),
+        );
+        break;
+        
+      case 'Live TV':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LiveTVScreen()),
+        );
+        break;
+        
       default:
-        print('📱 $title tapped');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$title section coming soon!'),
+            backgroundColor: const Color(0xFF1A5C2A),
+            duration: const Duration(seconds: 2),
+          ),
+        );
     }
-  }
-
-  void _showAboutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          'About UDA',
-          style: TextStyle(
-            color: Color(0xFF1A5C2A),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'The United Democratic Alliance (UDA) is a political party in Kenya.',
-              style: TextStyle(fontSize: 14, height: 1.5),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Our mission is to unite Kenyans, promote economic empowerment, '
-              'and build a better future for all citizens through the '
-              'Bottom-Up Economic Transformation Agenda (BETA).',
-              style: TextStyle(fontSize: 14, height: 1.5),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'KAZI NI KAZI',
-              style: TextStyle(
-                color: Color(0xFFFFCC00),
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFCC00),
-              foregroundColor: const Color(0xFF1A5C2A),
-            ),
-            child: const Text('CLOSE'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDocumentDialog(BuildContext context, String title) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: Color(0xFF1A5C2A),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          '$title document is currently being prepared. Please check back later.',
-          style: const TextStyle(fontSize: 14, height: 1.5),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFCC00),
-              foregroundColor: const Color(0xFF1A5C2A),
-            ),
-            child: const Text('CLOSE'),
-          ),
-        ],
-      ),
-    );
   }
 }

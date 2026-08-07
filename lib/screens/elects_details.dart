@@ -90,7 +90,7 @@ class ElectDetailsScreen extends StatelessWidget {
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0, // Removed shadow
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -119,21 +119,15 @@ class ElectDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero Image Card - Full width with background image
+            // Hero Image - CLEAN, NO SHADOWS, NO GRADIENTS
             Container(
               width: double.infinity,
-              height: 320,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(
+              height: 350,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(24),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+                // No shadows, no gradients
               ),
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
@@ -142,7 +136,7 @@ class ElectDetailsScreen extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Background Image
+                    // Clear Image
                     if (imagePath != null)
                       Image.asset(
                         imagePath,
@@ -180,127 +174,49 @@ class ElectDetailsScreen extends StatelessWidget {
                         ),
                       ),
                     
-                    // Dark Overlay for text readability
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.2),
-                            Colors.black.withOpacity(0.7),
-                          ],
-                          stops: const [0.0, 0.6],
-                        ),
-                      ),
-                    ),
-                    
-                    // Content on top of image
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Name
-                          Text(
-                            name,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black45,
-                                  blurRadius: 8,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          
-                          // Position Badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFCC00),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              position,
-                              style: const TextStyle(
-                                color: Color(0xFF1A5C2A),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          
-                          // Date and Location Row
-                          Row(
-                            children: [
-                              if (date.isNotEmpty) ...[
-                                const Icon(
-                                  Icons.calendar_today,
-                                  color: Colors.white70,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  date,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                              if (date.isNotEmpty && (constituency.isNotEmpty || county.isNotEmpty))
-                                Container(
-                                  width: 4,
-                                  height: 4,
-                                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white54,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              if (constituency.isNotEmpty || county.isNotEmpty)
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: Colors.white70,
-                                      size: 14,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      constituency.isNotEmpty ? constituency : county,
-                                      style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                    // Color accent strip at bottom
+                    // Simple solid overlay for text readability
                     Positioned(
                       bottom: 0,
                       left: 0,
                       right: 0,
-                      height: 4,
                       child: Container(
-                        color: Color(color),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5), // Simple solid color
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(24),
+                            bottomRight: Radius.circular(24),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFCC00),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                position,
+                                style: const TextStyle(
+                                  color: Color(0xFF1A5C2A),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -308,129 +224,142 @@ class ElectDetailsScreen extends StatelessWidget {
               ),
             ),
             
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            
+            // Biography Section - NO SHADOWS
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Biography Section
-                  if (bio.isNotEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFFE0E0E0),
+                    width: 1,
+                  ),
+                  // No boxShadow
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Biography Title
+                    Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 28,
+                          color: const Color(0xFFFFCC00),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Biography',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A5C2A),
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Bio Text
+                    if (bio.isNotEmpty)
+                      Text(
+                        bio,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          height: 1.7,
+                          color: Colors.black87,
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 4,
-                                height: 24,
-                                color: const Color(0xFFFFCC00),
-                              ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                'Biography',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1A5C2A),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            bio,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              height: 1.6,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
+                    
+                    if (bio.isNotEmpty) const SizedBox(height: 20),
+                    
+                    // Divider
+                    Container(
+                      height: 1,
+                      color: const Color(0xFFF0F0F0),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Details Grid
+                    const Text(
+                      'Personal Information',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A5C2A),
                       ),
                     ),
-                  
-                  if (bio.isNotEmpty) const SizedBox(height: 16),
-
-                  // Positions & Roles Section
-                  if (position.isNotEmpty || constituency.isNotEmpty || county.isNotEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                    const SizedBox(height: 12),
+                    
+                    // Position
+                    if (position.isNotEmpty)
+                      _buildDetailItem(
+                        icon: Icons.work,
+                        label: 'Position',
+                        value: position,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Positions & Roles',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1A5C2A),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          if (position.isNotEmpty)
-                            _buildRoleItem('Position', position),
-                          if (constituency.isNotEmpty)
-                            _buildRoleItem('Constituency', constituency),
-                          if (county.isNotEmpty)
-                            _buildRoleItem('County', county),
-                          if (date.isNotEmpty)
-                            _buildRoleItem('Active Since', date),
-                        ],
+                    
+                    // Constituency
+                    if (constituency.isNotEmpty)
+                      _buildDetailItem(
+                        icon: Icons.location_city,
+                        label: 'Constituency',
+                        value: constituency,
                       ),
-                    ),
-                  
-                  if (position.isNotEmpty || constituency.isNotEmpty || county.isNotEmpty)
-                    const SizedBox(height: 24),
-                  
-                  // Action Buttons
-                  
-                  const SizedBox(height: 24),
-                ],
+                    
+                    // County
+                    if (county.isNotEmpty)
+                      _buildDetailItem(
+                        icon: Icons.map,
+                        label: 'County',
+                        value: county,
+                      ),
+                    
+                    // Date
+                    if (date.isNotEmpty)
+                      _buildDetailItem(
+                        icon: Icons.calendar_today,
+                        label: 'Active Since',
+                        value: date,
+                      ),
+                  ],
+                ),
               ),
             ),
+            
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRoleItem(String label, String value) {
+  Widget _buildDetailItem({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 4,
-            height: 16,
-            color: const Color(0xFFFFCC00),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFCC00).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF1A5C2A),
+              size: 18,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

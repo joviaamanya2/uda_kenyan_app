@@ -2,8 +2,17 @@
 import 'package:flutter/material.dart';
 import 'news_details.dart';
 
-class NewsScreen extends StatelessWidget {
-  const NewsScreen({super.key});
+class NewsScreen extends StatefulWidget {
+  final Map<String, dynamic>? selectedNews;
+
+  const NewsScreen({super.key, this.selectedNews});
+
+  @override
+  State<NewsScreen> createState() => _NewsScreenState();
+}
+
+class _NewsScreenState extends State<NewsScreen> {
+  bool _didOpenSelectedNews = false;
 
   final List<Map<String, dynamic>> newsItems = const [
     {
@@ -12,6 +21,8 @@ class NewsScreen extends StatelessWidget {
       'date': 'July 23, 2026',
       'color': 0xFFFFCC00,
       'image': 'assets/images/news images/pic6.PNG',
+      'content':
+          'Sen. Hassan Omar Hassan visited the Kenyan Embassy in Juba to strengthen diplomatic ties and discuss future cooperation with South Sudanese leadership.',
     },
     {
       'title':
@@ -19,24 +30,32 @@ class NewsScreen extends StatelessWidget {
       'date': 'January 14, 2026',
       'color': 0xFF1A5C2A,
       'image': 'assets/images/news images/15.PNG',
+      'content':
+          'President Ruto led the NEC meeting to review UDA strategic priorities and reinforce party cohesion ahead of upcoming political engagements.',
     },
     {
       'title': 'UDA establish \'2027 Aspirants Forum\'',
       'date': 'January 21, 2026',
       'color': 0xFFFFCC00,
       'image': 'assets/images/news images/pic1.PNG',
+      'content':
+          'UDA announced a new 2027 Aspirants Forum to support, mentor, and organize potential candidates across the country.',
     },
     {
       'title': 'UDA Grassroots Sensitization Training in Kiambu County',
       'date': 'December 15, 2025',
       'color': 0xFF1A5C2A,
       'image': 'assets/images/news images/17.PNG',
+      'content':
+          'The party hosted a training session in Kiambu County focused on grassroots engagement and voter education for local communities.',
     },
     {
       'title': 'UDA Grassroots Sensitization Training in Uasin Gishu county',
       'date': 'December 17, 2025',
       'color': 0xFFFFCC00,
       'image': 'assets/images/news images/18.PNG',
+      'content':
+          'UDA continued its grassroots outreach with training in Uasin Gishu, empowering volunteers with civic education and mobilization tools.',
     },
     {
       'title':
@@ -44,8 +63,36 @@ class NewsScreen extends StatelessWidget {
       'date': 'July 21, 2026',
       'color': 0xFF1A5C2A,
       'image': 'assets/images/news images/pic9.PNG',
+      'content':
+          'A delegation led by Hassan Omar met South Sudan President Salva Kiir to discuss bilateral cooperation and regional stability.',
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.selectedNews != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_didOpenSelectedNews && mounted) {
+          _didOpenSelectedNews = true;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewsDetailsScreen(
+                title: widget.selectedNews!['title'] as String,
+                date: widget.selectedNews!['date'] as String,
+                image: widget.selectedNews!['image'] as String,
+                content:
+                    widget.selectedNews!['content'] as String? ??
+                    'Read more about the latest update in the news room.',
+              ),
+            ),
+          );
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -315,26 +362,47 @@ class NewsScreen extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
-              child: Image.network(
-                image,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 180,
-                    width: double.infinity,
-                    color: const Color(0xFF1A5C2A),
-                    child: const Center(
-                      child: Icon(
-                        Icons.newspaper,
-                        color: Colors.white54,
-                        size: 48,
-                      ),
+              child: (image.startsWith('http') || image.startsWith('https'))
+                  ? Image.network(
+                      image,
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 180,
+                          width: double.infinity,
+                          color: const Color(0xFF1A5C2A),
+                          child: const Center(
+                            child: Icon(
+                              Icons.newspaper,
+                              color: Colors.white54,
+                              size: 48,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      image,
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 180,
+                          width: double.infinity,
+                          color: const Color(0xFF1A5C2A),
+                          child: const Center(
+                            child: Icon(
+                              Icons.newspaper,
+                              color: Colors.white54,
+                              size: 48,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),

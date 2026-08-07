@@ -6,7 +6,8 @@ class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
 
   @override
-  State<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();
+  State<LanguageSelectionScreen> createState() =>
+      _LanguageSelectionScreenState();
 }
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
@@ -96,12 +97,20 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       setState(() {
         _isLoading = false;
       });
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
+
+      // Guard against using BuildContext after async gap
+      if (!mounted) return;
+
+      // If there is a previous route (e.g. opened from Home), go back to it.
+      // Otherwise (e.g. opened from Splash via pushReplacement) navigate to Login.
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      }
     });
   }
 
@@ -119,10 +128,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF1A5C2A),
-                    const Color(0xFF0D3B1E),
-                  ],
+                  colors: [const Color(0xFF1A5C2A), const Color(0xFF0D3B1E)],
                 ),
               ),
               child: Column(
@@ -178,10 +184,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 4),
                   const Text(
                     'Choose your preferred language',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
@@ -214,19 +217,19 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                         duration: const Duration(milliseconds: 300),
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
-                          color: isSelected 
+                          color: isSelected
                               ? const Color(0xFFFFCC00).withOpacity(0.15)
                               : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected 
+                            color: isSelected
                                 ? const Color(0xFFFFCC00)
                                 : Colors.grey.shade200,
                             width: isSelected ? 2 : 1,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: isSelected 
+                              color: isSelected
                                   ? const Color(0xFFFFCC00).withOpacity(0.2)
                                   : Colors.black.withOpacity(0.05),
                               blurRadius: 8,
@@ -239,7 +242,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                             width: 50,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: isSelected 
+                              color: isSelected
                                   ? const Color(0xFFFFCC00).withOpacity(0.2)
                                   : const Color(0xFF1A5C2A).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
@@ -254,10 +257,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                           title: Text(
                             language['name'] as String,
                             style: TextStyle(
-                              fontWeight: isSelected 
+                              fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.w500,
-                              color: isSelected 
+                              color: isSelected
                                   ? const Color(0xFF1A5C2A)
                                   : Colors.black87,
                               fontSize: 16,
@@ -271,7 +274,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                 language['nativeName'] as String,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: isSelected 
+                                  color: isSelected
                                       ? const Color(0xFF1A5C2A).withOpacity(0.7)
                                       : Colors.grey.shade600,
                                 ),
@@ -374,19 +377,20 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      }
                     },
                     child: const Text(
                       'Skip for now',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                   ),
                 ],
