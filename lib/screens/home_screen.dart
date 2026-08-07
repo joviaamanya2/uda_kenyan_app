@@ -1,8 +1,6 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
-import 'dart:ui_web' as ui_web;
+import 'package:uda_app/utils/web_utils.dart';
 import 'package:uda_app/screens/uda_candidates.dart';
 import 'join_uda.dart';
 import 'fundraise_screen.dart';
@@ -25,6 +23,7 @@ import 'rdcs_and_drdcs.dart';
 import 'uda_leadears.dart';
 import 'uda_candidates.dart';
 import 'language_selection_screen.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // ========== CUSTOM FEATURE ITEM WIDGET ==========
 class _FeatureItem extends StatefulWidget {
@@ -135,22 +134,9 @@ class UDAHomeScreen extends StatefulWidget {
 class _UDAHomeScreenState extends State<UDAHomeScreen> {
   static bool _mapViewRegistered = false;
 
-  static void _registerMapViewFactory() {
-    if (!_mapViewRegistered) {
-      ui_web.platformViewRegistry.registerViewFactory(
-        'google-maps-uda',
-        (int viewId) {
-          final iframe = html.IFrameElement()
-            ..src = 'https://maps.google.com/maps?q=UDA+Party+Headquarters,+Nairobi,+Kenya&z=13&output=embed'
-            ..style.border = 'none'
-            ..style.width = '100%'
-            ..style.height = '100%'
-            ..setAttribute('allowfullscreen', '')
-            ..setAttribute('loading', 'lazy')
-            ..setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-          return iframe;
-        },
-      );
+  void _registerMapView() {
+    if (!_mapViewRegistered && kIsWeb) {
+      WebUtils.registerMapView();
       _mapViewRegistered = true;
     }
   }
@@ -278,7 +264,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _registerMapViewFactory();
+    _registerMapView();
     _pageController = PageController(initialPage: _currentImageIndex);
     Future.delayed(const Duration(seconds: 3), _nextImage);
   }
@@ -1440,6 +1426,94 @@ Widget _buildLatestUpdatesSection() {
 
   // ========== UDA NEAR YOU ==========
   Widget _buildUDANearYou() {
+    // Show different UI based on platform
+    if (!kIsWeb) {
+      // Mobile fallback UI
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1A5C2A),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.location_on, color: Color(0xFFFFCC00), size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'UDA NEAR YOU',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Find your nearest UDA office',
+                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 200,
+              width: double.infinity,
+              color: Colors.grey[200],
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on, size: 48, color: Color(0xFF1A5C2A)),
+                    SizedBox(height: 8),
+                    Text(
+                      'UDA Head Office',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A5C2A),
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'Nairobi, Kenya',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Web platform - show Google Maps
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -1493,7 +1567,10 @@ Widget _buildLatestUpdatesSection() {
                 ),
                 GestureDetector(
                   onTap: () {
-                    html.window.open('https://www.google.com/maps', '_blank');
+                    // Only open on web
+                    if (kIsWeb) {
+                      WebUtils.openMapUrl('https://www.google.com/maps');
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -1521,7 +1598,7 @@ Widget _buildLatestUpdatesSection() {
               ],
             ),
           ),
-          // Embedded Google Map
+          // Embedded Google Map - only works on web
           ClipRRect(
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(12),
@@ -1530,7 +1607,9 @@ Widget _buildLatestUpdatesSection() {
             child: SizedBox(
               height: 220,
               width: double.infinity,
-              child: const HtmlElementView(viewType: 'google-maps-uda'),
+              child: kIsWeb 
+                  ? const HtmlElementView(viewType: 'google-maps-uda')
+                  : const SizedBox.shrink(),
             ),
           ),
         ],

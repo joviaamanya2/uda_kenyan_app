@@ -7,13 +7,15 @@ class NewsScreen extends StatelessWidget {
 
   final List<Map<String, dynamic>> newsItems = const [
     {
-      'title': 'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
+      'title':
+          'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
       'date': 'July 23, 2026',
       'color': 0xFFFFCC00,
       'image': 'assets/images/news images/pic6.PNG',
     },
     {
-      'title': 'UDA Party Leader, President William Ruto presided over the party\'s National Executive Committee (NEC) meeting',
+      'title':
+          'UDA Party Leader, President William Ruto presided over the party\'s National Executive Committee (NEC) meeting',
       'date': 'January 14, 2026',
       'color': 0xFF1A5C2A,
       'image': 'assets/images/news images/15.PNG',
@@ -37,7 +39,8 @@ class NewsScreen extends StatelessWidget {
       'image': 'assets/images/news images/18.PNG',
     },
     {
-      'title': 'Hassan Omar Leads Delegation in Courtesy Call on South Sudan President Salva Kiir',
+      'title':
+          'Hassan Omar Leads Delegation in Courtesy Call on South Sudan President Salva Kiir',
       'date': 'July 21, 2026',
       'color': 0xFF1A5C2A,
       'image': 'assets/images/news images/pic9.PNG',
@@ -51,10 +54,7 @@ class NewsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'UDA NEWS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
@@ -112,13 +112,18 @@ class NewsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // News Cards - Passing context
-            ...newsItems.map((news) => _buildNewsCard(
-              context: context,
-              title: news['title'] as String,
-              date: news['date'] as String,
-              image: news['image'] as String,
-              content: news['content'] as String,
-            )).toList(),
+            ...newsItems
+                .map(
+                  (news) => _buildNewsCard(
+                    context: context,
+                    title: news['title'] as String,
+                    date: news['date'] as String,
+                    image: news['image'] as String,
+                    content:
+                        news['content'] as String? ?? 'No content available.',
+                  ),
+                )
+                .toList(),
           ],
         ),
       ),
@@ -155,8 +160,10 @@ class NewsScreen extends StatelessWidget {
             builder: (context) => NewsDetailsScreen(
               title: 'UDA: Building a Better Kenya Through Bottom-Up Approach',
               date: 'Sun, 28 Jul 2026',
-              image: 'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+Featured',
-              content: 'NAIROBI – The United Democratic Alliance (UDA) is transforming Kenya through the Bottom-Up Economic Transformation Agenda (BETA), focusing on empowering ordinary citizens and creating opportunities for all.\n\nSince taking office, UDA has implemented various programs aimed at reducing the cost of living, creating jobs, and improving access to essential services for all Kenyans.\n\n"We are committed to building a Kenya where every citizen has an opportunity to thrive. UDA is the party of the people, and we will continue to deliver on our promises," said President William Ruto.\n\nThe party has also emphasized the importance of unity and working together to achieve national development goals.',
+              image:
+                  'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+Featured',
+              content:
+                  'NAIROBI – The United Democratic Alliance (UDA) is transforming Kenya through the Bottom-Up Economic Transformation Agenda (BETA), focusing on empowering ordinary citizens and creating opportunities for all.\n\nSince taking office, UDA has implemented various programs aimed at reducing the cost of living, creating jobs, and improving access to essential services for all Kenyans.\n\n"We are committed to building a Kenya where every citizen has an opportunity to thrive. UDA is the party of the people, and we will continue to deliver on our promises," said President William Ruto.\n\nThe party has also emphasized the importance of unity and working together to achieve national development goals.',
             ),
           ),
         );
@@ -182,7 +189,9 @@ class NewsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
               child: Image.network(
                 'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+Featured',
                 height: 180,
@@ -193,7 +202,11 @@ class NewsScreen extends StatelessWidget {
                     height: 180,
                     color: Colors.grey[800],
                     child: const Center(
-                      child: Icon(Icons.newspaper, color: Colors.white54, size: 64),
+                      child: Icon(
+                        Icons.newspaper,
+                        color: Colors.white54,
+                        size: 64,
+                      ),
                     ),
                   );
                 },
@@ -205,7 +218,10 @@ class NewsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFCC00),
                       borderRadius: BorderRadius.circular(4),
@@ -231,14 +247,15 @@ class NewsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 14, color: Colors.white70),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 14,
+                        color: Colors.white70,
+                      ),
                       const SizedBox(width: 6),
                       const Text(
                         'Sun, 28 Jul 2026',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white70,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.white70),
                       ),
                       const Spacer(),
                       const Icon(
@@ -295,7 +312,9 @@ class NewsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
               child: Image.network(
                 image,
                 height: 180,
@@ -335,7 +354,11 @@ class NewsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 14,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         date,
@@ -368,10 +391,7 @@ class NewsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              height: 1,
-              color: Colors.grey.shade300,
-            ),
+            Container(height: 1, color: Colors.grey.shade300),
           ],
         ),
       ),
