@@ -13,14 +13,12 @@ class EventDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'EVENT DETAILS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -54,11 +52,7 @@ class EventDetailsScreen extends StatelessWidget {
                       width: double.infinity,
                       color: const Color(0xFF1A5C2A),
                       child: const Center(
-                        child: Icon(
-                          Icons.event,
-                          color: Colors.white,
-                          size: 80,
-                        ),
+                        child: Icon(Icons.event, color: Colors.white, size: 80),
                       ),
                     );
                   },
@@ -85,7 +79,10 @@ class EventDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFCC00),
                           borderRadius: BorderRadius.circular(20),
@@ -168,7 +165,7 @@ class EventDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.05),
@@ -208,7 +205,7 @@ class EventDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.05),
@@ -278,8 +275,12 @@ class EventDetailsScreen extends StatelessWidget {
                                 label: const Text('Call'),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFF1A5C2A),
-                                  side: const BorderSide(color: Color(0xFF1A5C2A)),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  side: const BorderSide(
+                                    color: Color(0xFF1A5C2A),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -296,8 +297,12 @@ class EventDetailsScreen extends StatelessWidget {
                                 label: const Text('Email'),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFF1A5C2A),
-                                  side: const BorderSide(color: Color(0xFF1A5C2A)),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  side: const BorderSide(
+                                    color: Color(0xFF1A5C2A),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -371,7 +376,7 @@ class EventDetailsScreen extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -384,13 +389,7 @@ class EventDetailsScreen extends StatelessWidget {
         children: [
           Icon(icon, color: const Color(0xFFFFCC00), size: 20),
           const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.grey,
-            ),
-          ),
+          Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
           Text(
             value,
             style: const TextStyle(
@@ -444,10 +443,7 @@ class EventDetailsScreen extends StatelessWidget {
                     color: Colors.blue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.calendar_today,
-                    color: Colors.blue,
-                  ),
+                  child: const Icon(Icons.calendar_today, color: Colors.blue),
                 ),
                 title: const Text('Google Calendar'),
                 onTap: () {
@@ -462,10 +458,7 @@ class EventDetailsScreen extends StatelessWidget {
                     color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.phone_android,
-                    color: Colors.green,
-                  ),
+                  child: const Icon(Icons.phone_android, color: Colors.green),
                 ),
                 title: const Text('Phone Calendar'),
                 onTap: () {

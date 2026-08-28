@@ -12,14 +12,12 @@ class AchievementsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'ACHIEVEMENTS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -47,15 +45,18 @@ class AchievementsScreen extends StatelessWidget {
                       sections: [
                         AchievementSection(
                           title: 'Waste management',
-                          content: 'Solid waste management in Kenya is actively done by the county governments assisted by private garbage collectors and in other towns; it\'s the responsibility of the town council.',
+                          content:
+                              'Solid waste management in Kenya is actively done by the county governments assisted by private garbage collectors and in other towns; it\'s the responsibility of the town council.',
                         ),
                         AchievementSection(
                           title: 'Waste recycling',
-                          content: 'Plans of constructing waste recycling plants are underway. They will produce fertilisers, generate power and a host of other materials, including job creation for those involved.',
+                          content:
+                              'Plans of constructing waste recycling plants are underway. They will produce fertilisers, generate power and a host of other materials, including job creation for those involved.',
                         ),
                         AchievementSection(
                           title: 'Increased access to safe water',
-                          content: 'The government has increased access to safe water for all Kenyans through construction of new water treatment plants and rehabilitation of existing ones.',
+                          content:
+                              'The government has increased access to safe water for all Kenyans through construction of new water treatment plants and rehabilitation of existing ones.',
                         ),
                       ],
                     ),
@@ -79,15 +80,18 @@ class AchievementsScreen extends StatelessWidget {
                       sections: [
                         AchievementSection(
                           title: 'Youth employment',
-                          content: 'Creation of youth employment opportunities through various government programs including Kazi Mtaani and Youth Enterprise Development Fund.',
+                          content:
+                              'Creation of youth employment opportunities through various government programs including Kazi Mtaani and Youth Enterprise Development Fund.',
                         ),
                         AchievementSection(
                           title: 'Skills development',
-                          content: 'Training and skills development programs for young entrepreneurs to enable them to start and grow their own businesses.',
+                          content:
+                              'Training and skills development programs for young entrepreneurs to enable them to start and grow their own businesses.',
                         ),
                         AchievementSection(
                           title: 'Innovation hubs',
-                          content: 'Establishment of youth innovation hubs across all counties to support young innovators and tech entrepreneurs.',
+                          content:
+                              'Establishment of youth innovation hubs across all counties to support young innovators and tech entrepreneurs.',
                         ),
                       ],
                     ),
@@ -111,15 +115,18 @@ class AchievementsScreen extends StatelessWidget {
                       sections: [
                         AchievementSection(
                           title: 'BETA agenda',
-                          content: 'Implementation of the Bottom-Up Economic Transformation Agenda (BETA) to uplift the lives of ordinary Kenyans.',
+                          content:
+                              'Implementation of the Bottom-Up Economic Transformation Agenda (BETA) to uplift the lives of ordinary Kenyans.',
                         ),
                         AchievementSection(
                           title: 'SME support',
-                          content: 'Support for small and medium enterprises through funding, training, and market access programs.',
+                          content:
+                              'Support for small and medium enterprises through funding, training, and market access programs.',
                         ),
                         AchievementSection(
                           title: 'Agricultural productivity',
-                          content: 'Increased agricultural productivity through fertilizer subsidies, extension services, and market linkages.',
+                          content:
+                              'Increased agricultural productivity through fertilizer subsidies, extension services, and market linkages.',
                         ),
                       ],
                     ),
@@ -143,15 +150,18 @@ class AchievementsScreen extends StatelessWidget {
                       sections: [
                         AchievementSection(
                           title: 'Universal healthcare',
-                          content: 'Expansion of universal healthcare coverage to ensure all Kenyans have access to quality healthcare services.',
+                          content:
+                              'Expansion of universal healthcare coverage to ensure all Kenyans have access to quality healthcare services.',
                         ),
                         AchievementSection(
                           title: 'New hospitals',
-                          content: 'Construction of new hospitals and health centers across the country to improve healthcare access.',
+                          content:
+                              'Construction of new hospitals and health centers across the country to improve healthcare access.',
                         ),
                         AchievementSection(
                           title: 'Maternal health',
-                          content: 'Improved maternal and child healthcare services with reduced maternal mortality rates.',
+                          content:
+                              'Improved maternal and child healthcare services with reduced maternal mortality rates.',
                         ),
                       ],
                     ),
@@ -175,15 +185,18 @@ class AchievementsScreen extends StatelessWidget {
                       sections: [
                         AchievementSection(
                           title: 'CBC implementation',
-                          content: 'Competency-Based Curriculum (CBC) implementation to produce holistic and competent learners.',
+                          content:
+                              'Competency-Based Curriculum (CBC) implementation to produce holistic and competent learners.',
                         ),
                         AchievementSection(
                           title: 'School infrastructure',
-                          content: 'Construction of new schools and classrooms to accommodate the growing number of learners.',
+                          content:
+                              'Construction of new schools and classrooms to accommodate the growing number of learners.',
                         ),
                         AchievementSection(
                           title: 'Digital learning',
-                          content: 'Digital learning initiatives in rural schools to bridge the technology gap and improve learning outcomes.',
+                          content:
+                              'Digital learning initiatives in rural schools to bridge the technology gap and improve learning outcomes.',
                         ),
                       ],
                     ),
@@ -207,15 +220,18 @@ class AchievementsScreen extends StatelessWidget {
                       sections: [
                         AchievementSection(
                           title: 'Road network',
-                          content: 'Construction and rehabilitation of roads across the country to improve connectivity and trade.',
+                          content:
+                              'Construction and rehabilitation of roads across the country to improve connectivity and trade.',
                         ),
                         AchievementSection(
                           title: 'Railway expansion',
-                          content: 'Expansion of railway network to connect major cities and improve cargo transportation.',
+                          content:
+                              'Expansion of railway network to connect major cities and improve cargo transportation.',
                         ),
                         AchievementSection(
                           title: 'Renewable energy',
-                          content: 'Development of renewable energy projects to increase access to clean and affordable energy.',
+                          content:
+                              'Development of renewable energy projects to increase access to clean and affordable energy.',
                         ),
                       ],
                     ),
@@ -265,7 +281,7 @@ class AchievementsScreen extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -279,14 +295,18 @@ class AchievementsScreen extends StatelessWidget {
           children: [
             // Image
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               child: Container(
                 height: 160,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   image: DecorationImage(
-                    image: NetworkImage('https://via.placeholder.com/400x160/${color == 0xFF1A5C2A ? '1A5C2A' : 'FFCC00'}/FFFFFF?text=$title'),
+                    image: NetworkImage(
+                      'https://via.placeholder.com/400x160/${color == 0xFF1A5C2A ? '1A5C2A' : 'FFCC00'}/FFFFFF?text=$title',
+                    ),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -356,10 +376,7 @@ class AchievementsScreen extends StatelessWidget {
             // Dashed line under image
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                height: 1,
-                color: Colors.grey.shade300,
-              ),
+              child: Container(height: 1, color: Colors.grey.shade300),
             ),
             const SizedBox(height: 12),
             // Short description
@@ -367,10 +384,7 @@ class AchievementsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 _getDescription(title),
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 12),

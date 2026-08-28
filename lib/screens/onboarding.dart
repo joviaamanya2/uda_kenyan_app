@@ -18,23 +18,19 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void initState() {
     super.initState();
-    
-    // Slide animation controller - slides left and right continuously
+
     _slideController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 15),
     )..repeat(reverse: true);
 
-    // Slide from left to right and back
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(-0.3, 0),
-      end: const Offset(0.3, 0),
-    ).animate(
-      CurvedAnimation(
-        parent: _slideController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(
+          begin: const Offset(-0.3, 0),
+          end: const Offset(0.3, 0),
+        ).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeInOut),
+        );
   }
 
   @override
@@ -45,13 +41,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
-    final bannerHeight = MediaQuery.of(context).size.height * 0.50; // Exactly half of screen
+    final bannerHeight = MediaQuery.of(context).size.height * 0.50;
 
     return Scaffold(
       backgroundColor: const Color(0xFF1B1D20),
       body: Stack(
         children: [
-          // Background pattern of small UDA logos
+          // Background pattern
           Positioned.fill(
             child: Opacity(
               opacity: 0.08,
@@ -65,7 +61,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 itemBuilder: (context, index) => Image.asset(
                   'assets/images/logo.png',
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox.shrink(),
                 ),
               ),
             ),
@@ -73,7 +70,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
           Column(
             children: [
-              // Top Banner Section with Sliding Image
+              // Top Banner Section
               Stack(
                 children: [
                   // Sliding Banner Image
@@ -86,7 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           width: double.infinity,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: const AssetImage('assets/images/news images/18.PNG'),
+                              image: const AssetImage('assets/images/new.jpg'),
                               fit: BoxFit.cover,
                               alignment: Alignment(
                                 _slideAnimation.value.dx * 0.5,
@@ -115,21 +112,26 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     ),
                   ),
 
-                  // Dark overlay - exactly halfway down the banner
+                  // Dark overlay
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: bannerHeight / 2, // Half of banner height
+                    height: bannerHeight / 2,
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.transparent,
-                            const Color(0xFF1B1D20).withOpacity(0.85),
-                            const Color(0xFF1B1D20),
+                            const Color.fromARGB(0, 88, 87, 87),
+                            const Color.fromARGB(
+                              255,
+                              66,
+                              67,
+                              68,
+                            ).withOpacity(0.85),
+                            const Color.fromARGB(255, 56, 57, 58),
                           ],
                           stops: const [0.0, 0.5, 1.0],
                         ),
@@ -137,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     ),
                   ),
 
-                  // UDA Logo Emblem Centered
+                  // UDA Logo Emblem
                   Positioned(
                     bottom: 15,
                     left: 0,
@@ -149,7 +151,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFFFCC00), width: 3),
+                          border: Border.all(
+                            color: const Color(0xFFFFCC00),
+                            width: 3,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.3),
@@ -163,71 +168,74 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           child: Image.asset(
                             'assets/images/logo.png',
                             fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) => const Icon(
-                              Icons.flag,
-                              size: 40,
-                              color: Color(0xFF1A5C2A),
-                            ),
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                                  Icons.flag,
+                                  size: 40,
+                                  color: Color(0xFF1A5C2A),
+                                ),
                           ),
                         ),
                       ),
                     ),
                   ),
 
-                  // Slide indicator animation dots
+                  // Slide indicator dots
                   Positioned(
                     bottom: 110,
                     left: 0,
                     right: 0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildDot(0),
-                        _buildDot(1),
-                        _buildDot(2),
-                      ],
+                      children: [_buildDot(0), _buildDot(1), _buildDot(2)],
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 16),
-
-              // Title: UDA App
-              const Text(
-                'UDA App',
-                style: TextStyle(
-                  color: Color(0xFFFFCC00),
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: 'Serif',
-                  letterSpacing: 1.5,
+              // Title with reduced spacing
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  'UDA App',
+                  style: TextStyle(
+                    color: Color(0xFFFFCC00),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Serif',
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
 
-              const Spacer(),
+              // Spacer removed to bring content up
 
-              // Action Buttons Section
+              // Action Buttons Section - Raised up
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 8,
+                ),
                 child: Column(
                   children: [
                     // Continue with Email Button
                     SizedBox(
                       width: double.infinity,
-                      height: 52,
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFFCC00),
                           elevation: 4,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         child: const Text(
@@ -235,13 +243,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w900,
-                            fontSize: 16,
+                            fontSize: 15,
                           ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Divider: OR
                     Row(
@@ -258,7 +266,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             'or',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.7),
-                              fontSize: 14,
+                              fontSize: 13,
                             ),
                           ),
                         ),
@@ -271,24 +279,29 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Continue with Google Button
                     SizedBox(
                       width: double.infinity,
-                      height: 52,
+                      height: 50,
                       child: OutlinedButton(
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const UDAHomeScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => const UDAHomeScreen(),
+                            ),
                           );
                         },
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.black,
-                          side: const BorderSide(color: Color(0xFFFFCC00), width: 1.5),
+                          side: const BorderSide(
+                            color: const Color(0xFFFFCC00),
+                            width: 1.5,
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         child: const Row(
@@ -298,7 +311,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               'G',
                               style: TextStyle(
                                 color: Color(0xFFFFCC00),
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
@@ -308,7 +321,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               style: TextStyle(
                                 color: Color(0xFFFFCC00),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 15,
                               ),
                             ),
                           ],
@@ -316,7 +329,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Terms and Conditions Links
                     Row(
@@ -328,32 +341,34 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             'Terms and Conditions',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 13,
+                              fontSize: 12,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 24),
+                        const SizedBox(width: 20),
                         GestureDetector(
                           onTap: () {},
                           child: const Text(
                             'Privacy Policy',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 13,
+                              fontSize: 12,
                             ),
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // SKIP > Link
                     GestureDetector(
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const UDAHomeScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const UDAHomeScreen(),
+                          ),
                         );
                       },
                       child: const Row(
@@ -365,12 +380,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             style: TextStyle(
                               color: Color(0xFFFFCC00),
                               fontWeight: FontWeight.w900,
-                              fontSize: 16,
+                              fontSize: 14,
                               letterSpacing: 2,
                             ),
                           ),
                           SizedBox(width: 4),
-                          Icon(Icons.arrow_forward_ios, color: Color(0xFFFFCC00), size: 14),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Color(0xFFFFCC00),
+                            size: 12,
+                          ),
                         ],
                       ),
                     ),
@@ -378,7 +397,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 ),
               ),
 
-              const SizedBox(height: 36),
+              const SizedBox(height: 20),
             ],
           ),
         ],
@@ -387,11 +406,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   Widget _buildDot(int index) {
-    // Animate dots based on slide position
     double progress = _slideController.value;
     bool isActive = false;
-    
-    // Determine which dot is active based on slide position
+
     if (progress < 0.33) {
       isActive = index == 0;
     } else if (progress < 0.66) {
@@ -407,7 +424,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: isActive ? const Color(0xFFFFCC00) : Colors.white.withOpacity(0.4),
+        color: isActive
+            ? const Color(0xFFFFCC00)
+            : Colors.white.withOpacity(0.4),
         boxShadow: isActive
             ? [
                 BoxShadow(

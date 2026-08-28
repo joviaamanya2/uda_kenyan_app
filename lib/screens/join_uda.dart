@@ -1,6 +1,6 @@
 // lib/screens/join_uda_screen.dart
 import 'package:flutter/material.dart';
-import 'join_uda_form.dart'; 
+import 'join_uda_form.dart';
 
 class JoinUDAScreen extends StatelessWidget {
   const JoinUDAScreen({super.key});
@@ -12,14 +12,12 @@ class JoinUDAScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'JOIN UDA',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -36,7 +34,10 @@ class JoinUDAScreen extends StatelessWidget {
                 _navigateToForm(context);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A5C2A),
                   borderRadius: BorderRadius.circular(20),
@@ -51,11 +52,7 @@ class JoinUDAScreen extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.person_add,
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                    Icon(Icons.person_add, color: Colors.white, size: 16),
                     SizedBox(width: 6),
                     Text(
                       'JOIN UDA',
@@ -88,7 +85,7 @@ class JoinUDAScreen extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.2),
@@ -181,22 +178,38 @@ class JoinUDAScreen extends StatelessWidget {
                 children: [
                   _buildListItem('1. Dies;'),
                   _buildListItem('2. Resigns;'),
-                  _buildListItem('3. Joins another political organisation or political party;'),
-                  _buildListItem('4. Is dismissed in accordance with the Constitution and the Code of Conduct of UDA;'),
-                  _buildListItem('5. Is found in breach of the code and in particular:'),
+                  _buildListItem(
+                    '3. Joins another political organisation or political party;',
+                  ),
+                  _buildListItem(
+                    '4. Is dismissed in accordance with the Constitution and the Code of Conduct of UDA;',
+                  ),
+                  _buildListItem(
+                    '5. Is found in breach of the code and in particular:',
+                  ),
                   const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildListItem('• Campaigning for a candidate sponsored by another political organisation or party;'),
-                        _buildListItem('• Offering material support to a candidate sponsored by another political organisation or party;'),
-                        _buildListItem('• Campaigning against the official candidate of UDA.'),
+                        _buildListItem(
+                          '• Campaigning for a candidate sponsored by another political organisation or party;',
+                        ),
+                        _buildListItem(
+                          '• Offering material support to a candidate sponsored by another political organisation or party;',
+                        ),
+                        _buildListItem(
+                          '• Campaigning against the official candidate of UDA.',
+                        ),
                         const SizedBox(height: 8),
-                        _buildListItem('Dismissal under circumstance (e) above shall be after a fair hearing.'),
+                        _buildListItem(
+                          'Dismissal under circumstance (e) above shall be after a fair hearing.',
+                        ),
                         const SizedBox(height: 8),
-                        _buildListItem('A person who wishes to rejoin UDA may apply in accordance with the Rules and Regulations made under the UDA constitution.'),
+                        _buildListItem(
+                          'A person who wishes to rejoin UDA may apply in accordance with the Rules and Regulations made under the UDA constitution.',
+                        ),
                       ],
                     ),
                   ),
@@ -225,12 +238,24 @@ class JoinUDAScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _buildListItem('1. Take a full and active part in the discussion, formulation and implementation of policies of UDA at the organ where he/she belongs;'),
-                  _buildListItem('2. Attend meetings of the relevant organ where he/she is a member;'),
-                  _buildListItem('3. Receive and disseminate information on all aspects of UDA policies and activities;'),
-                  _buildListItem('4. Offer constructive criticism of any member, official, policy, programme or activity within the organs of UDA;'),
-                  _buildListItem('5. Take part in elections and be eligible for election to any elective office within the structures of UDA or appointment to any committee, structure, commission or delegation of UDA;'),
-                  _buildListItem('6. Submit proposals or statements to the National Conference, or the National Executive Council (NEC) provided such proposals or statements are submitted through the appropriate structure.'),
+                  _buildListItem(
+                    '1. Take a full and active part in the discussion, formulation and implementation of policies of UDA at the organ where he/she belongs;',
+                  ),
+                  _buildListItem(
+                    '2. Attend meetings of the relevant organ where he/she is a member;',
+                  ),
+                  _buildListItem(
+                    '3. Receive and disseminate information on all aspects of UDA policies and activities;',
+                  ),
+                  _buildListItem(
+                    '4. Offer constructive criticism of any member, official, policy, programme or activity within the organs of UDA;',
+                  ),
+                  _buildListItem(
+                    '5. Take part in elections and be eligible for election to any elective office within the structures of UDA or appointment to any committee, structure, commission or delegation of UDA;',
+                  ),
+                  _buildListItem(
+                    '6. Submit proposals or statements to the National Conference, or the National Executive Council (NEC) provided such proposals or statements are submitted through the appropriate structure.',
+                  ),
                 ],
               ),
             ),
@@ -252,14 +277,28 @@ class JoinUDAScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _buildListItem('1. Belong to and take an active part in the activities of his or her branch;'),
-                  _buildListItem('2. Take all the necessary steps and means to understand and carry out the aims, policies and programmes of UDA;'),
-                  _buildListItem('3. Explain the aims, policies, programmes and achievements of UDA to the population;'),
-                  _buildListItem('4. Fight propaganda detrimental to the interests of UDA and defend its policies, aims and programmes;'),
-                  _buildListItem('5. Guard against sectarianism, tribal chauvinism, sexism, religious and political intolerance or any other form of discrimination;'),
+                  _buildListItem(
+                    '1. Belong to and take an active part in the activities of his or her branch;',
+                  ),
+                  _buildListItem(
+                    '2. Take all the necessary steps and means to understand and carry out the aims, policies and programmes of UDA;',
+                  ),
+                  _buildListItem(
+                    '3. Explain the aims, policies, programmes and achievements of UDA to the population;',
+                  ),
+                  _buildListItem(
+                    '4. Fight propaganda detrimental to the interests of UDA and defend its policies, aims and programmes;',
+                  ),
+                  _buildListItem(
+                    '5. Guard against sectarianism, tribal chauvinism, sexism, religious and political intolerance or any other form of discrimination;',
+                  ),
                   _buildListItem('6. Promote peace, unity and solidarity;'),
-                  _buildListItem('7. Observe discipline, behave honestly and be loyal to the decisions of the majority of the members of the organ where a member belongs and to the decisions of higher organs within the structures of UDA;'),
-                  _buildListItem('8. Refrain from publishing, distributing or making statements to any media house which purports to be the view or position of UDA without authorisation of the organ of UDA.'),
+                  _buildListItem(
+                    '7. Observe discipline, behave honestly and be loyal to the decisions of the majority of the members of the organ where a member belongs and to the decisions of higher organs within the structures of UDA;',
+                  ),
+                  _buildListItem(
+                    '8. Refrain from publishing, distributing or making statements to any media house which purports to be the view or position of UDA without authorisation of the organ of UDA.',
+                  ),
                 ],
               ),
             ),
@@ -278,15 +317,10 @@ class JoinUDAScreen extends StatelessWidget {
         icon: const Icon(Icons.person_add),
         label: const Text(
           'JOIN UDA',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -296,11 +330,7 @@ class JoinUDAScreen extends StatelessWidget {
   Widget _buildSectionHeader(String title) {
     return Row(
       children: [
-        Container(
-          width: 4,
-          height: 24,
-          color: const Color(0xFFFFCC00),
-        ),
+        Container(width: 4, height: 24, color: const Color(0xFFFFCC00)),
         const SizedBox(width: 12),
         Text(
           title,
@@ -333,7 +363,7 @@ class JoinUDAScreen extends StatelessWidget {
   BoxDecoration _cardDecoration() {
     return BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.08),
@@ -341,10 +371,7 @@ class JoinUDAScreen extends StatelessWidget {
           offset: const Offset(0, 2),
         ),
       ],
-      border: Border.all(
-        color: Colors.grey.shade200,
-        width: 1,
-      ),
+      border: Border.all(color: Colors.grey.shade200, width: 1),
     );
   }
 

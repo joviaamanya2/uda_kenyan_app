@@ -12,14 +12,12 @@ class PresidentProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'PRESIDENT PROFILE',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -45,10 +43,10 @@ class PresidentProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // President Card - with larger image
+                // President Card - Full width image with overlay
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  height: 320,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
@@ -56,70 +54,113 @@ class PresidentProfileScreen extends StatelessWidget {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: Row(
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      // President Image - Made BIGGER
-                      Container(
-                        width: 130,
-                        height: 160,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFFFCC00), width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                      // Full image covering entire card
+                      Image.asset(
+                        'assets/images/William Ruto.PNG',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: Icon(
+                                Icons.person,
+                                color: Color(0xFF1A5C2A),
+                                size: 120,
+                              ),
                             ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: Image.asset(
-                            'assets/images/William Ruto.PNG',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.person,
-                                    color: Color(0xFF1A5C2A),
-                                    size: 100,
-                                  ),
-                                ),
-                              );
-                            },
+                          );
+                        },
+                      ),
+                      // Gradient overlay for text readability
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                            stops: const [0.5, 1.0],
                           ),
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      // President Info
-                      Expanded(
+                      // Positioned content on the image
+                      Positioned(
+                        bottom: 20,
+                        left: 20,
+                        right: 20,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 8),
                             const Text(
-                              'WILLIAM RUTO',
+                              'H.E Dr. William Ruto',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 22,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black45,
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 4),
                             const Text(
-                              'PRESIDENT',
+                              'President of the Republic of Kenya',
                               style: TextStyle(
-                                color: Color(0xFFFFCC00),
+                                color: Colors.white70,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 2,
+                                fontWeight: FontWeight.w500,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black45,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
                               ),
                             ),
-                            
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today,
+                                  color: Color(0xFFFFCC00),
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 6),
+                                const Text(
+                                  '2022 - Present',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Color(0xFFFFCC00),
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 6),
+                                const Text(
+                                  'Kenya',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -135,7 +176,7 @@ class PresidentProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.08),
@@ -162,17 +203,29 @@ class PresidentProfileScreen extends StatelessWidget {
                         color: const Color(0xFFFFCC00),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Personal Details
-                      _buildBioItem('Age', '58 years old (Born 21 December 1966)'),
-                      _buildBioItem('Place of Birth', 'Kamagut, Uasin Gishu County, Kenya'),
-                      _buildBioItem('Education', '• University of Nairobi (PhD in Plant Ecology)\n• University of Nairobi (MSc in Environmental Science)\n• University of Nairobi (BSc in Environmental Science)'),
-                      _buildBioItem('Spouse', 'H.E. Rachel Ruto (Married since 1991)'),
+                      _buildBioItem(
+                        'Age',
+                        '58 years old (Born 21 December 1966)',
+                      ),
+                      _buildBioItem(
+                        'Place of Birth',
+                        'Kamagut, Uasin Gishu County, Kenya',
+                      ),
+                      _buildBioItem(
+                        'Education',
+                        '• University of Nairobi (PhD in Plant Ecology)\n• University of Nairobi (MSc in Environmental Science)\n• University of Nairobi (BSc in Environmental Science)',
+                      ),
+                      _buildBioItem(
+                        'Spouse',
+                        'H.E. Rachel Ruto (Married since 1991)',
+                      ),
                       _buildBioItem('Children', '6 Children (1 Boy, 5 Girls)'),
                       _buildBioItem('Religion', 'Christian (Evangelical)'),
                       _buildBioItem('Year in Power', '2022 - Present'),
                       const SizedBox(height: 12),
-                      
+
                       const Text(
                         'H.E Dr. William Ruto is the President of the Republic of Kenya and the Party Leader of the United Democratic Alliance (UDA). He was elected in 2022 on a platform of economic transformation and inclusive governance.',
                         style: TextStyle(
@@ -211,7 +264,7 @@ class PresidentProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.08),
@@ -238,7 +291,7 @@ class PresidentProfileScreen extends StatelessWidget {
                         color: const Color(0xFFFFCC00),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Social Media Grid
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -309,9 +362,7 @@ class PresidentProfileScreen extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A5C2A),
-                  ),
+                  decoration: BoxDecoration(color: const Color(0xFF1A5C2A)),
                   child: const Center(
                     child: Text(
                       'UDA - KAZI NI KAZI',
@@ -328,8 +379,8 @@ class PresidentProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          
-          // Floating "Ask The President" Button - Navigates to the form screen
+
+          // Floating "Ask The President" Button
           Positioned(
             bottom: 20,
             right: 16,
@@ -337,11 +388,16 @@ class PresidentProfileScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AskPresidentScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const AskPresidentScreen(),
+                  ),
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFFFCC00), Color(0xFFFFD700)],
@@ -360,10 +416,7 @@ class PresidentProfileScreen extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Icon(
-                      Icons.question_answer,
-                      color: Color(0xFF1A5C2A),
-                    ),
+                    Icon(Icons.question_answer, color: Color(0xFF1A5C2A)),
                     SizedBox(width: 8),
                     Text(
                       'ASK THE PRESIDENT',
@@ -396,11 +449,7 @@ class PresidentProfileScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 4,
-            height: 16,
-            color: const Color(0xFFFFCC00),
-          ),
+          Container(width: 4, height: 16, color: const Color(0xFFFFCC00)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -455,11 +504,7 @@ class PresidentProfileScreen extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(height: 4),
             Text(

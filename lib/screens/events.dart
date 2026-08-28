@@ -1,6 +1,7 @@
 // lib/screens/events_screen.dart
 import 'package:flutter/material.dart';
 import 'events_detail.dart';
+import '../services/api_service.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -12,7 +13,7 @@ class EventsScreen extends StatefulWidget {
 class _EventsScreenState extends State<EventsScreen> {
   String _selectedCategory = 'All';
 
-  final List<Map<String, dynamic>> allEvents = const [
+  final List<Map<String, dynamic>> allEvents = [
     {
       'id': 1,
       'title': 'UDA Grassroots Elections 2024',
@@ -99,6 +100,79 @@ class _EventsScreenState extends State<EventsScreen> {
     },
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    try {
+      final remote = await ApiService.instance.getList('events');
+      if (!mounted || remote.isEmpty) return;
+      setState(() {
+        allEvents
+          ..clear()
+          ..addAll(
+            remote.map(
+              (item) => {
+                'id': item['id'],
+                'title': item['title'] ?? 'UDA Event',
+                'date': _formatDate(item['start_time'] as String?),
+                'time': _formatTimeRange(
+                  item['start_time'] as String?,
+                  item['end_time'] as String?,
+                ),
+                'location': item['location'] ?? '',
+                'venue': item['location'] ?? '',
+                'description': item['description'] ?? '',
+                'image': item['image_path'] ?? 'assets/images/uda_logo.png',
+                'category': item['category'] ?? 'Event',
+                'organizer': 'UDA',
+                'contact': '',
+              },
+            ),
+          );
+      });
+    } catch (_) {
+      // Keep bundled content available when the API is offline.
+    }
+  }
+
+  static const _monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+
+  /// Formats a backend ISO timestamp into "Month D, YYYY". Falls back to the
+  /// raw value when it isn't a parseable date.
+  String _formatDate(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+    return '${_monthNames[parsed.month - 1]} ${parsed.day}, ${parsed.year}';
+  }
+
+  String _formatTimeOfDay(DateTime dt) {
+    final hour24 = dt.hour;
+    final period = hour24 >= 12 ? 'PM' : 'AM';
+    final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    return '$hour12:$minute $period';
+  }
+
+  /// Formats a "start - end" time range from two ISO timestamps, e.g.
+  /// "8:00 AM - 5:00 PM". Falls back gracefully when either end is missing.
+  String _formatTimeRange(String? startRaw, String? endRaw) {
+    final start = startRaw == null ? null : DateTime.tryParse(startRaw);
+    final end = endRaw == null ? null : DateTime.tryParse(endRaw);
+    if (start == null && end == null) return '';
+    if (start != null && end != null) {
+      return '${_formatTimeOfDay(start)} - ${_formatTimeOfDay(end)}';
+    }
+    return _formatTimeOfDay((start ?? end)!);
+  }
+
   List<Map<String, dynamic>> get _filteredEvents {
     if (_selectedCategory == 'All') {
       return allEvents;
@@ -119,7 +193,8 @@ class _EventsScreenState extends State<EventsScreen> {
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -241,7 +316,7 @@ class _EventsScreenState extends State<EventsScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -256,8 +331,8 @@ class _EventsScreenState extends State<EventsScreen> {
             // Image Section
             ClipRRect(
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
               child: Stack(
                 children: [

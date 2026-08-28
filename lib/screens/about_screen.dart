@@ -12,9 +12,10 @@ import 'uda_candidates.dart';
 import 'achievements_screen.dart';
 import 'events.dart';
 import 'news_room.dart';
-import 'videos_screen.dart';
-import 'Live_tv.dart';
+import 'our_location.dart';
 import 'about_us.dart';
+import './Resource_center/resource_center.dart';
+import 'grassroots_elections.dart';
 
 class AboutUDAScreen extends StatelessWidget {
   const AboutUDAScreen({super.key});
@@ -22,19 +23,16 @@ class AboutUDAScreen extends StatelessWidget {
   final List<Map<String, dynamic>> menuItems = const [
     {'title': 'How To Join UDA', 'icon': Icons.person_add},
     {'title': 'About Us', 'icon': Icons.info},
-    {'title': 'UDA Leaders', 'icon': Icons.people},
-    {'title': 'Executive Committee', 'icon': Icons.account_tree},
-    {'title': 'RDCS & DRDCS', 'icon': Icons.location_city},
-    {'title': 'UDA Candidates', 'icon': Icons.how_to_vote},
+    {'title': 'Our Team', 'icon': Icons.people},
+    {'title': 'Our Location', 'icon': Icons.location_on}, // Fixed icon
+    {'title': 'Resource Center', 'icon': Icons.folder_open},
+    {'title': 'Grassroots Elections', 'icon': Icons.how_to_vote},
     {'title': 'UDA Gallery', 'icon': Icons.photo_library},
     {'title': 'Fundraising', 'icon': Icons.attach_money},
     {'title': 'Contact Us', 'icon': Icons.contact_mail},
-    {'title': 'Ask President', 'icon': Icons.question_answer},
     {'title': 'Achievements', 'icon': Icons.emoji_events},
-    {'title': 'Events', 'icon': Icons.event},
-    {'title': 'News Room', 'icon': Icons.article},
-    {'title': 'Videos', 'icon': Icons.video_library},
-    {'title': 'Live TV', 'icon': Icons.live_tv},
+    {'title': 'Privacy Policy', 'icon': Icons.privacy_tip},
+    {'title': 'Terms & Conditions', 'icon': Icons.description},
   ];
 
   @override
@@ -44,14 +42,12 @@ class AboutUDAScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'ABOUT UDA',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -94,7 +90,10 @@ class AboutUDAScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFFFCC00), width: 3),
+                      border: Border.all(
+                        color: const Color(0xFFFFCC00),
+                        width: 3,
+                      ),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(40),
@@ -140,13 +139,13 @@ class AboutUDAScreen extends StatelessWidget {
               ),
             ),
 
-            // Quick Stats Section - FIXED
+            // Quick Stats Section
             Container(
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -162,11 +161,13 @@ class AboutUDAScreen extends StatelessWidget {
                     child: _buildStatItem('Members', '12M+', Icons.people),
                   ),
                   Expanded(
-                    child: _buildStatItem('Branches', '290+', Icons.location_city),
+                    child: _buildStatItem(
+                      'Branches',
+                      '290+',
+                      Icons.location_city,
+                    ),
                   ),
-                  Expanded(
-                    child: _buildStatItem('Counties', '47', Icons.map),
-                  ),
+                  Expanded(child: _buildStatItem('Counties', '47', Icons.map)),
                 ],
               ),
             ),
@@ -178,64 +179,20 @@ class AboutUDAScreen extends StatelessWidget {
               color: Colors.white,
               child: Column(
                 children: [
-                  ...menuItems.map((item) => _buildMenuItem(
-                    context: context,
-                    title: item['title'] as String,
-                    icon: item['icon'] as IconData,
-                  )).toList(),
+                  ...menuItems
+                      .map(
+                        (item) => _buildMenuItem(
+                          context: context,
+                          title: item['title'] as String,
+                          icon: item['icon'] as IconData,
+                        ),
+                      )
+                      .toList(),
                 ],
               ),
             ),
 
             const SizedBox(height: 16),
-
-            // Footer Section - Support Center & Chat
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildFooterButton(
-                        icon: Icons.support_agent,
-                        label: 'SUPPORT CENTER',
-                        color: const Color(0xFF1A5C2A),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const ContactScreen()),
-                          );
-                        },
-                      ),
-                      _buildFooterButton(
-                        icon: Icons.chat,
-                        label: 'ASK PRESIDENT',
-                        color: const Color(0xFFFFCC00),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const AskPresidentScreen()),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'UDA - KAZI NI KAZI',
-                    style: TextStyle(
-                      color: Color(0xFF1A5C2A),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -259,10 +216,7 @@ class AboutUDAScreen extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.grey[600], fontSize: 12),
           textAlign: TextAlign.center,
         ),
       ],
@@ -281,9 +235,7 @@ class AboutUDAScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.grey.shade100),
-          ),
+          border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
         ),
         child: Row(
           children: [
@@ -293,11 +245,7 @@ class AboutUDAScreen extends StatelessWidget {
                 color: const Color(0xFFFFCC00),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                icon,
-                color: const Color(0xFF1A5C2A),
-                size: 20,
-              ),
+              child: Icon(icon, color: const Color(0xFF1A5C2A), size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -333,7 +281,7 @@ class AboutUDAScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -346,14 +294,18 @@ class AboutUDAScreen extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: color == const Color(0xFF1A5C2A) ? Colors.white : Colors.black,
+              color: color == const Color(0xFF1A5C2A)
+                  ? Colors.white
+                  : Colors.black,
               size: 18,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: color == const Color(0xFF1A5C2A) ? Colors.white : Colors.black,
+                color: color == const Color(0xFF1A5C2A)
+                    ? Colors.white
+                    : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),
@@ -372,105 +324,89 @@ class AboutUDAScreen extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const JoinUDAScreen()),
         );
         break;
-        
+
       case 'About Us':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AboutScreen()),
         );
         break;
-        
-      case 'UDA Leaders':
+
+      case 'Our Team':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const UDALeadersScreen()),
         );
         break;
-        
-      case 'Executive Committee':
+
+      case 'Our Location':
+        // FIXED: Navigates to LocationsScreen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ExecutiveCommitteeScreen()),
+          MaterialPageRoute(builder: (context) => const LocationsScreen()),
         );
         break;
-        
-      case 'RDCS & DRDCS':
+
+      case 'Resource Center':
+        // Navigate to Resource Center
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const RDCSDRDCSScreen()),
+          MaterialPageRoute(builder: (context) => const ResourceCenterScreen()),
         );
         break;
-        
-      case 'UDA Candidates':
+
+      case 'Grassroots Elections':
+        // Navigate to Grassroots Elections
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const UDACandidatesScreen()),
+          MaterialPageRoute(
+            builder: (context) => const GrassrootsElectionsScreen(),
+          ),
         );
         break;
-        
+
       case 'UDA Gallery':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const GalleryScreen()),
         );
         break;
-        
+
       case 'Fundraising':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const FundraiseScreen()),
         );
         break;
-        
+
       case 'Contact Us':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ContactScreen()),
         );
         break;
-        
-      case 'Ask President':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AskPresidentScreen()),
-        );
-        break;
-        
+
       case 'Achievements':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AchievementsScreen()),
         );
         break;
-        
-      case 'Events':
+
+      case 'Privacy Policy':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const EventsScreen()),
         );
         break;
-        
-      case 'News Room':
+
+      case 'Terms & Conditions':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const NewsScreen()),
         );
         break;
-        
-      case 'Videos':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const VideosScreen()),
-        );
-        break;
-        
-      case 'Live TV':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const LiveTVScreen()),
-        );
-        break;
-        
+
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

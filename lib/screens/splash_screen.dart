@@ -25,13 +25,13 @@ class _UDASplashScreenState extends State<UDASplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFCC00), // All in Yellow as requested
+      backgroundColor: const Color(0xFFFFCC00),
       body: Stack(
         children: [
-          // Background repeated pattern of small UDA logos (faintly visible)
+          // Background Pattern
           Positioned.fill(
             child: Opacity(
-              opacity: 0.08, // Not seen clearly as requested
+              opacity: 0.08,
               child: GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -40,48 +40,53 @@ class _UDASplashScreenState extends State<UDASplashScreen> {
                   crossAxisSpacing: 16,
                 ),
                 itemBuilder: (context, index) => Image.asset(
-                  'assets/images/logo.png',
+                  'assets/images/uda_logo.png',
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox.shrink(),
                 ),
               ),
             ),
           ),
 
-          // Main Center Content with Black Words
+          // Main Center Content
           SafeArea(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // White card container with UDA Logo
+                  // Circular Container with UDA Logo
                   Container(
-                    width: 140,
-                    height: 140,
+                    width: 150,
+                    height: 150,
                     decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFF1A5C2A), width: 3),
+                      border: Border.all(
+                        color: const Color(0xFF1A5C2A),
+                        width: 4,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          blurRadius: 15,
-                          offset: const Offset(0, 6),
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                    child: ClipOval(
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(20.0),
                         child: Image.asset(
-                          'assets/images/logo.png',
+                          'assets/images/uda_logo.png',
                           fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) => const Icon(
-                            Icons.flag,
-                            size: 60,
-                            color: Color(0xFF1A5C2A),
-                          ),
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                                Icons.flag,
+                                size: 60,
+                                color: Color(0xFF1A5C2A),
+                              ),
                         ),
                       ),
                     ),
@@ -93,7 +98,7 @@ class _UDASplashScreenState extends State<UDASplashScreen> {
                   const Text(
                     'UDA',
                     style: TextStyle(
-                      color: Colors.black, // Black words as requested
+                      color: Colors.black,
                       fontSize: 48,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 4,
@@ -106,7 +111,7 @@ class _UDASplashScreenState extends State<UDASplashScreen> {
                   const Text(
                     'United Democratic Alliance',
                     style: TextStyle(
-                      color: Colors.black, // Black words as requested
+                      color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
@@ -117,17 +122,27 @@ class _UDASplashScreenState extends State<UDASplashScreen> {
 
                   // Green Motto Tag
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF1A5C2A),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: const Text(
                       'KAZI NI KAZI',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: 13,
                         letterSpacing: 2,
                       ),
                     ),

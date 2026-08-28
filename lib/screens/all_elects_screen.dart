@@ -64,10 +64,10 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
       final county = (elect['county'] as String).toLowerCase();
       final position = (elect['position'] as String).toLowerCase();
       final query = _searchQuery.toLowerCase();
-      return name.contains(query) || 
-             constituency.contains(query) || 
-             county.contains(query) ||
-             position.contains(query);
+      return name.contains(query) ||
+          constituency.contains(query) ||
+          county.contains(query) ||
+          position.contains(query);
     }).toList();
   }
 
@@ -78,14 +78,12 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
       appBar: AppBar(
         title: const Text(
           'UDA ELECTS 2026',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -100,7 +98,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: TextField(
@@ -113,7 +111,10 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                   hintText: 'Search elects by name, constituency, county...',
                   prefixIcon: Icon(Icons.search, color: Color(0xFF1A5C2A)),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ),
@@ -166,7 +167,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.08),
@@ -174,10 +175,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                           offset: const Offset(0, 2),
                         ),
                       ],
-                      border: Border.all(
-                        color: Color(color),
-                        width: 2,
-                      ),
+                      border: Border.all(color: Color(color), width: 2),
                     ),
                     child: Row(
                       children: [
@@ -188,7 +186,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: const Color(0xFFFFCC00), 
+                              color: const Color(0xFFFFCC00),
                               width: 2,
                             ),
                           ),
@@ -204,7 +202,9 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                                         color: Color(color),
                                         child: Center(
                                           child: Text(
-                                            (elect['name'] as String).substring(0, 1).toUpperCase(),
+                                            (elect['name'] as String)
+                                                .substring(0, 1)
+                                                .toUpperCase(),
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 24,
@@ -219,7 +219,9 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                                     color: Color(color),
                                     child: Center(
                                       child: Text(
-                                        (elect['name'] as String).substring(0, 1).toUpperCase(),
+                                        (elect['name'] as String)
+                                            .substring(0, 1)
+                                            .toUpperCase(),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 24,
@@ -246,7 +248,10 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                               ),
                               const SizedBox(height: 4),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Color(color),
                                   borderRadius: BorderRadius.circular(4),
@@ -255,7 +260,9 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                                   elect['position'] as String,
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: color == 0xFFFFCC00 ? Colors.black : Colors.white,
+                                    color: color == 0xFFFFCC00
+                                        ? Colors.black
+                                        : Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -284,7 +291,11 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                               const SizedBox(height: 2),
                               Row(
                                 children: [
-                                  const Icon(Icons.location_on, size: 12, color: Colors.grey),
+                                  const Icon(
+                                    Icons.location_on,
+                                    size: 12,
+                                    color: Colors.grey,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     '${elect['constituency'] ?? 'N/A'} • ${elect['county'] ?? 'N/A'}',

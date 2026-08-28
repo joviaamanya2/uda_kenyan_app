@@ -1,4 +1,5 @@
 // lib/screens/language_selection_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:uda_app/screens/login_screen.dart';
 
@@ -10,105 +11,74 @@ class LanguageSelectionScreen extends StatefulWidget {
       _LanguageSelectionScreenState();
 }
 
-class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
+    with SingleTickerProviderStateMixin {
   String _selectedLanguage = 'English';
   bool _isLoading = false;
+
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   final List<Map<String, dynamic>> _languages = [
     {
       'name': 'English',
-      'nativeName': 'English',
+
       'flag': '🇬🇧',
       'code': 'en',
       'speakers': 'Official Language',
     },
     {
       'name': 'Kiswahili',
-      'nativeName': 'Kiswahili',
+
       'flag': '🇰🇪',
       'code': 'sw',
       'speakers': 'National Language',
     },
-    {
-      'name': 'Luo',
-      'nativeName': 'Dholuo',
-      'flag': '🇰🇪',
-      'code': 'luo',
-      'speakers': 'Western Kenya',
-    },
-    {
-      'name': 'Kikuyu',
-      'nativeName': 'Gĩkũyũ',
-      'flag': '🇰🇪',
-      'code': 'kik',
-      'speakers': 'Central Kenya',
-    },
-    {
-      'name': 'Luhya',
-      'nativeName': 'Oluluhya',
-      'flag': '🇰🇪',
-      'code': 'luy',
-      'speakers': 'Western Kenya',
-    },
-    {
-      'name': 'Kalenjin',
-      'nativeName': 'Kipsigis',
-      'flag': '🇰🇪',
-      'code': 'kln',
-      'speakers': 'Rift Valley',
-    },
-    {
-      'name': 'Kamba',
-      'nativeName': 'Kikamba',
-      'flag': '🇰🇪',
-      'code': 'kam',
-      'speakers': 'Eastern Kenya',
-    },
-    {
-      'name': 'Meru',
-      'nativeName': 'Kimîîru',
-      'flag': '🇰🇪',
-      'code': 'mer',
-      'speakers': 'Eastern Kenya',
-    },
-    {
-      'name': 'Somali',
-      'nativeName': 'Af-Soomaali',
-      'flag': '🇸🇴',
-      'code': 'som',
-      'speakers': 'North Eastern',
-    },
-    {
-      'name': 'Maa',
-      'nativeName': 'ɔl Maa',
-      'flag': '🇰🇪',
-      'code': 'mas',
-      'speakers': 'Rift Valley',
-    },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _handleLanguageSelection() {
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate language change
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (!mounted) return;
+
       setState(() {
         _isLoading = false;
       });
 
-      // Guard against using BuildContext after async gap
-      if (!mounted) return;
-
-      // If there is a previous route (e.g. opened from Home), go back to it.
-      // Otherwise (e.g. opened from Splash via pushReplacement) navigate to Login.
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+            settings: const RouteSettings(name: '/login'),
+          ),
         );
       }
     });
@@ -117,286 +87,310 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A5C2A),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [const Color(0xFF1A5C2A), const Color(0xFF0D3B1E)],
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Logo
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFFFCC00),
-                        width: 3,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Text(
-                              'UDA',
-                              style: TextStyle(
-                                color: Color(0xFF1A5C2A),
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Select Language',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Choose your preferred language',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                // ----------------------------------------------------------
+                // SPACE ABOVE LOGO
+                // ----------------------------------------------------------
+                const SizedBox(height: 35),
 
-            // Language List
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(30),
-                  ),
-                ),
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: _languages.length,
-                  itemBuilder: (context, index) {
-                    final language = _languages[index];
-                    final isSelected = _selectedLanguage == language['name'];
-
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedLanguage = language['name'] as String;
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.only(bottom: 8),
+                // ----------------------------------------------------------
+                // HEADER
+                // ----------------------------------------------------------
+                Container(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      // Logo
+                      Container(
+                        width: 64,
+                        height: 64,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? const Color(0xFFFFCC00).withOpacity(0.15)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(12),
+                          shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected
-                                ? const Color(0xFFFFCC00)
-                                : Colors.grey.shade200,
-                            width: isSelected ? 2 : 1,
+                            color: const Color(0xFFFFCC00),
+                            width: 2,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: isSelected
-                                  ? const Color(0xFFFFCC00).withOpacity(0.2)
-                                  : Colors.black.withOpacity(0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
-                        child: ListTile(
-                          leading: Container(
-                            width: 50,
-                            height: 50,
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/uda_logo.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: const Color(0xFFFFCC00),
+                                child: const Center(
+                                  child: Text(
+                                    'UDA',
+                                    style: TextStyle(
+                                      color: Color(0xFF1A5C2A),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // Title
+                      const Text(
+                        'Choose your language',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF1A5C2A),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      // Subtitle
+                      Text(
+                        'Select your preferred language to continue',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ----------------------------------------------------------
+                // LANGUAGE CARDS
+                // ----------------------------------------------------------
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+                  child: Column(
+                    children: [
+                      ..._languages.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final language = entry.value;
+                        final isSelected =
+                            _selectedLanguage == language['name'];
+
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index == _languages.length - 1 ? 0 : 10,
+                          ),
+                          child: Container(
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? const Color(0xFFFFCC00).withOpacity(0.2)
-                                  : const Color(0xFF1A5C2A).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(
-                              child: Text(
-                                language['flag'] as String,
-                                style: const TextStyle(fontSize: 24),
+                                  ? const Color(0xFFFFCC00).withOpacity(0.08)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFFFFCC00)
+                                    : Colors.grey.shade200,
+                                width: isSelected ? 2 : 1,
                               ),
                             ),
-                          ),
-                          title: Text(
-                            language['name'] as String,
-                            style: TextStyle(
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.w500,
-                              color: isSelected
-                                  ? const Color(0xFF1A5C2A)
-                                  : Colors.black87,
-                              fontSize: 16,
-                            ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 2),
-                              Text(
-                                language['nativeName'] as String,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isSelected
-                                      ? const Color(0xFF1A5C2A).withOpacity(0.7)
-                                      : Colors.grey.shade600,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(14),
+                              onTap: () {
+                                setState(() {
+                                  _selectedLanguage =
+                                      language['name'] as String;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 13,
                                 ),
-                              ),
-                              Text(
-                                language['speakers'] as String,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: isSelected
-                              ? Container(
-                                  width: 28,
-                                  height: 28,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFFCC00),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Color(0xFF1A5C2A),
-                                    size: 18,
-                                  ),
-                                )
-                              : null,
-                          onTap: () {
-                            setState(() {
-                              _selectedLanguage = language['name'] as String;
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                                child: Row(
+                                  children: [
+                                    // Flag
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? const Color(
+                                                0xFFFFCC00,
+                                              ).withOpacity(0.15)
+                                            : Colors.grey.shade50,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          language['flag'] as String,
+                                          style: const TextStyle(fontSize: 24),
+                                        ),
+                                      ),
+                                    ),
 
-            // Bottom Button
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, -4),
+                                    const SizedBox(width: 14),
+
+                                    // Language information
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                language['name'] as String,
+                                                style: TextStyle(
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.w700
+                                                      : FontWeight.w600,
+                                                  fontSize: 16,
+                                                  color: isSelected
+                                                      ? const Color(0xFF1A5C2A)
+                                                      : Colors.black87,
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 6),
+
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          const SizedBox(height: 3),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Selected indicator
+                                    if (isSelected)
+                                      Container(
+                                        width: 24,
+                                        height: 24,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFFFCC00),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.check_rounded,
+                                          color: Color(0xFF1A5C2A),
+                                          size: 16,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
+                ),
+
+                // ----------------------------------------------------------
+                // SMALL SPACE BEFORE BUTTONS
+                // ----------------------------------------------------------
+                const SizedBox(height: 16),
+
+                // ----------------------------------------------------------
+                // CONTINUE BUTTON
+                // ----------------------------------------------------------
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
                     width: double.infinity,
+                    height: 48,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _handleLanguageSelection,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFFCC00),
                         foregroundColor: const Color(0xFF1A5C2A),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        disabledBackgroundColor: Colors.grey.shade300,
+                        disabledForegroundColor: Colors.grey.shade600,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 5,
                       ),
                       child: _isLoading
                           ? const SizedBox(
-                              height: 24,
-                              width: 24,
+                              height: 22,
+                              width: 22,
                               child: CircularProgressIndicator(
                                 color: Color(0xFF1A5C2A),
-                                strokeWidth: 2,
+                                strokeWidth: 2.5,
                               ),
                             )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'Continue in ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  _selectedLanguage,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                          : Text(
+                              'Continue in $_selectedLanguage',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                                color: Color(0xFF1A5C2A),
+                              ),
                             ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: () {
-                      if (Navigator.of(context).canPop()) {
-                        Navigator.of(context).pop();
-                      } else {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                        );
-                      }
-                    },
-                    child: const Text(
+                ),
+
+                // ----------------------------------------------------------
+                // SKIP
+                // ----------------------------------------------------------
+                const SizedBox(height: 2),
+
+                InkWell(
+                  onTap: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+                    child: Text(
                       'Skip for now',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                      style: TextStyle(
+                        color: Color(0xFFBDBDBD),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                // Small space at bottom
+                const SizedBox(height: 12),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

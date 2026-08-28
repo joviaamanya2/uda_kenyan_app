@@ -1,5 +1,7 @@
 // lib/screens/join_uda_form_screen.dart
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class JoinUDAFormScreen extends StatefulWidget {
   const JoinUDAFormScreen({super.key});
@@ -11,7 +13,7 @@ class JoinUDAFormScreen extends StatefulWidget {
 class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   // Form key for validation
   final _formKey = GlobalKey<FormState>();
-  
+
   // Text editing controllers
   final _surnameController = TextEditingController();
   final _otherNameController = TextEditingController();
@@ -23,16 +25,21 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   final _parishController = TextEditingController();
   final _fromController = TextEditingController();
   final _toController = TextEditingController();
-  
+
   // Dropdown values
   String? _selectedGender;
   String? _selectedParty;
   String? _previousParty;
-  
+
   // Checkbox states
   bool _wasInUDA = false;
   bool _wasInOtherParty = false;
-  
+
+  // National ID Upload
+  File? _nationalIdFrontImage;
+  File? _nationalIdBackImage;
+  bool _isIdUploaded = false;
+
   // Party options
   final List<String> _partyOptions = [
     'Select Political Party',
@@ -66,6 +73,111 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
     super.dispose();
   }
 
+  // Method to pick image from gallery or camera
+  Future<void> _pickIdImage(bool isFront) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        setState(() {
+          if (isFront) {
+            _nationalIdFrontImage = File(image.path);
+          } else {
+            _nationalIdBackImage = File(image.path);
+          }
+          _checkIfIdFullyUploaded();
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error picking image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Method to take photo with camera
+  Future<void> _takeIdPhoto(bool isFront) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        setState(() {
+          if (isFront) {
+            _nationalIdFrontImage = File(image.path);
+          } else {
+            _nationalIdBackImage = File(image.path);
+          }
+          _checkIfIdFullyUploaded();
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error taking photo: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Check if both sides of ID are uploaded
+  void _checkIfIdFullyUploaded() {
+    setState(() {
+      _isIdUploaded =
+          _nationalIdFrontImage != null && _nationalIdBackImage != null;
+    });
+  }
+
+  // Show image picker options dialog
+  void _showImagePickerDialog(bool isFront) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(isFront ? 'Upload Front ID' : 'Upload Back ID'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(
+                Icons.photo_library,
+                color: Color(0xFF1A5C2A),
+              ),
+              title: const Text('Choose from Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickIdImage(isFront);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFF1A5C2A)),
+              title: const Text('Take Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _takeIdPhoto(isFront);
+              },
+            ),
+          ],
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,14 +185,12 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
       appBar: AppBar(
         title: const Text(
           'JOIN UDA',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -96,7 +206,10 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                 _submitForm(context);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A5C2A),
                   borderRadius: BorderRadius.circular(20),
@@ -111,11 +224,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                    Icon(Icons.check, color: Colors.white, size: 16),
                     SizedBox(width: 6),
                     Text(
                       'SUBMIT',
@@ -150,7 +259,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -234,21 +343,83 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
               ),
               const SizedBox(height: 16),
 
-              // National ID (NIN)
-              _buildTextField(
-                controller: _ninController,
-                label: 'National ID (NIN)',
-                icon: Icons.credit_card,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your National ID';
-                  }
-                  if (value.length < 8) {
-                    return 'Please enter a valid National ID';
-                  }
-                  return null;
-                },
+              // National ID Upload Section
+              _buildSectionHeader('Upload National ID'),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Please upload both sides of your National ID',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Front ID Upload
+                    _buildIdUploadCard(
+                      title: 'Front Side',
+                      imageFile: _nationalIdFrontImage,
+                      onTap: () => _showImagePickerDialog(true),
+                      isUploaded: _nationalIdFrontImage != null,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Back ID Upload
+                    _buildIdUploadCard(
+                      title: 'Back Side',
+                      imageFile: _nationalIdBackImage,
+                      onTap: () => _showImagePickerDialog(false),
+                      isUploaded: _nationalIdBackImage != null,
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Upload status indicator
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: _isIdUploaded
+                            ? Colors.green.shade50
+                            : Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: _isIdUploaded
+                              ? Colors.green.shade300
+                              : Colors.orange.shade300,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _isIdUploaded ? Icons.check_circle : Icons.warning,
+                            color: _isIdUploaded ? Colors.green : Colors.orange,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              _isIdUploaded
+                                  ? 'Both sides of your ID have been uploaded'
+                                  : 'Please upload both sides of your National ID',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _isIdUploaded
+                                    ? Colors.green.shade800
+                                    : Colors.orange.shade800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -377,10 +548,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                       const SizedBox(height: 12),
                       const Text(
                         'If YES, specify the Time period below:',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -450,10 +618,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                       const SizedBox(height: 12),
                       const Text(
                         'If YES, specify the party below:',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                       const SizedBox(height: 8),
                       _buildDropdown(
@@ -467,7 +632,9 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                           });
                         },
                         validator: (value) {
-                          if (_wasInOtherParty && (value == null || value == 'Select Political Party')) {
+                          if (_wasInOtherParty &&
+                              (value == null ||
+                                  value == 'Select Political Party')) {
                             return 'Please select a political party';
                           }
                           return null;
@@ -513,15 +680,129 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
     );
   }
 
+  // ID Upload Card Widget
+  Widget _buildIdUploadCard({
+    required String title,
+    required File? imageFile,
+    required VoidCallback onTap,
+    required bool isUploaded,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 120,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isUploaded ? Colors.green.shade400 : Colors.grey.shade300,
+            width: isUploaded ? 2 : 1,
+          ),
+        ),
+        child: imageFile != null
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: Image.file(imageFile, fit: BoxFit.cover),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.6),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    right: 8,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.check, color: Colors.white, size: 14),
+                              SizedBox(width: 4),
+                              Text(
+                                'Uploaded',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.upload_file,
+                      color: Colors.grey.shade600,
+                      size: 32,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tap to upload $title',
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'JPG, PNG or PDF',
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
   // Helper method for section headers
   Widget _buildSectionHeader(String title) {
     return Row(
       children: [
-        Container(
-          width: 4,
-          height: 24,
-          color: const Color(0xFFFFCC00),
-        ),
+        Container(width: 4, height: 24, color: const Color(0xFFFFCC00)),
         const SizedBox(width: 12),
         Text(
           title,
@@ -546,7 +827,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -564,15 +845,15 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           labelStyle: const TextStyle(color: Color(0xFF1A5C2A)),
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFF1A5C2A), width: 2),
           ),
           filled: true,
@@ -604,7 +885,10 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           labelStyle: const TextStyle(color: Color(0xFF1A5C2A), fontSize: 12),
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A), size: 18),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
         ),
       ),
     );
@@ -622,7 +906,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -634,10 +918,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
       child: DropdownButtonFormField<String>(
         value: value,
         items: items.map((item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
+          return DropdownMenuItem<String>(value: item, child: Text(item));
         }).toList(),
         onChanged: onChanged,
         validator: validator,
@@ -646,15 +927,15 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           labelStyle: const TextStyle(color: Color(0xFF1A5C2A)),
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFF1A5C2A), width: 2),
           ),
           filled: true,
@@ -667,7 +948,18 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   // Submit form
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      // Form is valid, show success dialog
+      // Check if both sides of ID are uploaded
+      if (!_isIdUploaded) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please upload both sides of your National ID'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Form is valid and ID is uploaded, show success dialog
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -710,7 +1002,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           ],
         ),
       );
-      
+
       // Print form data for debugging
       print('=== UDA Membership Application ===');
       print('Surname: ${_surnameController.text}');
@@ -731,6 +1023,8 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
       if (_wasInOtherParty) {
         print('Previous Party: $_selectedParty');
       }
+      print('National ID Front: ${_nationalIdFrontImage?.path}');
+      print('National ID Back: ${_nationalIdBackImage?.path}');
       print('=== End ===');
     } else {
       // Form is invalid, show error

@@ -7,23 +7,27 @@ class VideosScreen extends StatelessWidget {
 
   final List<Map<String, dynamic>> videos = const [
     {
-      'title': 'ADDRESS BY H.E. PRESIDENT RUTO AT UDA NATIONAL DELEGATES CONVENTION',
+      'title':
+          'ADDRESS BY H.E. PRESIDENT RUTO AT UDA NATIONAL DELEGATES CONVENTION',
       'date': 'Tue, 9 Jun 2026',
-      'description': 'President William Ruto Addresses UDA Delegates at KICC, Nairobi',
+      'description':
+          'President William Ruto Addresses UDA Delegates at KICC, Nairobi',
       'duration': '45:22',
       'views': '125K',
     },
     {
       'title': 'STATE OF THE NATION ADDRESS BY H.E. PRESIDENT WILLIAM RUTO',
       'date': 'Thu, 4 Jun 2026',
-      'description': 'President Ruto Delivers State of the Nation Address at Parliament',
+      'description':
+          'President Ruto Delivers State of the Nation Address at Parliament',
       'duration': '1:12:45',
       'views': '230K',
     },
     {
       'title': 'UDA PARTY LEADERS MEET ON ECONOMIC TRANSFORMATION AGENDA',
       'date': 'Fri, 22 May 2026',
-      'description': 'UDA Leaders Hold Strategic Meeting on Bottom-Up Economic Agenda',
+      'description':
+          'UDA Leaders Hold Strategic Meeting on Bottom-Up Economic Agenda',
       'duration': '28:15',
       'views': '89K',
     },
@@ -44,7 +48,8 @@ class VideosScreen extends StatelessWidget {
     {
       'title': 'SWEARING-IN AND INAUGURATION OF UDA COUNTY OFFICIALS',
       'date': 'Wed, 20 May 2026',
-      'description': 'Inauguration Ceremony for Newly Elected UDA County Officials',
+      'description':
+          'Inauguration Ceremony for Newly Elected UDA County Officials',
       'duration': '2:15:30',
       'views': '342K',
     },
@@ -57,14 +62,12 @@ class VideosScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'UDA VIDEOS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -89,30 +92,6 @@ class VideosScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey, width: 1),
-                  bottom: BorderSide(color: Colors.grey, width: 1),
-                ),
-              ),
-              child: const Center(
-                child: Text(
-                  'UDA MEDIA CENTRE',
-                  style: TextStyle(
-                    color: Color(0xFF1A5C2A),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
             // Category Tabs
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -137,14 +116,18 @@ class VideosScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Video List
-            ...videos.map((video) => _buildVideoCard(
-              context: context,
-              title: video['title'] as String,
-              date: video['date'] as String,
-              description: video['description'] as String,
-              duration: video['duration'] as String,
-              views: video['views'] as String,
-            )).toList(),
+            ...videos
+                .map(
+                  (video) => _buildVideoCard(
+                    context: context,
+                    title: video['title'] as String,
+                    date: video['date'] as String,
+                    description: video['description'] as String,
+                    duration: video['duration'] as String,
+                    views: video['views'] as String,
+                  ),
+                )
+                .toList(),
           ],
         ),
       ),
@@ -176,12 +159,16 @@ class VideosScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         print('▶️ Featured video played: UDA National Delegates Convention');
-        _showVideoDialog(context, 'UDA National Delegates Convention 2026', 'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+TV');
+        _showVideoDialog(
+          context,
+          'UDA National Delegates Convention 2026',
+          'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+TV',
+        );
       },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -196,7 +183,9 @@ class VideosScreen extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                   child: Image.network(
                     'https://via.placeholder.com/400x200/1A5C2A/FFCC00?text=UDA+TV',
                     height: 200,
@@ -244,7 +233,10 @@ class VideosScreen extends StatelessWidget {
                   bottom: 8,
                   right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(4),
@@ -267,7 +259,10 @@ class VideosScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFCC00),
                       borderRadius: BorderRadius.circular(4),
@@ -293,22 +288,27 @@ class VideosScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   const Text(
                     'President William Ruto Addresses UDA Delegates at KICC',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 12, color: Colors.grey),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 12,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 4),
                       const Text(
                         'Sun, 9 Jun 2026',
                         style: TextStyle(fontSize: 11, color: Colors.grey),
                       ),
                       const SizedBox(width: 16),
-                      const Icon(Icons.visibility, size: 12, color: Colors.grey),
+                      const Icon(
+                        Icons.visibility,
+                        size: 12,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 4),
                       const Text(
                         '230K views',
@@ -336,13 +336,17 @@ class VideosScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         print('▶️ Video played: $title');
-        _showVideoDialog(context, title, 'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA');
+        _showVideoDialog(
+          context,
+          title,
+          'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA',
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -363,11 +367,13 @@ class VideosScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: const Color(0xFF1A5C2A),
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
                     ),
                     image: const DecorationImage(
-                      image: NetworkImage('https://via.placeholder.com/120x80/1A5C2A/FFCC00?text=UDA'),
+                      image: NetworkImage(
+                        'https://via.placeholder.com/120x80/1A5C2A/FFCC00?text=UDA',
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -397,7 +403,10 @@ class VideosScreen extends StatelessWidget {
                   bottom: 4,
                   right: 4,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(3),
@@ -434,28 +443,39 @@ class VideosScreen extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       description,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 11, color: Colors.grey),
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 11,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           date,
-                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        const Icon(Icons.visibility, size: 11, color: Colors.grey),
+                        const Icon(
+                          Icons.visibility,
+                          size: 11,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           views,
-                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
@@ -474,9 +494,7 @@ class VideosScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         contentPadding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         content: Container(
           width: MediaQuery.of(context).size.width * 0.9,
           child: Column(

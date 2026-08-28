@@ -11,14 +11,12 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'GENERAL SECRETARY',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -68,7 +66,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                       );
                     },
                   ),
-                  
+
                   // Dark overlay for better text visibility
                   Container(
                     decoration: BoxDecoration(
@@ -82,10 +80,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
-                  
-                     
-                  
+
                   // Position badge at bottom
                   Positioned(
                     bottom: 24,
@@ -152,7 +147,10 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFCC00).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
@@ -179,7 +177,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.08),
@@ -229,77 +227,13 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Career and Achievements Section
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'CAREER & ACHIEVEMENTS',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A5C2A),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: 40,
-                    height: 3,
-                    color: const Color(0xFFFFCC00),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildAchievementItem(
-                    '📜', 
-                    'EALA Member',
-                    'Serving as a Member of the East African Legislative Assembly since 2022'
-                  ),
-                  _buildAchievementItem(
-                    '🏛️', 
-                    'Secretary General',
-                    'Appointed as the Secretary General of UDA, overseeing party operations'
-                  ),
-                  _buildAchievementItem(
-                    '⚖️', 
-                    'Legal Expert',
-                    'Practiced law with a focus on constitutional and human rights law'
-                  ),
-                  _buildAchievementItem(
-                    '🗣️', 
-                    'Public Speaker',
-                    'Renowned orator and political analyst on national and regional matters'
-                  ),
-                  _buildAchievementItem(
-                    '🌟', 
-                    'Youth Mentor',
-                    'Passionate about mentoring young leaders in politics and governance'
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
             // Personal Details Section
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.08),
@@ -373,7 +307,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.08),
@@ -469,9 +403,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A5C2A),
-              ),
+              decoration: BoxDecoration(color: const Color(0xFF1A5C2A)),
               child: const Center(
                 child: Text(
                   'UDA - KAZI NI KAZI',
@@ -505,10 +437,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 20),
-              ),
+              child: Text(emoji, style: const TextStyle(fontSize: 20)),
             ),
           ),
           const SizedBox(width: 12),
@@ -553,11 +482,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               color: const Color(0xFF1A5C2A).withOpacity(0.1),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(
-              icon,
-              color: const Color(0xFF1A5C2A),
-              size: 18,
-            ),
+            child: Icon(icon, color: const Color(0xFF1A5C2A), size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -613,11 +538,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(height: 4),
             Text(

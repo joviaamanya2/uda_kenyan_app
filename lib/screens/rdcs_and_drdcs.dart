@@ -122,9 +122,9 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
       final station = (leader['station'] ?? '').toLowerCase();
       final region = (leader['region'] ?? '').toLowerCase();
       final query = _searchQuery.toLowerCase();
-      return name.contains(query) || 
-             station.contains(query) || 
-             region.contains(query);
+      return name.contains(query) ||
+          station.contains(query) ||
+          region.contains(query);
     }).toList();
   }
 
@@ -137,9 +137,9 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
       final station = (leader['station'] ?? '').toLowerCase();
       final region = (leader['region'] ?? '').toLowerCase();
       final query = _searchQuery.toLowerCase();
-      return name.contains(query) || 
-             station.contains(query) || 
-             region.contains(query);
+      return name.contains(query) ||
+          station.contains(query) ||
+          region.contains(query);
     }).toList();
   }
 
@@ -154,14 +154,12 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
       appBar: AppBar(
         title: const Text(
           'RDCS & DRDCS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -189,7 +187,10 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
                   hintText: 'Search by station or name...',
                   prefixIcon: Icon(Icons.search, color: Color(0xFF1A5C2A)),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ),
@@ -217,27 +218,35 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
                 if (_filteredRDCs.isNotEmpty) ...[
                   _buildSectionHeader('RDCS'),
                   const SizedBox(height: 8),
-                  ..._filteredRDCs.map((leader) => _buildLeaderCard(
-                    name: leader['name']!,
-                    title: leader['title']!,
-                    station: leader['station']!,
-                    tel: leader['tel']!,
-                    isRDC: true,
-                  )).toList(),
+                  ..._filteredRDCs
+                      .map(
+                        (leader) => _buildLeaderCard(
+                          name: leader['name']!,
+                          title: leader['title']!,
+                          station: leader['station']!,
+                          tel: leader['tel']!,
+                          isRDC: true,
+                        ),
+                      )
+                      .toList(),
                 ],
-                
+
                 // DRDC Section
                 if (_filteredDRDCs.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   _buildSectionHeader('DRDCS'),
                   const SizedBox(height: 8),
-                  ..._filteredDRDCs.map((leader) => _buildLeaderCard(
-                    name: leader['name']!,
-                    title: leader['title']!,
-                    station: leader['station']!,
-                    tel: leader['tel']!,
-                    isRDC: false,
-                  )).toList(),
+                  ..._filteredDRDCs
+                      .map(
+                        (leader) => _buildLeaderCard(
+                          name: leader['name']!,
+                          title: leader['title']!,
+                          station: leader['station']!,
+                          tel: leader['tel']!,
+                          isRDC: false,
+                        ),
+                      )
+                      .toList(),
                 ],
               ],
             ),
@@ -283,7 +292,7 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -307,11 +316,18 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isRDC ? const Color(0xFF1A5C2A) : const Color(0xFFFFCC00),
+                    color: isRDC
+                        ? const Color(0xFF1A5C2A)
+                        : const Color(0xFFFFCC00),
                   ),
                   child: Center(
                     child: Text(
-                      name.split(' ').map((word) => word[0]).join('').substring(0, 2).toUpperCase(),
+                      name
+                          .split(' ')
+                          .map((word) => word[0])
+                          .join('')
+                          .substring(0, 2)
+                          .toUpperCase(),
                       style: TextStyle(
                         color: isRDC ? Colors.white : const Color(0xFF1A5C2A),
                         fontSize: 14,
@@ -335,9 +351,14 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: isRDC ? const Color(0xFF1A5C2A) : const Color(0xFFFFCC00),
+                          color: isRDC
+                              ? const Color(0xFF1A5C2A)
+                              : const Color(0xFFFFCC00),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -345,7 +366,9 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: isRDC ? Colors.white : const Color(0xFF1A5C2A),
+                            color: isRDC
+                                ? Colors.white
+                                : const Color(0xFF1A5C2A),
                           ),
                         ),
                       ),
@@ -360,17 +383,14 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            
+
             // Details
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.grey.shade200,
-                  width: 1,
-                ),
+                border: Border.all(color: Colors.grey.shade200, width: 1),
               ),
               child: Column(
                 children: [
@@ -414,10 +434,7 @@ class _RDCSDRDCSScreenState extends State<RDCSDRDCSScreen> {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.black87),
             ),
           ),
         ],

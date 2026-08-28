@@ -5,10 +5,7 @@ class AchievementSection {
   final String title;
   final String content;
 
-  const AchievementSection({
-    required this.title,
-    required this.content,
-  });
+  const AchievementSection({required this.title, required this.content});
 }
 
 class AchievementDetailsScreen extends StatelessWidget {
@@ -35,7 +32,8 @@ class AchievementDetailsScreen extends StatelessWidget {
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -54,15 +52,17 @@ class AchievementDetailsScreen extends StatelessWidget {
               height: 200,
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 image: DecorationImage(
-                  image: NetworkImage('https://via.placeholder.com/400x200/1A5C2A/FFCC00?text=$title'),
+                  image: NetworkImage(
+                    'https://via.placeholder.com/400x200/1A5C2A/FFCC00?text=$title',
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -87,11 +87,7 @@ class AchievementDetailsScreen extends StatelessWidget {
             // Section Title
             Row(
               children: [
-                Container(
-                  width: 4,
-                  height: 24,
-                  color: const Color(0xFFFFCC00),
-                ),
+                Container(width: 4, height: 24, color: const Color(0xFFFFCC00)),
                 const SizedBox(width: 12),
                 Text(
                   title,
@@ -104,11 +100,7 @@ class AchievementDetailsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Container(
-              height: 3,
-              width: 50,
-              color: const Color(0xFFFFCC00),
-            ),
+            Container(height: 3, width: 50, color: const Color(0xFFFFCC00)),
             const SizedBox(height: 16),
 
             // Sections
@@ -162,10 +154,7 @@ class AchievementDetailsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          height: 1,
-          color: Colors.grey.shade300,
-        ),
+        Container(height: 1, color: Colors.grey.shade300),
         const SizedBox(height: 16),
       ],
     );

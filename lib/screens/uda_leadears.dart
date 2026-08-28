@@ -1,5 +1,6 @@
 // lib/screens/uda_leaders_screen.dart
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
 class UDALeadersScreen extends StatefulWidget {
   const UDALeadersScreen({super.key});
@@ -9,6 +10,14 @@ class UDALeadersScreen extends StatefulWidget {
 }
 
 class _UDALeadersScreenState extends State<UDALeadersScreen> {
+  static const _sectionOrder = [
+    'National Chairperson',
+    'Secretary General',
+    'National Treasurer',
+    'Electoral Commission',
+    'National Secretariat Directors',
+  ];
+
   final Map<String, bool> _expandedSections = {
     'National Chairperson': false,
     'Secretary General': false,
@@ -17,7 +26,9 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
     'National Secretariat Directors': false,
   };
 
-  final Map<String, List<Map<String, String>>> _leadersData = {
+  // Bundled offline fallback; _loadLeaders() replaces it with live data from
+  // the backend (leaders with category=party_leadership, grouped by section).
+  Map<String, List<Map<String, String>>> _leadersData = {
     'National Chairperson': [
       {
         'name': 'H.E Dr. William Ruto',
@@ -91,20 +102,55 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _loadLeaders();
+  }
+
+  Future<void> _loadLeaders() async {
+    try {
+      final remote = await ApiService.instance.getList(
+        'leaders?category=party_leadership',
+      );
+      if (!mounted || remote.isEmpty) return;
+
+      final grouped = <String, List<Map<String, String>>>{};
+      for (final section in _sectionOrder) {
+        final members = remote
+            .where((item) => item['section'] == section)
+            .map(
+              (item) => {
+                'name': (item['name'] ?? '').toString(),
+                'title': (item['position'] ?? '').toString(),
+                'image': (item['photo_path'] ?? '').toString(),
+              },
+            )
+            .toList();
+        if (members.isNotEmpty) grouped[section] = members;
+      }
+      if (grouped.isEmpty) return;
+
+      setState(() {
+        _leadersData = grouped;
+      });
+    } catch (_) {
+      // Keep bundled content available when the API is offline.
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: const Text(
           'UDA LEADERS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -129,69 +175,22 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Column(
-                children: [
-                  Icon(
-                    Icons.groups,
-                    color: Color(0xFFFFCC00),
-                    size: 48,
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'UDA LEADERSHIP',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'KAZI NI KAZI',
-                    style: TextStyle(
-                      color: Color(0xFFFFCC00),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
             // Leadership Sections with Dropdown
-            ..._leadersData.keys.map((section) => _buildSection(
-              title: section,
-              leaders: _leadersData[section]!,
-              isExpanded: _expandedSections[section] ?? false,
-              onToggle: () {
-                setState(() {
-                  _expandedSections[section] = !(_expandedSections[section] ?? false);
-                });
-              },
-            )).toList(),
+            ..._leadersData.keys
+                .map(
+                  (section) => _buildSection(
+                    title: section,
+                    leaders: _leadersData[section]!,
+                    isExpanded: _expandedSections[section] ?? false,
+                    onToggle: () {
+                      setState(() {
+                        _expandedSections[section] =
+                            !(_expandedSections[section] ?? false);
+                      });
+                    },
+                  ),
+                )
+                .toList(),
           ],
         ),
       ),
@@ -208,7 +207,7 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -227,19 +226,15 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFF1A5C2A),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(isExpanded ? 12 : 12),
-                  topRight: Radius.circular(isExpanded ? 12 : 12),
-                  bottomLeft: Radius.circular(isExpanded ? 0 : 12),
-                  bottomRight: Radius.circular(isExpanded ? 0 : 12),
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isExpanded ? 0 : 16),
+                  bottomRight: Radius.circular(isExpanded ? 0 : 16),
                 ),
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.person,
-                    color: Color(0xFFFFCC00),
-                    size: 20,
-                  ),
+                  const Icon(Icons.person, color: Color(0xFFFFCC00), size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -260,7 +255,7 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
               ),
             ),
           ),
-          
+
           // Leaders List (Expandable)
           if (isExpanded)
             Container(
@@ -295,10 +290,7 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
         decoration: BoxDecoration(
           color: Colors.grey[50],
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
+          border: Border.all(color: Colors.grey.shade200, width: 1),
         ),
         child: Row(
           children: [
@@ -309,14 +301,16 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF1A5C2A),
-                border: Border.all(
-                  color: const Color(0xFFFFCC00),
-                  width: 2,
-                ),
+                border: Border.all(color: const Color(0xFFFFCC00), width: 2),
               ),
               child: Center(
                 child: Text(
-                  name.split(' ').map((word) => word[0]).join('').substring(0, 2).toUpperCase(),
+                  name
+                      .split(' ')
+                      .map((word) => word[0])
+                      .join('')
+                      .substring(0, 2)
+                      .toUpperCase(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -342,10 +336,7 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
                   const SizedBox(height: 2),
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
                   ),
                 ],
               ),

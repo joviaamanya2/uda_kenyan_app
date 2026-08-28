@@ -7,23 +7,31 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
   url_launcher: ^6.2.0
+  image_picker: ^1.0.0
+  pdf: ^3.10.4
+  printing: ^5.11.1
+  path_provider: ^2.1.0
+  http: ^1.2.2
+  video_player: ^2.14.0
+  share_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons: 0.14.4
 
 flutter:
   uses-material-design: true
 
   # Assets section - CORRECT path (no 'lib/' prefix)
   assets:
-    - assets/images/logo.png
+    - assets/images/uda_logo.png
     - assets/images/main.PNG
     - assets/images/main2.PNG
     - assets/images/Ruto.png
@@ -50,7 +58,8 @@ flutter:
     - assets/images/news images/pic3.PNG 
     - assets/images/news images/Pic1.PNG 
     - assets/images/news images/19.PNG 
-    - assets/images/news images/18.PNG 
+    - assets/images/new.jpg
+    - assets/images/location images/baringo (1).jpeg
     - assets/images/news images/17.PNG 
     - assets/images/news images/16.PNG 
     - assets/images/news images/15.PNG
@@ -59,6 +68,14 @@ flutter:
     - assets/images/events images/rurii_byelection.png 
     - assets/images/events images/sensitization.png 
     - assets/images/events images/Training.png 
+    - assets/images/location images/baringo.jpeg 
+    - assets/images/location images/bungoma.jpeg 
+    - assets/images/location images/busia1.jpeg 
+    - assets/images/location images/homabay1.jpeg 
+    - assets/images/location images/isiolonorth4 (1).jpeg 
+    - assets/images/location images/isiolonorth4.jpeg
+    - assets/images/location images/kakamega.jpeg
+    - assets/images/location images/kk4.jpeg
 
 # flutter_launcher_icons configuration - generates native app icons from a single image
 flutter_icons:

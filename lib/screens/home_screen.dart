@@ -11,6 +11,7 @@ import 'Live_tv.dart';
 import 'events.dart';
 import 'gallery.dart';
 import 'news_room.dart';
+import './community/community_screen.dart';
 import 'about_screen.dart';
 import 'contact_screen.dart';
 import 'ask_president.dart';
@@ -24,6 +25,7 @@ import 'uda_leadears.dart';
 import 'uda_candidates.dart';
 import 'language_selection_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../services/api_service.dart';
 
 // ========== CUSTOM FEATURE ITEM WIDGET ==========
 class _FeatureItem extends StatefulWidget {
@@ -90,7 +92,7 @@ class _FeatureItemState extends State<_FeatureItem> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: shadowColor,
@@ -151,8 +153,9 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   ];
   late final PageController _pageController;
 
-  // Define elects data at class level to reuse
-  final List<Map<String, dynamic>> elects = [
+  // Define elects data at class level to reuse. Bundled here as an offline
+  // fallback; _loadLeaders() replaces it with live data from the backend.
+  List<Map<String, dynamic>> elects = [
     {
       'name': 'William Ruto',
       'position': 'President',
@@ -263,12 +266,146 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
     },
   ];
 
+  // Bundled offline fallback for the "Latest Updates" section; replaced by
+  // _loadUpdates() with live news from the backend.
+  List<Map<String, dynamic>> _updates = [
+    {
+      'title':
+          'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
+      'date': 'July 23, 2026',
+      'color': 0xFFFFCC00,
+      'image': 'assets/images/news images/pic6.PNG',
+      'content':
+          'Sen. Hassan Omar Hassan visited the Kenyan Embassy in Juba to strengthen diplomatic ties and discuss future cooperation with South Sudanese leadership.',
+    },
+    {
+      'title':
+          'UDA Party Leader, President William Ruto presided over the party\'s National Executive Committee (NEC) meeting',
+      'date': 'January 14, 2026',
+      'color': 0xFF1A5C2A,
+      'image': 'assets/images/news images/15.PNG',
+      'content':
+          'President Ruto led the NEC meeting to review UDA strategic priorities and reinforce party cohesion ahead of upcoming political engagements.',
+    },
+    {
+      'title': 'UDA establish \'2027 Aspirants Forum\'',
+      'date': 'January 21, 2026',
+      'color': 0xFFFFCC00,
+      'image': 'assets/images/news images/19.PNG',
+      'content':
+          'UDA announced a new 2027 Aspirants Forum to support, mentor, and organize potential candidates across the country.',
+    },
+    {
+      'title': 'UDA Grassroots Sensitization Training in Kiambu County',
+      'date': 'December 15, 2025',
+      'color': 0xFF1A5C2A,
+      'image': 'assets/images/news images/17.PNG',
+      'content':
+          'The party hosted a training session in Kiambu County focused on grassroots engagement and voter education for local communities.',
+    },
+    {
+      'title': 'UDA Grassroots Sensitization Training in Uasin Gishu county',
+      'date': 'December 17, 2025',
+      'color': 0xFFFFCC00,
+      'image': 'assets/images/news images/pic10.PNG',
+      'content':
+          'UDA continued its grassroots outreach with training in Uasin Gishu, empowering volunteers with civic education and mobilization tools.',
+    },
+    {
+      'title':
+          'Hassan Omar Leads Delegation in Courtesy Call on South Sudan President Salva Kiir',
+      'date': 'July 21, 2026',
+      'color': 0xFF1A5C2A,
+      'image': 'assets/images/news images/pic9.PNG',
+      'content':
+          'A delegation led by Hassan Omar met South Sudan President Salva Kiir to discuss bilateral cooperation and regional stability.',
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
     _registerMapView();
     _pageController = PageController(initialPage: _currentImageIndex);
     Future.delayed(const Duration(seconds: 3), _nextImage);
+    _loadLeaders();
+    _loadUpdates();
+  }
+
+  Future<void> _loadUpdates() async {
+    try {
+      final remote = await ApiService.instance.getList('news');
+      if (!mounted || remote.isEmpty) return;
+      setState(() {
+        _updates = remote.asMap().entries.map((entry) {
+          final item = entry.value;
+          return {
+            'title': item['title'] ?? 'UDA News',
+            'date': _formatDate(item['published_at'] as String?),
+            'color': entry.key.isEven ? 0xFFFFCC00 : 0xFF1A5C2A,
+            'image': item['image_path'] ?? 'assets/images/uda_logo.png',
+            'content': item['content'] ?? '',
+          };
+        }).toList();
+      });
+    } catch (_) {
+      // Keep bundled content available when the API is offline.
+    }
+  }
+
+  static const _monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  /// Formats a backend ISO timestamp (e.g. "2026-07-23T00:00:00.000000Z")
+  /// into the "Month D, YYYY" style used throughout the UI. Falls back to
+  /// the raw value when it isn't a parseable date.
+  String _formatDate(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+    return '${_monthNames[parsed.month - 1]} ${parsed.day}, ${parsed.year}';
+  }
+
+  Future<void> _loadLeaders() async {
+    try {
+      final remote = await ApiService.instance.getList('leaders');
+      if (!mounted || remote.isEmpty) return;
+      setState(() {
+        elects
+          ..clear()
+          ..addAll(
+            remote.asMap().entries.map((entry) {
+              final item = entry.value;
+              return {
+                'name': item['name'] ?? 'UDA Leader',
+                'position': item['position'] ?? '',
+                'color': entry.key.isEven ? 0xFF1A5C2A : 0xFFFFCC00,
+                'constituency': item['constituency'] ?? 'National',
+                'county': item['county'] ?? 'KENYA',
+                'bio': item['bio'] ?? '',
+                'date': item['term_label'] ?? '',
+                'office': item['office'] ?? '',
+                'image': item['photo_path'] ?? 'assets/images/uda_logo.png',
+                'isFeatured': item['is_featured'] == true,
+              };
+            }),
+          );
+      });
+    } catch (_) {
+      // Keep bundled content available when the API is offline.
+    }
   }
 
   void _nextImage() {
@@ -303,7 +440,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       'assets/images/Omboko Milemba.PNG',
       'assets/images/Ruto.png',
       'assets/images/William Ruto.PNG',
-      'assets/images/logo.png',
+      'assets/images/uda_logo.png',
       'assets/images/main.PNG',
       'assets/images/main2.PNG',
     ];
@@ -359,9 +496,13 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   _buildUDANearYou(),
                   const SizedBox(height: 16),
                   _buildRoadmapAndContact(),
-                  const SizedBox(height: 16),
-                  _buildFooter(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
+                  // Footer with background color to separate
+                  Container(
+                    color: const Color(0xFF1A5C2A).withOpacity(0.05),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(children: [_buildFooter()]),
+                  ),
                 ],
               ),
             ),
@@ -380,27 +521,34 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
       child: Row(
         children: [
+          // Circular Logo - Updated
           Container(
-            width: 38,
-            height: 38,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: const Color(0xFF1A5C2A), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+            child: ClipOval(
               child: Image.asset(
-                'assets/images/logo.png',
+                'assets/images/uda_logo.png',
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'UDA',
                       style: TextStyle(
-                        color: Color(0xFF1A5C2A),
+                        color: const Color(0xFF1A5C2A),
                         fontWeight: FontWeight.w900,
-                        fontSize: 10,
+                        fontSize: 12,
                       ),
                     ),
                   );
@@ -408,7 +556,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 10),
           const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -417,7 +565,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 'UDA',
                 style: TextStyle(
                   color: Color(0xFF1A5C2A),
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -694,7 +842,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
@@ -807,7 +955,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -900,59 +1048,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
 
   // ========== LATEST UPDATES SECTION ==========
   Widget _buildLatestUpdatesSection() {
-    final updates = [
-      {
-        'title':
-            'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
-        'date': 'July 23, 2026',
-        'color': 0xFFFFCC00,
-        'image': 'assets/images/news images/pic6.PNG',
-        'content':
-            'Sen. Hassan Omar Hassan visited the Kenyan Embassy in Juba to strengthen diplomatic ties and discuss future cooperation with South Sudanese leadership.',
-      },
-      {
-        'title':
-            'UDA Party Leader, President William Ruto presided over the party\'s National Executive Committee (NEC) meeting',
-        'date': 'January 14, 2026',
-        'color': 0xFF1A5C2A,
-        'image': 'assets/images/news images/15.PNG',
-        'content':
-            'President Ruto led the NEC meeting to review UDA strategic priorities and reinforce party cohesion ahead of upcoming political engagements.',
-      },
-      {
-        'title': 'UDA establish \'2027 Aspirants Forum\'',
-        'date': 'January 21, 2026',
-        'color': 0xFFFFCC00,
-        'image': 'assets/images/news images/pic1.PNG',
-        'content':
-            'UDA announced a new 2027 Aspirants Forum to support, mentor, and organize potential candidates across the country.',
-      },
-      {
-        'title': 'UDA Grassroots Sensitization Training in Kiambu County',
-        'date': 'December 15, 2025',
-        'color': 0xFF1A5C2A,
-        'image': 'assets/images/news images/17.PNG',
-        'content':
-            'The party hosted a training session in Kiambu County focused on grassroots engagement and voter education for local communities.',
-      },
-      {
-        'title': 'UDA Grassroots Sensitization Training in Uasin Gishu county',
-        'date': 'December 17, 2025',
-        'color': 0xFFFFCC00,
-        'image': 'assets/images/news images/18.PNG',
-        'content':
-            'UDA continued its grassroots outreach with training in Uasin Gishu, empowering volunteers with civic education and mobilization tools.',
-      },
-      {
-        'title':
-            'Hassan Omar Leads Delegation in Courtesy Call on South Sudan President Salva Kiir',
-        'date': 'July 21, 2026',
-        'color': 0xFF1A5C2A,
-        'image': 'assets/images/news images/pic9.PNG',
-        'content':
-            'A delegation led by Hassan Omar met South Sudan President Salva Kiir to discuss bilateral cooperation and regional stability.',
-      },
-    ];
+    final updates = _updates;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -991,7 +1087,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 200, // Increased height to accommodate description
+          height: 200,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1011,7 +1107,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   );
                 },
                 child: Container(
-                  width: 300, // Slightly wider for better text display
+                  width: 300,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
@@ -1032,7 +1128,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        // Background Image
                         if (imagePath != null)
                           Image.asset(
                             imagePath,
@@ -1055,30 +1150,42 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                         else
                           Container(color: Colors.white),
 
-                        // Dark Gradient Overlay - stronger at bottom
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.1),
-                                Colors.black.withOpacity(0.5),
-                                Colors.black.withOpacity(0.85),
+                                const Color.fromARGB(
+                                  255,
+                                  39,
+                                  38,
+                                  38,
+                                ).withOpacity(0.1),
+                                const Color.fromARGB(
+                                  255,
+                                  37,
+                                  37,
+                                  37,
+                                ).withOpacity(0.5),
+                                const Color.fromARGB(
+                                  255,
+                                  44,
+                                  44,
+                                  44,
+                                ).withOpacity(0.85),
                               ],
                               stops: const [0.0, 0.5, 1.0],
                             ),
                           ),
                         ),
 
-                        // Content - Now with description and date at bottom
                         Padding(
                           padding: const EdgeInsets.all(14),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              // Description/Title at bottom
                               Text(
                                 update['title'] as String,
                                 style: const TextStyle(
@@ -1098,8 +1205,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 8),
-
-                              // Date and arrow row
                               Row(
                                 children: [
                                   Icon(
@@ -1123,7 +1228,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  // Small indicator arrow
                                   Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
@@ -1141,8 +1245,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                             ],
                           ),
                         ),
-
-                        // Color accent strip at bottom
                         Positioned(
                           bottom: 0,
                           left: 0,
@@ -1180,7 +1282,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -1251,6 +1353,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         'color': 0xFF1A5C2A,
         'screen': const ExecutiveCommitteeScreen(),
         'image': 'assets/images/news images/15.PNG',
+        'bgColor': const Color(0xFF1A5C2A),
       },
       {
         'title': 'General Secretary',
@@ -1258,6 +1361,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         'screen': const GeneralSecretaryProfileScreen(),
         'image': 'assets/images/Hon. Sen. Hassan Omar.PNG',
         'isGeneralSecretary': true,
+        'bgColor': const Color(0xFF2C2C2C),
       },
       {
         'title': 'Party Manifesto',
@@ -1265,24 +1369,28 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         'screen': const AboutUDAScreen(),
         'image': 'assets/images/logo.png',
         'isLogoCard': true,
+        'bgColor': const Color(0xFF1A5C2A),
       },
       {
         'title': 'UDA Leaders',
         'color': 0xFFFFCC00,
         'screen': const UDALeadersScreen(),
         'image': 'assets/images/news images/pic3.PNG',
+        'bgColor': const Color(0xFF2C2C2C),
       },
       {
         'title': 'RDCS & DRDCS',
         'color': 0xFF1A5C2A,
         'screen': const RDCSDRDCSScreen(),
         'image': 'assets/images/news images/pic6.PNG',
+        'bgColor': const Color(0xFF1A5C2A),
       },
       {
         'title': 'UDA Candidates',
         'color': 0xFFFFCC00,
         'screen': const UDACandidatesScreen(),
         'image': 'assets/images/news images/pic3.PNG',
+        'bgColor': const Color(0xFF2C2C2C),
       },
     ];
 
@@ -1303,6 +1411,11 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
           final isGenSec = card['isGeneralSecretary'] == true;
           final isLogoCard = card['isLogoCard'] == true;
           final imagePath = card['image'] as String?;
+          final bgColor = card['bgColor'] as Color;
+
+          // Get color with null safety
+          final int colorValue = card['color'] as int;
+          final Color borderColor = Color(colorValue);
 
           return GestureDetector(
             onTap: () {
@@ -1315,15 +1428,12 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
             },
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF161B17), // Dark charcoal base
+                color: bgColor,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: Color(card['color'] as int),
-                  width: 2,
-                ),
+                border: Border.all(color: borderColor, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.20),
+                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),
@@ -1335,14 +1445,13 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   fit: StackFit.expand,
                   children: [
                     if (isLogoCard) ...[
-                      // Party Manifesto: Faded UDA Logo background
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Opacity(
-                            opacity: 0.35,
+                            opacity: 0.2,
                             child: Image.asset(
-                              'assets/images/logo.png',
+                              'assets/images/uda_logo.png',
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) =>
                                   const SizedBox.shrink(),
@@ -1350,48 +1459,32 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                           ),
                         ),
                       ),
-                      // Dark gradient overlay
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.20),
-                              Colors.black.withOpacity(0.85),
-                            ],
-                          ),
-                        ),
-                      ),
                     ] else if (imagePath != null) ...[
-                      // Faded Dark Photo Background
+                      // Higher opacity for clearer images on Secretary and RDCS cards
                       Opacity(
-                        opacity: 0.40,
+                        opacity: 0.55,
                         child: Image.asset(
                           imagePath,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              Container(color: const Color(0xFF1A5C2A)),
-                        ),
-                      ),
-                      // Dark gradient overlay for rich contrast
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.20),
-                              Colors.black.withOpacity(0.60),
-                              Colors.black.withOpacity(0.90),
-                            ],
-                            stops: const [0.0, 0.5, 1.0],
-                          ),
+                              Container(color: bgColor),
                         ),
                       ),
                     ],
-
-                    // Card Content (Words positioned LOWER at bottom in WHITE for high contrast)
+                    // Dark overlay for better text visibility
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.2),
+                            Colors.black.withOpacity(0.6),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Card Content - White text on dark background
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
                       child: Column(
@@ -1404,18 +1497,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                                 horizontal: 8,
                                 vertical: 3,
                               ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFFCC00),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'OFFICE',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1A5C2A),
-                                ),
-                              ),
                             ),
                             const SizedBox(height: 6),
                           ],
@@ -1423,13 +1504,13 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                             card['title'] as String,
                             style: const TextStyle(
                               fontWeight: FontWeight.w900,
-                              fontSize: 13,
+                              fontSize: 14,
                               color: Colors.white,
                               height: 1.25,
                               letterSpacing: 0.2,
                               shadows: [
                                 Shadow(
-                                  color: Colors.black87,
+                                  color: Colors.black45,
                                   blurRadius: 4,
                                   offset: Offset(0, 1),
                                 ),
@@ -1438,6 +1519,15 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            width: 30,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: borderColor,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
                         ],
                       ),
@@ -1454,14 +1544,12 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
 
   // ========== UDA NEAR YOU ==========
   Widget _buildUDANearYou() {
-    // Show different UI based on platform
     if (!kIsWeb) {
-      // Mobile fallback UI
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.12),
@@ -1478,8 +1566,8 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               decoration: const BoxDecoration(
                 color: Color(0xFF1A5C2A),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
               ),
               child: Row(
@@ -1545,12 +1633,11 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       );
     }
 
-    // Web platform - show Google Maps
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.12),
@@ -1562,14 +1649,13 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with title and "Open Map" button
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: const BoxDecoration(
               color: Color(0xFF1A5C2A),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
             ),
             child: Row(
@@ -1603,7 +1689,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Only open on web
                     if (kIsWeb) {
                       WebUtils.openMapUrl('https://www.google.com/maps');
                     }
@@ -1641,11 +1726,10 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               ],
             ),
           ),
-          // Embedded Google Map - only works on web
           ClipRRect(
             borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(12),
-              bottomRight: Radius.circular(12),
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16),
             ),
             child: SizedBox(
               height: 220,
@@ -1676,7 +1760,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A5C2A),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -1723,7 +1807,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFCC00),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -1766,7 +1850,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Support Center Button on the Left
           FloatingActionButton.extended(
             heroTag: 'support',
             onPressed: () {
@@ -1785,14 +1868,13 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               ),
             ),
           ),
-          // Chat Button on the Right
           FloatingActionButton.extended(
             heroTag: 'chat',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AskPresidentScreen(),
+                  builder: (context) => const CommunityScreen(),
                 ),
               );
             },
@@ -1815,65 +1897,13 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   Widget _buildFooter() {
     return Container(
       width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFFFCC00), width: 3),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(35),
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                      child: Text(
-                        'UDA',
-                        style: TextStyle(
-                          color: Color(0xFF1A5C2A),
-                          fontWeight: FontWeight.w900,
-                          fontSize: 16,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'UNITED DEMOCRATIC ALLIANCE',
-            style: TextStyle(
-              color: Color(0xFF1A5C2A),
-              fontWeight: FontWeight.w900,
-              fontSize: 14,
-              letterSpacing: 1,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'KAZI NI KAZI',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
           const Text(
             '© 2024 UDA Party. All Rights Reserved.',
-            style: TextStyle(color: Colors.grey, fontSize: 10),
+            style: TextStyle(color: Colors.grey, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1903,7 +1933,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Fixed: Wrapped ListTiles in Material to fix decoration conflict
               Material(
                 color: Colors.transparent,
                 child: ListTile(

@@ -83,10 +83,7 @@ class ElectDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'ELECT DETAILS',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
@@ -173,16 +170,21 @@ class ElectDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    
+
                     // Simple solid overlay for text readability
                     Positioned(
                       bottom: 0,
                       left: 0,
                       right: 0,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5), // Simple solid color
+                          color: Colors.black.withOpacity(
+                            0.5,
+                          ), // Simple solid color
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(24),
                             bottomRight: Radius.circular(24),
@@ -201,7 +203,10 @@ class ElectDetailsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFFCC00),
                                 borderRadius: BorderRadius.circular(12),
@@ -223,9 +228,9 @@ class ElectDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Biography Section - NO SHADOWS
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -235,10 +240,7 @@ class ElectDetailsScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFFE0E0E0),
-                    width: 1,
-                  ),
+                  border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
                   // No boxShadow
                 ),
                 child: Column(
@@ -264,7 +266,7 @@ class ElectDetailsScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Bio Text
                     if (bio.isNotEmpty)
                       Text(
@@ -275,16 +277,13 @@ class ElectDetailsScreen extends StatelessWidget {
                           color: Colors.black87,
                         ),
                       ),
-                    
+
                     if (bio.isNotEmpty) const SizedBox(height: 20),
-                    
+
                     // Divider
-                    Container(
-                      height: 1,
-                      color: const Color(0xFFF0F0F0),
-                    ),
+                    Container(height: 1, color: const Color(0xFFF0F0F0)),
                     const SizedBox(height: 16),
-                    
+
                     // Details Grid
                     const Text(
                       'Personal Information',
@@ -295,7 +294,7 @@ class ElectDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Position
                     if (position.isNotEmpty)
                       _buildDetailItem(
@@ -303,7 +302,7 @@ class ElectDetailsScreen extends StatelessWidget {
                         label: 'Position',
                         value: position,
                       ),
-                    
+
                     // Constituency
                     if (constituency.isNotEmpty)
                       _buildDetailItem(
@@ -311,7 +310,7 @@ class ElectDetailsScreen extends StatelessWidget {
                         label: 'Constituency',
                         value: constituency,
                       ),
-                    
+
                     // County
                     if (county.isNotEmpty)
                       _buildDetailItem(
@@ -319,7 +318,7 @@ class ElectDetailsScreen extends StatelessWidget {
                         label: 'County',
                         value: county,
                       ),
-                    
+
                     // Date
                     if (date.isNotEmpty)
                       _buildDetailItem(
@@ -331,7 +330,7 @@ class ElectDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
           ],
         ),
@@ -355,11 +354,7 @@ class ElectDetailsScreen extends StatelessWidget {
               color: const Color(0xFFFFCC00).withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: const Color(0xFF1A5C2A),
-              size: 18,
-            ),
+            child: Icon(icon, color: const Color(0xFF1A5C2A), size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(

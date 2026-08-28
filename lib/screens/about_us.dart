@@ -11,14 +11,12 @@ class AboutScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'ABOUT UDA',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -33,28 +31,27 @@ class AboutScreen extends StatelessWidget {
           children: [
             // Hero Section - History & Values
             _buildHeroSection(),
-            
+
             // About Us Section
             _buildAboutUsSection(),
-            
+
             // Our Values Section
-            
-            
+
             // Who We Are Section
             _buildWhoWeAreSection(),
-            
+
             // Party Symbol Section
             _buildPartySymbolSection(),
-            
+
             // Party Colors Section
             _buildPartyColorsSection(),
-            
+
             // Our Manifesto & Contact Section
             _buildManifestoContactSection(),
-            
+
             // Party History Timeline
             _buildPartyHistorySection(),
-            
+
             // Foundation Details
             _buildFoundationDetailsSection(),
           ],
@@ -94,11 +91,7 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Container(
-            width: 60,
-            height: 4,
-            color: const Color(0xFFFFCC00),
-          ),
+          Container(width: 60, height: 4, color: const Color(0xFFFFCC00)),
           const SizedBox(height: 16),
           const Text(
             'About Us',
@@ -128,17 +121,13 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Container(
-            width: 50,
-            height: 3,
-            color: const Color(0xFFFFCC00),
-          ),
+          Container(width: 50, height: 3, color: const Color(0xFFFFCC00)),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -152,19 +141,22 @@ class AboutScreen extends StatelessWidget {
                 _buildValueItem(
                   icon: Icons.gavel,
                   title: 'Good Governance',
-                  description: 'The party is founded on the principles of good governance including equity, diversity, love, unity, freedom, justice, accountability, transparency and peace.',
+                  description:
+                      'The party is founded on the principles of good governance including equity, diversity, love, unity, freedom, justice, accountability, transparency and peace.',
                 ),
                 const Divider(height: 24),
                 _buildValueItem(
                   icon: Icons.business_center,
                   title: 'Economic Prosperity',
-                  description: 'The leadership of the party shall ensure a just and prosperous nation through good governance, nurturing the right political atmosphere for businesses and industries to thrive.',
+                  description:
+                      'The leadership of the party shall ensure a just and prosperous nation through good governance, nurturing the right political atmosphere for businesses and industries to thrive.',
                 ),
                 const Divider(height: 24),
                 _buildValueItem(
                   icon: Icons.people,
                   title: 'Human Resource Development',
-                  description: 'Development of human resource, foster political stability and welfare of the people of Kenya.',
+                  description:
+                      'Development of human resource, foster political stability and welfare of the people of Kenya.',
                 ),
               ],
             ),
@@ -188,11 +180,7 @@ class AboutScreen extends StatelessWidget {
             color: const Color(0xFFFFCC00),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: const Color(0xFF1A5C2A),
-            size: 20,
-          ),
+          child: Icon(icon, color: const Color(0xFF1A5C2A), size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -230,7 +218,7 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -281,7 +269,7 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -345,7 +333,7 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -383,7 +371,11 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildColorChip(Color color, String label, {Color textColor = Colors.white}) {
+  Widget _buildColorChip(
+    Color color,
+    String label, {
+    Color textColor = Colors.white,
+  }) {
     return Column(
       children: [
         Container(
@@ -392,10 +384,7 @@ class AboutScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.grey[300]!,
-              width: 1,
-            ),
+            border: Border.all(color: Colors.grey[300]!, width: 1),
           ),
         ),
         const SizedBox(height: 4),
@@ -426,7 +415,7 @@ class AboutScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFCC00),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -438,11 +427,7 @@ class AboutScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Icon(
-                      Icons.description,
-                      color: Color(0xFF1A5C2A),
-                      size: 24,
-                    ),
+                    Icon(Icons.description, color: Color(0xFF1A5C2A), size: 24),
                     SizedBox(height: 4),
                     Text(
                       'OUR MANIFESTO',
@@ -469,7 +454,7 @@ class AboutScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A5C2A),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -481,11 +466,7 @@ class AboutScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Icon(
-                      Icons.phone,
-                      color: Color(0xFFFFCC00),
-                      size: 24,
-                    ),
+                    Icon(Icons.phone, color: Color(0xFFFFCC00), size: 24),
                     SizedBox(height: 4),
                     Text(
                       'CONTACT US',
@@ -513,7 +494,7 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -561,17 +542,11 @@ class AboutScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFFFFCC00),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFF1A5C2A),
-                  width: 2,
-                ),
+                border: Border.all(color: const Color(0xFF1A5C2A), width: 2),
               ),
             ),
-            if (!isFirst) Container(
-              width: 2,
-              height: 40,
-              color: const Color(0xFFFFCC00),
-            ),
+            if (!isFirst)
+              Container(width: 2, height: 40, color: const Color(0xFFFFCC00)),
           ],
         ),
         const SizedBox(width: 16),
@@ -610,7 +585,7 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -645,17 +620,11 @@ class AboutScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFFFFCC00).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: const Color(0xFFFFCC00),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFFFFCC00), width: 1),
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.info_outline,
-                    color: Color(0xFF1A5C2A),
-                  ),
+                  const Icon(Icons.info_outline, color: Color(0xFF1A5C2A)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

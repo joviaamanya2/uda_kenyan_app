@@ -1,5 +1,6 @@
 // lib/screens/ask_president_screen.dart
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
 class AskPresidentScreen extends StatefulWidget {
   const AskPresidentScreen({super.key});
@@ -32,14 +33,12 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
       appBar: AppBar(
         title: const Text(
           'ASK THE PRESIDENT',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -54,7 +53,10 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
                 _submitForm(context);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A5C2A),
                   borderRadius: BorderRadius.circular(20),
@@ -69,11 +71,7 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.send,
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                    Icon(Icons.send, color: Colors.white, size: 16),
                     SizedBox(width: 6),
                     Text(
                       'SEND',
@@ -108,7 +106,7 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -137,10 +135,7 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
                     SizedBox(height: 8),
                     Text(
                       'Please use the form below to send your question or message to the President.',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -221,9 +216,11 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : () {
-                    _submitForm(context);
-                  },
+                  onPressed: _isSubmitting
+                      ? null
+                      : () {
+                          _submitForm(context);
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFCC00),
                     foregroundColor: const Color(0xFF1A5C2A),
@@ -239,7 +236,9 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A5C2A)),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFF1A5C2A),
+                            ),
                           ),
                         )
                       : Row(
@@ -310,7 +309,7 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -330,15 +329,15 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
           hintText: hint,
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFF1A5C2A), width: 2),
           ),
           filled: true,
@@ -348,14 +347,17 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
     );
   }
 
-  void _submitForm(BuildContext context) {
+  Future<void> _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isSubmitting = true;
       });
 
-      // Simulate API call
-      Future.delayed(const Duration(seconds: 2), () {
+      try {
+        await ApiService.instance.askQuestion(
+          question: _messageController.text.trim(),
+        );
+        if (!mounted) return;
         setState(() {
           _isSubmitting = false;
         });
@@ -409,7 +411,16 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
         _emailController.clear();
         _subjectController.clear();
         _messageController.clear();
-      });
+      } catch (error) {
+        if (!mounted) return;
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

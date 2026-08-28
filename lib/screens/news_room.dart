@@ -1,6 +1,7 @@
 // lib/screens/news_screen.dart
 import 'package:flutter/material.dart';
 import 'news_details.dart';
+import '../services/api_service.dart';
 
 class NewsScreen extends StatefulWidget {
   final Map<String, dynamic>? selectedNews;
@@ -14,7 +15,7 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   bool _didOpenSelectedNews = false;
 
-  final List<Map<String, dynamic>> newsItems = const [
+  final List<Map<String, dynamic>> newsItems = [
     {
       'title':
           'UDA Secretary General, Sen. Hassan Omar Hassan paid a courtesy call to the Embassy of the Republic of Kenya in Juba, South Sudan',
@@ -71,7 +72,7 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   void initState() {
     super.initState();
-
+    _loadNews();
     if (widget.selectedNews != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!_didOpenSelectedNews && mounted) {
@@ -94,6 +95,30 @@ class _NewsScreenState extends State<NewsScreen> {
     }
   }
 
+  Future<void> _loadNews() async {
+    try {
+      final remote = await ApiService.instance.getList('news');
+      if (!mounted || remote.isEmpty) return;
+      setState(() {
+        newsItems
+          ..clear()
+          ..addAll(
+            remote.map(
+              (item) => {
+                'title': item['title'] ?? 'UDA News',
+                'date': item['published_at'] ?? '',
+                'color': 0xFFFFCC00,
+                'image': item['image_path'] ?? 'assets/images/uda_logo.png',
+                'content': item['content'] ?? '',
+              },
+            ),
+          );
+      });
+    } catch (_) {
+      // Keep bundled content available when the API is offline.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +130,8 @@ class _NewsScreenState extends State<NewsScreen> {
         ),
         backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.black,
-        elevation: 2,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -223,7 +249,7 @@ class _NewsScreenState extends State<NewsScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -237,7 +263,7 @@ class _NewsScreenState extends State<NewsScreen> {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
+                top: Radius.circular(16),
               ),
               child: Image.network(
                 'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+Featured',
@@ -346,7 +372,7 @@ class _NewsScreenState extends State<NewsScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -360,7 +386,7 @@ class _NewsScreenState extends State<NewsScreen> {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
+                top: Radius.circular(16),
               ),
               child: (image.startsWith('http') || image.startsWith('https'))
                   ? Image.network(

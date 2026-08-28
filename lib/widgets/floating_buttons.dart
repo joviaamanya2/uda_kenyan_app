@@ -55,9 +55,7 @@ class FloatingButtons extends StatelessWidget {
             Text('🌐 Visit: www.uda.go.ke/support'),
           ],
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         actions: [
           TextButton(
             onPressed: () {
@@ -111,9 +109,7 @@ class FloatingButtons extends StatelessWidget {
             Text('🐦 Twitter: @UDAParty'),
           ],
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         actions: [
           TextButton(
             onPressed: () {
