@@ -1,10 +1,13 @@
 // lib/screens/events_screen.dart
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'events_detail.dart';
 import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class EventsScreen extends StatefulWidget {
-  const EventsScreen({super.key});
+  final bool embedded;
+  const EventsScreen({super.key, this.embedded = false});
 
   @override
   State<EventsScreen> createState() => _EventsScreenState();
@@ -140,8 +143,18 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   static const _monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   /// Formats a backend ISO timestamp into "Month D, YYYY". Falls back to the
@@ -185,31 +198,36 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        title: const Text(
-          'EVENTS',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: const Color(0xFFFFCC00),
-        foregroundColor: Colors.black,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: Colors.black),
-            onPressed: () {
-              _showFilterDialog(context);
-            },
-          ),
-        ],
-      ),
+      backgroundColor: context.pageBg,
+      appBar: widget.embedded
+          ? null
+          : AppBar(
+              title: const Text(
+                'EVENTS',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: const Color(0xFFFFCC00),
+              foregroundColor: Colors.black,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.filter_list, color: Colors.black),
+                  onPressed: () {
+                    _showFilterDialog(context);
+                  },
+                ),
+              ],
+            ),
       body: Column(
         children: [
           _buildCategoryTabs(),
@@ -269,7 +287,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   border: Border.all(
                     color: isSelected
                         ? const Color(0xFFFFCC00)
-                        : Colors.grey[300]!,
+                        : context.hairline,
                     width: 1.5,
                   ),
                   boxShadow: isSelected
@@ -287,7 +305,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   style: TextStyle(
                     color: isSelected
                         ? const Color(0xFF1A5C2A)
-                        : Colors.grey[700],
+                        : context.textMuted,
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
@@ -315,7 +333,7 @@ class _EventsScreenState extends State<EventsScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -480,7 +498,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   const SizedBox(height: 8),
                   Text(
                     event['description'] as String,
-                    style: const TextStyle(fontSize: 13, color: Colors.black87),
+                    style: TextStyle(fontSize: 13, color: context.textStrong),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -543,13 +561,13 @@ class _EventsScreenState extends State<EventsScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+              color: context.textMuted,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'No events available in "${_selectedCategory}" category',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            style: TextStyle(fontSize: 14, color: context.textMuted),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -623,11 +641,11 @@ class _EventsScreenState extends State<EventsScreen> {
                           Navigator.pop(context);
                         },
                         selectedColor: const Color(0xFFFFCC00),
-                        backgroundColor: Colors.white,
+                        backgroundColor: context.surface,
                         labelStyle: TextStyle(
                           color: isSelected
                               ? const Color(0xFF1A5C2A)
-                              : Colors.grey[700],
+                              : context.textMuted,
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -637,7 +655,7 @@ class _EventsScreenState extends State<EventsScreen> {
                           side: BorderSide(
                             color: isSelected
                                 ? const Color(0xFFFFCC00)
-                                : Colors.grey[300]!,
+                                : context.hairline,
                             width: 1.5,
                           ),
                         ),
@@ -710,7 +728,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.hairline,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -798,8 +816,17 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   void _shareEvent(Map<String, dynamic> event) {
-    // Implement share functionality
-    // You can use the share package: https://pub.dev/packages/share
-    print('Sharing event: ${event['title']}');
+    final title = event['title'] as String? ?? 'UDA Event';
+    final date = event['date'] as String? ?? '';
+    final location = event['location'] as String? ?? '';
+    SharePlus.instance.share(
+      ShareParams(
+        text: [
+          title,
+          if (date.isNotEmpty) date,
+          if (location.isNotEmpty) location,
+        ].join('\n'),
+      ),
+    );
   }
 }

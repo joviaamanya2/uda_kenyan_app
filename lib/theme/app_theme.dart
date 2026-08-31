@@ -443,3 +443,133 @@ ThemeData buildAppTheme() {
     visualDensity: VisualDensity.standard,
   );
 }
+
+/// Dark counterpart to [buildAppTheme]. Green app bar (yellow is too harsh in
+/// the dark), near-black surfaces, light text.
+ThemeData buildDarkTheme() {
+  const surface = Color(0xFF1C1F1D);
+  const background = Color(0xFF121412);
+  const onSurface = Color(0xFFECEFEC);
+  const muted = Color(0xFF9AA6A0);
+  const divider = Color(0xFF2C302E);
+
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: AppColors.primary,
+    primary: const Color(0xFF4CAF6A),
+    secondary: AppColors.accent,
+    surface: surface,
+    error: const Color(0xFFF2B8B5),
+    brightness: Brightness.dark,
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: colorScheme,
+    scaffoldBackgroundColor: background,
+    splashFactory: InkRipple.splashFactory,
+    fontFamily: 'Roboto',
+    textTheme: const TextTheme(
+      headlineSmall: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w900,
+        color: onSurface,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 19,
+        fontWeight: FontWeight.w800,
+        color: onSurface,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: onSurface,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        color: onSurface,
+      ),
+      bodyLarge: TextStyle(fontSize: 15, color: onSurface, height: 1.4),
+      bodyMedium: TextStyle(fontSize: 13.5, color: onSurface, height: 1.4),
+      bodySmall: TextStyle(fontSize: 12, color: muted, height: 1.3),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.primaryDark,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+      scrolledUnderElevation: 0,
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.1,
+      ),
+      iconTheme: IconThemeData(color: Colors.white),
+      actionsIconTheme: IconThemeData(color: Colors.white),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: AppColors.primaryDark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+    ),
+    cardTheme: CardThemeData(
+      elevation: 0,
+      color: surface,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+      clipBehavior: Clip.antiAlias,
+    ),
+    dividerTheme: const DividerThemeData(
+      color: divider,
+      thickness: 1,
+      space: 1,
+    ),
+    listTileTheme: const ListTileThemeData(
+      iconColor: Color(0xFF4CAF6A),
+      textColor: onSurface,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.accent,
+        foregroundColor: const Color(0xFF102915),
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: const Color(0xFF6FCB8A),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: surface,
+      contentTextStyle: const TextStyle(color: onSurface, fontSize: 13.5),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+    ),
+    visualDensity: VisualDensity.standard,
+  );
+}

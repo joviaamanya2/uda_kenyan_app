@@ -1,5 +1,7 @@
 // lib/screens/fundraise_screen.dart
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class FundraiseScreen extends StatefulWidget {
   const FundraiseScreen({super.key});
@@ -44,7 +46,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
   ];
 
   // Location options
-  final List<String> _locationOptions = ['Uganda', 'Diaspora'];
+  final List<String> _locationOptions = ['Kenya', 'Diaspora'];
 
   bool _showOtherAmount = false;
   bool _isSubmitting = false;
@@ -61,7 +63,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'FUNDRAISE',
@@ -80,9 +82,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
-              onTap: () {
-                _submitForm(context);
-              },
+              onTap: _isSubmitting ? null : _submitForm,
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -118,59 +118,17 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(
+          16,
+          16,
+          16,
+          16 + MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section - Flat design
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A5C2A),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Column(
-                  children: [
-                    Text(
-                      'UDA FUNDRAISING',
-                      style: TextStyle(
-                        color: Color(0xFFFFCC00),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'THE LEGACY',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'KAZI NI KAZI',
-                      style: TextStyle(
-                        color: Color(0xFFFFCC00),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 3,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
               // Select Category Section
               _buildSectionHeader('Select Category to Fund'),
               const SizedBox(height: 8),
@@ -199,7 +157,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -240,12 +198,12 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? const Color(0xFF1A5C2A)
-                                    : Colors.grey[100],
+                                    : context.surfaceAlt,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: isSelected
                                       ? const Color(0xFFFFCC00)
-                                      : Colors.grey[300]!,
+                                      : context.hairline,
                                   width: isSelected ? 2 : 1,
                                 ),
                               ),
@@ -255,7 +213,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                                   style: TextStyle(
                                     color: isSelected
                                         ? Colors.white
-                                        : Colors.black87,
+                                        : context.textStrong,
                                     fontWeight: isSelected
                                         ? FontWeight.bold
                                         : FontWeight.normal,
@@ -279,12 +237,12 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? const Color(0xFFFFCC00)
-                                    : Colors.grey[100],
+                                    : context.surfaceAlt,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: isSelected
                                       ? const Color(0xFF1A5C2A)
-                                      : Colors.grey[300]!,
+                                      : context.hairline,
                                   width: isSelected ? 2 : 1,
                                 ),
                               ),
@@ -294,7 +252,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                                   style: TextStyle(
                                     color: isSelected
                                         ? const Color(0xFF1A5C2A)
-                                        : Colors.black87,
+                                        : context.textStrong,
                                     fontWeight: isSelected
                                         ? FontWeight.bold
                                         : FontWeight.normal,
@@ -313,7 +271,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                       const SizedBox(height: 12),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.surface,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: const Color(0xFF1A5C2A),
@@ -357,7 +315,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -395,12 +353,12 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? const Color(0xFFFFCC00)
-                                    : Colors.grey[100],
+                                    : context.surfaceAlt,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: isSelected
                                       ? const Color(0xFF1A5C2A)
-                                      : Colors.grey[300]!,
+                                      : context.hairline,
                                   width: isSelected ? 2 : 1,
                                 ),
                               ),
@@ -410,7 +368,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
                                   style: TextStyle(
                                     color: isSelected
                                         ? const Color(0xFF1A5C2A)
-                                        : Colors.black87,
+                                        : context.textStrong,
                                     fontWeight: isSelected
                                         ? FontWeight.bold
                                         : FontWeight.normal,
@@ -474,11 +432,7 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isSubmitting
-                      ? null
-                      : () {
-                          _submitForm(context);
-                        },
+                  onPressed: _isSubmitting ? null : _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFCC00),
                     foregroundColor: const Color(0xFF1A5C2A),
@@ -530,12 +484,14 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
       children: [
         Container(width: 4, height: 24, color: const Color(0xFFFFCC00)),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
-            color: Color(0xFF1A5C2A),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF1A5C2A),
+            ),
           ),
         ),
       ],
@@ -553,9 +509,9 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.hairline),
       ),
       child: TextFormField(
         controller: controller,
@@ -587,9 +543,9 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.hairline),
       ),
       child: DropdownButtonFormField<String>(
         value: value,
@@ -604,11 +560,11 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -621,134 +577,166 @@ class _FundraiseScreenState extends State<FundraiseScreen> {
     );
   }
 
-  // Submit form - production ready
-  void _submitForm(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      // Check if amount is selected
-      if (_selectedAmount == null && !_showOtherAmount) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select a donation amount'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        return;
-      }
+  double? _resolveAmount() {
+    final raw = _showOtherAmount
+        ? _otherAmountController.text
+        : (_selectedAmount ?? '');
+    final cleaned = raw.replaceAll(RegExp(r'[^0-9.]'), '');
+    return double.tryParse(cleaned);
+  }
 
-      // Check if location is selected
-      if (_selectedLocation == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select your location'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        return;
-      }
+  // Submit form - sends the donation to the backend
+  Future<void> _submitForm() async {
+    if (_isSubmitting) return;
 
-      // Show submitting state
-      setState(() {
-        _isSubmitting = true;
-      });
-
-      // Simulate API call (replace with actual API call)
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          _isSubmitting = false;
-        });
-
-        // Show success dialog
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: Row(
-              children: const [
-                Icon(Icons.check_circle, color: Color(0xFF1A5C2A), size: 32),
-                SizedBox(width: 12),
-                Text(
-                  'Thank You!',
-                  style: TextStyle(
-                    color: Color(0xFF1A5C2A),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Your donation has been received successfully.',
-                  style: TextStyle(fontSize: 14, height: 1.5),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Category: ${_selectedCategory ?? 'Not specified'}',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      Text(
-                        'Amount: ${_showOtherAmount ? _otherAmountController.text : _selectedAmount}',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      Text(
-                        'Location: $_selectedLocation',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      Text(
-                        'Name: ${_fullNameController.text}',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'A confirmation email has been sent to your email address.',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  Navigator.pop(context); // Go back to previous screen
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFCC00),
-                  foregroundColor: const Color(0xFF1A5C2A),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'DONE',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        );
-      });
-    } else {
+    if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in all required fields'),
           backgroundColor: Colors.red,
         ),
       );
+      return;
     }
+
+    if (_selectedAmount == null && !_showOtherAmount) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a donation amount'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedLocation == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select your location'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final amount = _resolveAmount();
+    if (amount == null || amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid amount'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      await ApiService.instance.submitDonation(
+        name: _fullNameController.text.trim(),
+        email: _emailController.text.trim(),
+        amount: amount,
+        currency: 'USD',
+        category: _selectedCategory == 'Select Category'
+            ? null
+            : _selectedCategory,
+        location: _selectedLocation,
+        comment: _commentController.text.trim(),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString()), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    // Show success dialog
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: const [
+            Icon(Icons.check_circle, color: Color(0xFF1A5C2A), size: 32),
+            SizedBox(width: 12),
+            Text(
+              'Thank You!',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Your donation has been received successfully.',
+              style: TextStyle(fontSize: 14, height: 1.5),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.surfaceAlt,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Category: ${_selectedCategory ?? 'Not specified'}',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Text(
+                    'Amount: ${_showOtherAmount ? _otherAmountController.text : _selectedAmount}',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Text(
+                    'Location: $_selectedLocation',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Text(
+                    'Name: ${_fullNameController.text}',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'A confirmation email has been sent to your email address.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+          ],
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Go back to previous screen
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFFCC00),
+              foregroundColor: const Color(0xFF1A5C2A),
+              elevation: 0,
+            ),
+            child: const Text(
+              'DONE',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

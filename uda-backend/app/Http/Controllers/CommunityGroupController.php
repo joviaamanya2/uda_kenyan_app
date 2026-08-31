@@ -24,9 +24,11 @@ class CommunityGroupController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'contact_info' => 'nullable|string',
+            'whatsapp' => 'nullable|string',
         ]);
 
         $g = CommunityGroup::create($data);
+
         return response()->json($g, 201);
     }
 
@@ -37,15 +39,18 @@ class CommunityGroupController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'contact_info' => 'nullable|string',
+            'whatsapp' => 'nullable|string',
         ]);
 
         $communityGroup->update($data);
+
         return response()->json($communityGroup);
     }
 
     public function destroy(CommunityGroup $communityGroup)
     {
         $communityGroup->delete();
+
         return response()->json(null, 204);
     }
 }

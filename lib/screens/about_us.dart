@@ -1,13 +1,50 @@
 // lib/screens/about_screen.dart
 import 'package:flutter/material.dart';
 
-class AboutScreen extends StatelessWidget {
+import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
+
+class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
+
+  @override
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
+  // Editable from the admin dashboard (Site settings). Defaults below.
+  String _intro =
+      'The United Democratic Alliance (UDA) is a Kenyan political party led by H.E Dr. William Samoei Ruto, President of the Republic of Kenya. It is the largest party in the Kenya Kwanza coalition government.';
+  String _vision =
+      'An equitably empowered Kenyan society living in a peaceful and united country.';
+  String _mission =
+      'The leadership of the party shall ensure a just and prosperous nation through good governance, nurturing the right political atmosphere for businesses and industries to thrive, development of human resource, foster political stability and welfare of the people of Kenya.';
+  String _values =
+      'The party is founded on the principles of good governance including equity, diversity, love, unity, freedom, justice, accountability, transparency and peace.';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final s = await ApiService.instance.getSettings();
+    if (!mounted || s.isEmpty) return;
+    String pick(String key, String fallback) =>
+        (s[key]?.trim().isNotEmpty ?? false) ? s[key]!.trim() : fallback;
+    setState(() {
+      _intro = pick('about_intro', _intro);
+      _vision = pick('about_vision', _vision);
+      _mission = pick('about_mission', _mission);
+      _values = pick('about_values', _values);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'ABOUT UDA',
@@ -48,6 +85,9 @@ class AboutScreen extends StatelessWidget {
 
             // Our Manifesto & Contact Section
             _buildManifestoContactSection(),
+
+            // Focus Areas
+            _buildFocusAreasSection(),
 
             // Party History Timeline
             _buildPartyHistorySection(),
@@ -126,7 +166,7 @@ class AboutScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.surface,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -198,9 +238,9 @@ class AboutScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 description,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: Colors.black87,
+                  color: context.textStrong,
                   height: 1.5,
                 ),
               ),
@@ -217,7 +257,7 @@ class AboutScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -239,20 +279,66 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'The party is founded on the principles of good governance including equity, diversity, love, unity, freedom, justice, accountability, transparency and peace.',
+            Text(
+              _intro,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
+                color: context.textStrong,
                 height: 1.6,
               ),
             ),
             const SizedBox(height: 12),
             const Text(
-              'The leadership of the party shall ensure a just and prosperous nation through good governance, nurturing the right political atmosphere for businesses and industries to thrive, development of human resource, foster political stability and welfare of the people of Kenya.',
+              'Our Vision',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _vision,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
+                color: context.textStrong,
+                height: 1.6,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Our Mission',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _mission,
+              style: TextStyle(
+                fontSize: 14,
+                color: context.textStrong,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Our Values',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _values,
+              style: TextStyle(
+                fontSize: 14,
+                color: context.textStrong,
                 height: 1.6,
               ),
             ),
@@ -268,7 +354,7 @@ class AboutScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -313,7 +399,7 @@ class AboutScreen extends StatelessWidget {
                     'The party symbol is a Wheelbarrow, symbolizing "the value, dignity and respect of work in pursuit of an equitable society".',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.grey[700],
+                      color: context.textMuted,
                       height: 1.5,
                     ),
                   ),
@@ -332,7 +418,7 @@ class AboutScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -384,7 +470,7 @@ class AboutScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[300]!, width: 1),
+            border: Border.all(color: context.hairline, width: 1),
           ),
         ),
         const SizedBox(height: 4),
@@ -487,13 +573,102 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildFocusAreasSection() {
+    final focusAreas = <Map<String, dynamic>>[
+      {'icon': Icons.agriculture, 'label': 'Agricultural Transformation'},
+      {'icon': Icons.local_hospital, 'label': 'Healthcare & Education'},
+      {'icon': Icons.house, 'label': 'Housing & Infrastructure'},
+      {'icon': Icons.wifi, 'label': 'Digital Superhighway & ICT'},
+      {'icon': Icons.factory, 'label': 'Manufacturing & Service Economy'},
+      {'icon': Icons.storefront, 'label': 'Micro, Small & Medium Enterprises'},
+      {
+        'icon': Icons.volunteer_activism,
+        'label': "Women's Agenda & Social Protection",
+      },
+      {'icon': Icons.eco, 'label': 'Environment, Sports & Governance'},
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: context.surface,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Our Focus Areas',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'UDA is anchored on the Bottom-Up Economic Transformation Agenda (BETA), which prioritises:',
+              style: TextStyle(
+                fontSize: 13,
+                color: context.textStrong,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...focusAreas.map(
+              (area) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFCC00),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        area['icon'] as IconData,
+                        color: const Color(0xFF1A5C2A),
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        area['label'] as String,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF1A5C2A),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPartyHistorySection() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -516,8 +691,33 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _buildTimelineItem(
+              date: '2012',
+              title: 'Registered as the Party of Action (POA)',
+            ),
+            _buildTimelineItem(
+              date: 'Before 2017',
+              title: 'Renamed Party of Development and Reforms (PDR)',
+            ),
+            _buildTimelineItem(
+              date: 'December 2020',
+              title: 'Rebranded to the United Democratic Alliance (UDA)',
+            ),
+            _buildTimelineItem(
               date: '8 January 2021',
-              title: 'Foundation of New Party',
+              title: 'Official launch of UDA',
+            ),
+            _buildTimelineItem(
+              date: '9 May 2022',
+              title: 'Kenya Kwanza Coalition formed with ANC and FORD-Kenya',
+            ),
+            _buildTimelineItem(
+              date: '9 August 2022',
+              title:
+                  'H.E William Ruto elected 5th President of Kenya on the UDA ticket',
+            ),
+            _buildTimelineItem(
+              date: '17 January 2025',
+              title: 'ANC merges into UDA, integrating its leadership',
               isFirst: true,
             ),
           ],
@@ -557,7 +757,7 @@ class AboutScreen extends StatelessWidget {
               Text(
                 date,
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: context.textMuted,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -584,7 +784,7 @@ class AboutScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -598,7 +798,7 @@ class AboutScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Foundation of New Party',
+              'Foundation of the Party',
               style: TextStyle(
                 color: Color(0xFF1A5C2A),
                 fontSize: 18,
@@ -606,11 +806,11 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'The United Democratic Party is formed - a decision motivated by the need to transform the course of Kenyan politics and governance.',
+            Text(
+              'The United Democratic Alliance was rebranded from the Party of Development and Reforms in December 2020 and officially launched on 8 January 2021 - a decision motivated by the need to transform the course of Kenyan politics and governance.',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
+                color: context.textStrong,
                 height: 1.6,
               ),
             ),
@@ -631,7 +831,7 @@ class AboutScreen extends StatelessWidget {
                       'The formation of UDA marks a new chapter in Kenyan politics, focused on transformative leadership and good governance.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.grey[700],
+                        color: context.textMuted,
                         height: 1.5,
                       ),
                     ),

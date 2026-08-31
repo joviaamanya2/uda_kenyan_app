@@ -1,5 +1,6 @@
 // lib/screens/resource_center/tenders_screen.dart
 import 'package:flutter/material.dart';
+import '../../theme/theme_ext.dart';
 
 class TendersScreen extends StatelessWidget {
   const TendersScreen({super.key});
@@ -7,7 +8,7 @@ class TendersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'TENDERS',
@@ -41,7 +42,7 @@ class TendersScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Open tenders and procurement opportunities',
-                      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 13, color: context.textMuted),
                     ),
                   ),
                 ],
@@ -52,30 +53,35 @@ class TendersScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   _buildTenderItem(
+                    context: context,
                     title: 'Supply of Office Equipment',
                     ref: 'UDA/T/2024/001',
                     deadline: '30 April 2024',
                     status: 'Open',
                   ),
                   _buildTenderItem(
+                    context: context,
                     title: 'Event Management Services',
                     ref: 'UDA/T/2024/002',
                     deadline: '25 April 2024',
                     status: 'Open',
                   ),
                   _buildTenderItem(
+                    context: context,
                     title: 'Printing and Branding Services',
                     ref: 'UDA/T/2024/003',
                     deadline: '20 April 2024',
                     status: 'Closing Soon',
                   ),
                   _buildTenderItem(
+                    context: context,
                     title: 'IT Infrastructure Upgrade',
                     ref: 'UDA/T/2024/004',
                     deadline: '15 April 2024',
                     status: 'Closed',
                   ),
                   _buildTenderItem(
+                    context: context,
                     title: 'Security Services',
                     ref: 'UDA/T/2024/005',
                     deadline: '10 April 2024',
@@ -91,6 +97,7 @@ class TendersScreen extends StatelessWidget {
   }
 
   Widget _buildTenderItem({
+    required BuildContext context,
     required String title,
     required String ref,
     required String deadline,
@@ -109,7 +116,7 @@ class TendersScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -131,7 +138,7 @@ class TendersScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(ref, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+          Text(ref, style: TextStyle(fontSize: 12, color: context.textMuted)),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,7 +149,7 @@ class TendersScreen extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     deadline,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 12, color: context.textMuted),
                   ),
                 ],
               ),

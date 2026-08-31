@@ -4,7 +4,7 @@ import 'downloads.dart';
 import 'notices.dart';
 import 'tender.dart';
 import 'financial_statements.dart';
-import 'endrc_screen.dart';
+import '../../theme/theme_ext.dart';
 
 class ResourceCenterScreen extends StatelessWidget {
   const ResourceCenterScreen({super.key});
@@ -12,7 +12,7 @@ class ResourceCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'RESOURCE CENTER',
@@ -28,17 +28,6 @@ class ResourceCenterScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {
-                print('🔍 Search in Resource Center');
-              },
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -46,47 +35,6 @@ class ResourceCenterScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'RESOURCE CENTER',
-                    style: TextStyle(
-                      color: Color(0xFFFFCC00),
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Access all UDA resources and documents',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
             // Downloads
             _buildResourceItem(
               context: context,
@@ -171,7 +119,7 @@ class ResourceCenterScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -184,9 +132,14 @@ class ResourceCenterScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildStatItem('Documents', '150+', Icons.description),
-                  _buildStatItem('Downloads', '12K+', Icons.download),
-                  _buildStatItem('Reports', '45+', Icons.insert_chart),
+                  _buildStatItem(
+                    context,
+                    'Documents',
+                    '150+',
+                    Icons.description,
+                  ),
+                  _buildStatItem(context, 'Downloads', '12K+', Icons.download),
+                  _buildStatItem(context, 'Reports', '45+', Icons.insert_chart),
                 ],
               ),
             ),
@@ -232,7 +185,7 @@ class ResourceCenterScreen extends StatelessWidget {
                           'Contact us for assistance with any resource',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: context.textMuted,
                           ),
                         ),
                       ],
@@ -271,7 +224,7 @@ class ResourceCenterScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -280,7 +233,7 @@ class ResourceCenterScreen extends StatelessWidget {
               offset: const Offset(0, 2),
             ),
           ],
-          border: Border.all(color: Colors.grey.shade200, width: 1),
+          border: Border.all(color: context.hairline, width: 1),
         ),
         child: Row(
           children: [
@@ -309,7 +262,7 @@ class ResourceCenterScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 13, color: context.textMuted),
                   ),
                 ],
               ),
@@ -320,7 +273,12 @@ class ResourceCenterScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon) {
+  Widget _buildStatItem(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
     return Column(
       children: [
         Icon(icon, color: const Color(0xFF1A5C2A), size: 24),
@@ -333,7 +291,7 @@ class ResourceCenterScreen extends StatelessWidget {
             color: Color(0xFF1A5C2A),
           ),
         ),
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+        Text(label, style: TextStyle(color: context.textMuted, fontSize: 12)),
       ],
     );
   }

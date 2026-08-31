@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class JoinUDAFormScreen extends StatefulWidget {
   const JoinUDAFormScreen({super.key});
@@ -29,11 +31,13 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   // Dropdown values
   String? _selectedGender;
   String? _selectedParty;
-  String? _previousParty;
 
   // Checkbox states
   bool _wasInUDA = false;
   bool _wasInOtherParty = false;
+
+  // Submission state
+  bool _isSubmitting = false;
 
   // National ID Upload
   File? _nationalIdFrontImage;
@@ -181,7 +185,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'JOIN UDA',
@@ -202,9 +206,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
-              onTap: () {
-                _submitForm(context);
-              },
+              onTap: _isSubmitting ? null : _submitForm,
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -243,56 +245,17 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(
+          16,
+          16,
+          16,
+          16 + MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Welcome to UDA Registry',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Please fill in your personal details below to continue',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 14,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
               // Personal Details Section
               _buildSectionHeader('Personal Details'),
               const SizedBox(height: 16),
@@ -349,9 +312,9 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: context.hairline),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,9 +474,9 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: context.hairline),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,9 +545,9 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: context.hairline),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -650,9 +613,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    _submitForm(context);
-                  },
+                  onPressed: _isSubmitting ? null : _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFCC00),
                     foregroundColor: const Color(0xFF1A5C2A),
@@ -662,14 +623,23 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'SUBMIT APPLICATION',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
-                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Color(0xFF1A5C2A),
+                          ),
+                        )
+                      : const Text(
+                          'SUBMIT APPLICATION',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -693,10 +663,10 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
         height: 120,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
+          color: context.surfaceAlt,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isUploaded ? Colors.green.shade400 : Colors.grey.shade300,
+            color: isUploaded ? Colors.green.shade400 : context.hairline,
             width: isUploaded ? 2 : 1,
           ),
         ),
@@ -770,18 +740,11 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.upload_file,
-                      color: Colors.grey.shade600,
-                      size: 32,
-                    ),
+                    Icon(Icons.upload_file, color: context.textMuted, size: 32),
                     const SizedBox(height: 8),
                     Text(
                       'Tap to upload $title',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: context.textMuted, fontSize: 12),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -804,12 +767,14 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
       children: [
         Container(width: 4, height: 24, color: const Color(0xFFFFCC00)),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
-            color: Color(0xFF1A5C2A),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF1A5C2A),
+            ),
           ),
         ),
       ],
@@ -826,7 +791,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -846,11 +811,11 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -872,9 +837,9 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.hairline),
       ),
       child: TextFormField(
         controller: controller,
@@ -905,7 +870,7 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -928,11 +893,11 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -946,94 +911,108 @@ class _JoinUDAFormScreenState extends State<JoinUDAFormScreen> {
   }
 
   // Submit form
-  void _submitForm(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      // Check if both sides of ID are uploaded
-      if (!_isIdUploaded) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please upload both sides of your National ID'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
+  Future<void> _submitForm() async {
+    if (_isSubmitting) return;
 
-      // Form is valid and ID is uploaded, show success dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: Row(
-            children: const [
-              Icon(Icons.check_circle, color: Color(0xFF1A5C2A), size: 32),
-              SizedBox(width: 12),
-              Text(
-                'Success!',
-                style: TextStyle(
-                  color: Color(0xFF1A5C2A),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          content: const Text(
-            'Your UDA membership application has been submitted successfully. You will receive a confirmation message shortly.',
-            style: TextStyle(fontSize: 14, height: 1.5),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to previous screen
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFCC00),
-                foregroundColor: const Color(0xFF1A5C2A),
-              ),
-              child: const Text(
-                'DONE',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      );
-
-      // Print form data for debugging
-      print('=== UDA Membership Application ===');
-      print('Surname: ${_surnameController.text}');
-      print('Other Name: ${_otherNameController.text}');
-      print('Phone: ${_phoneController.text}');
-      print('NIN: ${_ninController.text}');
-      print('Gender: $_selectedGender');
-      print('District: ${_districtController.text}');
-      print('Village: ${_villageController.text}');
-      print('Sub County: ${_subCountyController.text}');
-      print('Parish: ${_parishController.text}');
-      print('Was in UDA: $_wasInUDA');
-      if (_wasInUDA) {
-        print('From: ${_fromController.text}');
-        print('To: ${_toController.text}');
-      }
-      print('Was in Other Party: $_wasInOtherParty');
-      if (_wasInOtherParty) {
-        print('Previous Party: $_selectedParty');
-      }
-      print('National ID Front: ${_nationalIdFrontImage?.path}');
-      print('National ID Back: ${_nationalIdBackImage?.path}');
-      print('=== End ===');
-    } else {
-      // Form is invalid, show error
+    if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in all required fields'),
           backgroundColor: Colors.red,
         ),
       );
+      return;
     }
+
+    if (!_isIdUploaded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please upload both sides of your National ID'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      await ApiService.instance.submitMembership(
+        fields: {
+          'surname': _surnameController.text.trim(),
+          'other_name': _otherNameController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          if (_ninController.text.trim().isNotEmpty)
+            'national_id_number': _ninController.text.trim(),
+          if (_selectedGender != null && _selectedGender != 'Select Gender')
+            'gender': _selectedGender!,
+          'district': _districtController.text.trim(),
+          'village': _villageController.text.trim(),
+          'sub_county': _subCountyController.text.trim(),
+          'parish': _parishController.text.trim(),
+          'was_in_uda': _wasInUDA ? '1' : '0',
+          if (_wasInUDA) 'uda_from': _fromController.text.trim(),
+          if (_wasInUDA) 'uda_to': _toController.text.trim(),
+          'was_in_other_party': _wasInOtherParty ? '1' : '0',
+          if (_wasInOtherParty &&
+              _selectedParty != null &&
+              _selectedParty != 'Select Political Party')
+            'previous_party': _selectedParty!,
+        },
+        idFrontPath: _nationalIdFrontImage?.path,
+        idBackPath: _nationalIdBackImage?.path,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString()), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: const [
+            Icon(Icons.check_circle, color: Color(0xFF1A5C2A), size: 32),
+            SizedBox(width: 12),
+            Text(
+              'Success!',
+              style: TextStyle(
+                color: Color(0xFF1A5C2A),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Your UDA membership application has been submitted successfully. You will receive a confirmation message shortly.',
+          style: TextStyle(fontSize: 14, height: 1.5),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Go back to previous screen
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFFCC00),
+              foregroundColor: const Color(0xFF1A5C2A),
+            ),
+            child: const Text(
+              'DONE',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

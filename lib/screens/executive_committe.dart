@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'elects_details.dart';
 import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class ExecutiveCommitteeScreen extends StatefulWidget {
   const ExecutiveCommitteeScreen({super.key});
@@ -16,94 +17,94 @@ class _ExecutiveCommitteeScreenState extends State<ExecutiveCommitteeScreen> {
   // from the backend (leaders with category=executive).
   List<Map<String, dynamic>> committeeMembers = [
     {
-      'name': 'H.E Dr. William Ruto',
-      'position': 'National Chairman',
+      'name': 'H.E Dr. William Samoei Ruto',
+      'position': 'Party Leader',
       'image': 'assets/images/William Ruto.PNG',
       'bio':
-          'H.E Dr. William Ruto is the President of Kenya and the National Chairman of UDA. He is committed to transforming Kenya through the Bottom-Up Economic Transformation Agenda.',
-      'email': 'william.ruto@uda.go.ke',
-      'phone': '+254 700 000 000',
-      'office': 'State House, Nairobi',
+          'H.E Dr. William Samoei Ruto is the President of the Republic of Kenya and the Party Leader of UDA. He is committed to transforming Kenya through the Bottom-Up Economic Transformation Agenda (BETA).',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'H.E Cecily Mbarire',
-      'position': 'CHAIRPERSON, Governor, Embu County',
+      'position': 'National Chairperson / Governor, Embu County',
       'image': 'assets/images/H.E Cecily Mbarire.PNG',
       'bio':
-          'H.E Cecily Mbarire is the Governor of Embu County and the Chairperson of UDA. She is dedicated to the development and welfare of her constituents.',
-      'email': 'cecily.mbarire@uda.go.ke',
-      'phone': '+254 700 000 001',
-      'office': 'Embu County Office',
+          'H.E Cecily Mbarire is the Governor of Embu County and the National Chairperson of UDA. She is dedicated to the development and welfare of her constituents.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'Mr. Kelvin Lunani',
-      'position': 'DEPUTY CHAIRPERSON',
+      'position': 'National Vice-Chairperson',
       'image': 'assets/images/Mr. Kelvin Lunani.PNG',
       'bio':
-          'Mr. Kelvin Lunani is the Deputy Chairperson of UDA. He is committed to the development and welfare of his constituents.',
-      'email': 'kelvin.lunani@uda.go.ke',
-      'phone': '+254 700 000 002',
-      'office': 'Nairobi, Kenya',
+          'Mr. Kelvin Lunani is the National Vice-Chairperson of UDA. He previously served as national chairman of ANC before its merger into UDA in January 2025.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'H.E. Prof. Kithure Kindiki',
-      'position': 'Deputy President of Kenya',
+      'position': 'Deputy Party Leader / Deputy President of Kenya',
       'image': 'assets/images/H.E Prof. Kithure Kindiki.PNG',
       'bio':
-          'H.E. Prof. Kithure Kindiki is the Deputy President of Kenyal of UDA. He is committed to the development and welfare of his constituents.',
-      'email': 'cleophas.malala@uda.go.ke',
-      'phone': '+254 700 000 003',
-      'office': 'Nairobi, Kenya',
+          'H.E. Prof. Kithure Kindiki is the Deputy President of the Republic of Kenya and a Deputy Party Leader of UDA. He previously served as Cabinet Secretary for Interior and National Administration.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
-      'name': 'Hon. Hassan Omar',
+      'name': 'Sen. Hassan Omar',
       'position': 'Secretary General',
       'image': 'assets/images/Hon. Sen. Hassan Omar.PNG',
       'bio':
-          'Hon. Hassan Omar is the Secretary General of UDA. He is committed to the development and welfare of his constituents.',
-      'email': 'hassan.omar@uda.go.ke',
-      'phone': '+254 700 000 004',
-      'office': 'Mombasa, Kenya',
+          'Sen. Hassan Omar is the Secretary General of UDA, responsible for the day-to-day running of the party secretariat.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'H.E. Issa Timamy',
-      'position': 'Governor, Lamu County',
+      'position': 'Deputy Party Leader / Governor, Lamu County',
       'image': 'assets/images/H.E Issa Timamy.png',
       'bio':
-          'H.E. Issa Timamy is the Governor of Lamu County and a member of the UDA Executive Committee. He is committed to the development and welfare of his constituents.',
-      'email': 'issa.timamy@uda.go.ke',
-      'phone': '+254 700 000 005',
-      'office': 'Nyeri, Kenya',
+          'H.E. Issa Timamy is the Governor of Lamu County and a Deputy Party Leader of UDA. He was the party leader of ANC before it merged into UDA in January 2025.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'Mr. Nicodemus Bore',
-      'position': 'EXECUTIVE DIRECTOR',
+      'position': 'Executive Director',
       'image': 'assets/images/Mr. Nicodemus Bore.PNG',
       'bio':
-          'Mr. Nicodemus Bore is the Executive Director of UDA. He is committed to the development and welfare of his constituents.',
-      'email': 'nicodemus.bore@uda.go.ke',
-      'phone': '+254 700 000 006',
-      'office': 'Nairobi, Kenya',
+          'Mr. Nicodemus Bore is the Executive Director of UDA, overseeing the party secretariat and administration.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'Hon. Omboko Milemba',
-      'position': 'DEPUTY SECRETARY GENERAL - MP Emuhaya Constituency',
+      'position': 'Deputy Secretary General / MP, Emuhaya Constituency',
       'image': 'assets/images/Omboko Milemba.PNG',
       'bio':
-          'Hon. Omboko Milemba is the Deputy Secretary General of UDA. He is committed to the development and welfare of his constituents.',
-      'email': 'omboko.milemba@uda.go.ke',
-      'phone': '+254 700 000 007',
-      'office': 'Nairobi, Kenya',
+          'Hon. Omboko Milemba is the Deputy Secretary General of UDA and Member of Parliament for Emuhaya Constituency. He was ANC secretary-general before the merger into UDA.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
     {
       'name': 'Hon. Japheth Nyakundi',
-      'position': 'NATIONAL TREASURER',
+      'position': 'National Treasurer',
       'image': 'assets/images/Hon. Japheth Nyakundi.PNG',
       'bio':
-          'Hon. Japheth Nyakundi is the National Treasurer of UDA. He is committed to the development and welfare of his constituents.',
-      'email': 'japheth.nyakundi@uda.go.ke',
-      'phone': '+254 700 000 008',
-      'office': 'Nairobi, Kenya',
+          'Hon. Japheth Nyakundi is the National Treasurer of UDA, responsible for the party\'s finances.',
+      'email': 'hello@uda.ke',
+      'phone': '020 2020405',
+      'office': 'UDA National Office, Hustler Plaza, Ngong Road, Nairobi',
     },
   ];
 
@@ -142,7 +143,7 @@ class _ExecutiveCommitteeScreenState extends State<ExecutiveCommitteeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'EXECUTIVE COMMITTEE',
@@ -158,17 +159,6 @@ class _ExecutiveCommitteeScreenState extends State<ExecutiveCommitteeScreen> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {
-                print('🔍 Search committee members');
-              },
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -203,7 +193,7 @@ class _ExecutiveCommitteeScreenState extends State<ExecutiveCommitteeScreen> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -212,7 +202,7 @@ class _ExecutiveCommitteeScreenState extends State<ExecutiveCommitteeScreen> {
               offset: const Offset(0, 2),
             ),
           ],
-          border: Border.all(color: Colors.grey.shade200, width: 1),
+          border: Border.all(color: context.hairline, width: 1),
         ),
         child: Row(
           children: [

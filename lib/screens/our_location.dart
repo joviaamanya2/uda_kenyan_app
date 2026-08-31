@@ -1,5 +1,6 @@
 // lib/screens/locations_screen.dart
 import 'package:flutter/material.dart';
+import '../theme/theme_ext.dart';
 
 class LocationsScreen extends StatefulWidget {
   const LocationsScreen({super.key});
@@ -12,7 +13,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'OUR LOCATIONS',
@@ -35,12 +36,59 @@ class _LocationsScreenState extends State<LocationsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // National Headquarters
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1A5C2A),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.account_balance, color: Color(0xFFFFCC00)),
+                      SizedBox(width: 8),
+                      Text(
+                        'UDA National Headquarters',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Hustler Plaza, Ngong Road, Nairobi',
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Tel: 020 2020405   •   Email: hello@uda.ke',
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+
             // Main Featured Location - Baringo
             _buildMainLocationCard(
               title: 'Baringo',
               subtitle: 'UDA Regional Office',
-              location: ' Baringo country Headquarters',
-              address: 'Along Kabarnet -Eldama Rvine Road',
+              location: 'Baringo County Headquarters',
+              address: 'Along Kabarnet - Eldama Ravine Road',
               imageAsset: 'assets/images/location images/baringo (1).jpeg',
             ),
             const SizedBox(height: 20),
@@ -65,7 +113,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -103,10 +151,10 @@ class _LocationsScreenState extends State<LocationsScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Call us: +254 720 123 456',
+                          'Call us: 020 2020405',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[600],
+                            color: context.textMuted,
                           ),
                         ),
                       ],
@@ -236,31 +284,31 @@ class _LocationsScreenState extends State<LocationsScreen> {
       {
         'name': 'Baringo',
         'image': 'assets/images/location images/baringo.jpeg',
-        'address': 'UDA House, Ngong Road',
-        'county': 'Nairobi County',
+        'address': 'UDA Baringo County Office',
+        'county': 'Baringo County',
       },
       {
         'name': 'BUNGOMA',
         'image': 'assets/images/location images/bungoma.jpeg',
-        'address': 'Mombasa County HQ',
-        'county': 'Mombasa County',
+        'address': 'UDA Bungoma County Office',
+        'county': 'Bungoma County',
       },
       {
         'name': 'Busia',
         'image': 'assets/images/location images/busia1.jpeg',
-        'address': 'Kisumu County HQ',
-        'county': 'Kisumu County',
+        'address': 'UDA Busia County Office',
+        'county': 'Busia County',
       },
       {
         'name': 'Homa Bay',
         'image': 'assets/images/homa_bay.jpg',
-        'address': 'Homa Bay County HQ',
+        'address': 'UDA Homa Bay County Office',
         'county': 'Homa Bay County',
       },
       {
         'name': 'Isiolo North',
         'image': 'assets/images/location images/isiolonorth4.jpeg',
-        'address': 'Isiolo North County ',
+        'address': 'UDA Isiolo North Constituency Office',
         'county': 'Isiolo County',
       },
       // {
@@ -476,7 +524,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
             const SizedBox(height: 4),
             Text(
               county,
-              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 13, color: context.textMuted),
             ),
             const SizedBox(height: 8),
             Container(
@@ -497,7 +545,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
                   Expanded(
                     child: Text(
                       'Visit us during office hours: Mon-Fri 8:00 AM - 5:00 PM',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 12, color: context.textMuted),
                     ),
                   ),
                 ],

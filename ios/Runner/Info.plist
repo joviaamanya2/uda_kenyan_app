@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is used to show the UDA offices nearest to you.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take photos and videos to share on the UDA community feed.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Record audio for videos you post to the UDA community feed.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose photos and videos to share on the UDA community feed and your profile.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

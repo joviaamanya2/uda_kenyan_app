@@ -79,7 +79,10 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final bannerHeight = MediaQuery.of(context).size.height * 0.40;
+    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+    final keyboardOpen = keyboardInset > 0;
+    final bannerHeight =
+        MediaQuery.of(context).size.height * (keyboardOpen ? 0.22 : 0.40);
 
     return Scaffold(
       backgroundColor: const Color(0xFF1B1D20),
@@ -106,106 +109,106 @@ class _LoginScreenState extends State<LoginScreen>
           ),
 
           SafeArea(
-            child: Column(
-              children: [
-                // Banner section with reduced height
-                Stack(
-                  children: [
-                    AnimatedBuilder(
-                      animation: _slideAnimation,
-                      builder: (context, child) {
-                        return ClipRect(
-                          child: Container(
-                            height: bannerHeight,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: const AssetImage(
-                                  'assets/images/new.jpg',
-                                ),
-                                fit: BoxFit.cover,
-                                alignment: Alignment(
-                                  _slideAnimation.value.dx * 0.5,
-                                  0.0,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: keyboardInset),
+              child: Column(
+                children: [
+                  // Banner section with reduced height
+                  Stack(
+                    children: [
+                      AnimatedBuilder(
+                        animation: _slideAnimation,
+                        builder: (context, child) {
+                          return ClipRect(
+                            child: Container(
+                              height: bannerHeight,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: const AssetImage(
+                                    'assets/images/new.jpg',
+                                  ),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment(
+                                    _slideAnimation.value.dx * 0.5,
+                                    0.0,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-
-                    Container(
-                      height: 70,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            const Color(0xFFFFCC00),
-                            const Color(0xFFFFCC00).withOpacity(0.8),
-                            Colors.transparent,
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    ),
 
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: bannerHeight / 2,
-                      child: Container(
+                      Container(
+                        height: 70,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              const Color(0xFF1B1D20).withOpacity(0.85),
-                              const Color(0xFF1B1D20),
+                              const Color(0xFFFFCC00),
+                              const Color(0xFFFFCC00).withOpacity(0.8),
+                              Colors.transparent,
                             ],
-                            stops: const [0.0, 0.5, 1.0],
                           ),
                         ),
                       ),
-                    ),
 
-                    Positioned(
-                      bottom: 10,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [_buildDot(0), _buildDot(1), _buildDot(2)],
-                      ),
-                    ),
-
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: 20,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.8),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(8),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 64,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                const Color(0xFF1B1D20),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
 
-                // Login card - raised up with less negative offset
-                Expanded(
-                  child: Transform.translate(
-                    offset: const Offset(0, -30),
+                      Positioned(
+                        bottom: 10,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [_buildDot(0), _buildDot(1), _buildDot(2)],
+                        ),
+                      ),
+
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                            size: 20,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.8),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Login card - raised above the banner
+                  Transform.translate(
+                    offset: const Offset(0, -40),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -225,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ],
                         ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             // Login Title
                             const Text(
@@ -358,12 +361,22 @@ class _LoginScreenState extends State<LoginScreen>
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Password reset link sent to your email',
+                                  showDialog<void>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Forgot Password'),
+                                      content: const Text(
+                                        'To reset your password, please contact '
+                                        'the UDA Secretariat on 020 2020405 or '
+                                        'email hello@uda.ke and our team will '
+                                        'assist you.',
                                       ),
-                                      backgroundColor: Color(0xFF1A5C2A),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(ctx),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },
@@ -444,8 +457,8 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

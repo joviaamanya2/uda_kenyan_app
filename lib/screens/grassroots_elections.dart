@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import '../theme/theme_ext.dart';
 
 class GrassrootsElectionsScreen extends StatefulWidget {
   const GrassrootsElectionsScreen({super.key});
@@ -21,7 +22,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'GRASSROOTS ELECTIONS',
@@ -168,7 +169,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
                           'Download the aspirants list for your county and verify your details.',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[700],
+                            color: context.textMuted,
                           ),
                         ),
                       ],
@@ -192,38 +193,28 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
   Widget _buildHeaderBanner() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: context.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'GRASSROOTS 2025',
+            'UDA Grassroots Elections',
             style: TextStyle(
-              color: Color(0xFFFFCC00),
-              fontSize: 28,
+              color: Color(0xFF1A5C2A),
+              fontSize: 20,
               fontWeight: FontWeight.bold,
-              letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'UDA Grassroots Elections',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+          Text(
+            'Party members elect their leaders at the ward, constituency and '
+            'county levels to build a democratic grassroots structure.',
+            style: TextStyle(color: context.textMuted, fontSize: 13),
           ),
           const SizedBox(height: 16),
           Container(
@@ -238,7 +229,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
                 Icon(Icons.how_to_vote, color: Color(0xFF1A5C2A), size: 16),
                 SizedBox(width: 8),
                 Text(
-                  'PHASE III',
+                  'GRASSROOTS DEMOCRACY',
                   style: TextStyle(
                     color: Color(0xFF1A5C2A),
                     fontWeight: FontWeight.bold,
@@ -266,7 +257,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -275,7 +266,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: context.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,7 +290,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
                       'UDA PHASE III GRASSROOTS ELECTIONS',
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.grey[600],
+                        color: context.textMuted,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -395,7 +386,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -471,13 +462,13 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
               decoration: BoxDecoration(
                 color: isFirst || isLast
                     ? const Color(0xFFFFCC00)
-                    : Colors.grey[300],
+                    : context.hairline,
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFF1A5C2A), width: 2),
               ),
             ),
             if (!isLast)
-              Container(width: 2, height: 50, color: Colors.grey[300]),
+              Container(width: 2, height: 50, color: context.hairline),
           ],
         ),
         const SizedBox(width: 16),
@@ -491,7 +482,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
                   date,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: context.textMuted,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -506,7 +497,7 @@ class _GrassrootsElectionsScreenState extends State<GrassrootsElectionsScreen> {
                 ),
                 Text(
                   description,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: context.textMuted),
                 ),
               ],
             ),

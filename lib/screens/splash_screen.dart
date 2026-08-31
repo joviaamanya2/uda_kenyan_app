@@ -1,6 +1,8 @@
 // lib/screens/splash_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import 'home_screen.dart';
 import 'language_selection_screen.dart';
 
 class UDASplashScreen extends StatefulWidget {
@@ -16,9 +18,13 @@ class _UDASplashScreenState extends State<UDASplashScreen> {
     super.initState();
     Timer(const Duration(seconds: 4), () {
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LanguageSelectionScreen()),
-      );
+      // A returning, logged-in user goes straight to the home screen.
+      final next = ApiService.instance.isLoggedIn
+          ? const UDAHomeScreen()
+          : const LanguageSelectionScreen();
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => next));
     });
   }
 

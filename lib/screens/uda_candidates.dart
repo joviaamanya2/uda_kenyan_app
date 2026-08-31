@@ -1,55 +1,53 @@
-// lib/screens/uda_candidates_screen.dart
+// lib/screens/uda_candidates.dart
 import 'package:flutter/material.dart';
+import '../theme/theme_ext.dart';
 
-class UDACandidatesScreen extends StatefulWidget {
+class UDACandidatesScreen extends StatelessWidget {
   const UDACandidatesScreen({super.key});
 
-  @override
-  State<UDACandidatesScreen> createState() => _UDACandidatesScreenState();
-}
-
-class _UDACandidatesScreenState extends State<UDACandidatesScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  final List<Map<String, dynamic>> _candidates = [
+  static const List<Map<String, dynamic>> _positions = [
     {
-      'title': 'Presidential Candidate',
+      'title': 'President',
       'icon': Icons.how_to_vote,
       'count': '1',
+      'note': 'Head of State and Government',
     },
-    {'title': 'Members of Parliament', 'icon': Icons.gavel, 'count': '290'},
-    {'title': 'Mayors', 'icon': Icons.emoji_people, 'count': '47'},
-    {'title': 'Governors', 'icon': Icons.account_balance, 'count': '47'},
     {
-      'title': 'County Assembly Members',
+      'title': 'Governors',
+      'icon': Icons.account_balance,
+      'count': '47',
+      'note': 'One for each county',
+    },
+    {
+      'title': 'Senators',
+      'icon': Icons.groups,
+      'count': '47',
+      'note': 'Represent counties in the Senate',
+    },
+    {
+      'title': 'Woman Representatives',
+      'icon': Icons.woman,
+      'count': '47',
+      'note': 'Elected county woman members of the National Assembly',
+    },
+    {
+      'title': 'Members of Parliament',
+      'icon': Icons.gavel,
+      'count': '290',
+      'note': 'Elected constituency representatives',
+    },
+    {
+      'title': 'Members of County Assembly',
       'icon': Icons.person_pin,
       'count': '1,450',
+      'note': 'Elected ward representatives',
     },
-    {'title': 'Youth Representatives', 'icon': Icons.people, 'count': '470'},
-    {'title': 'Women Representatives', 'icon': Icons.woman, 'count': '47'},
-    {'title': 'Senators', 'icon': Icons.groups, 'count': '47'},
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 15),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'UDA CANDIDATES',
@@ -61,280 +59,49 @@ class _UDACandidatesScreenState extends State<UDACandidatesScreen>
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {
-                print('🔍 Search candidates');
-              },
-            ),
-          ),
-        ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xFF1A5C2A).withOpacity(0.05),
-              const Color(0xFFFFCC00).withOpacity(0.05),
-              const Color(0xFF1A5C2A).withOpacity(0.05),
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-        ),
-        child: Stack(
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Animated Background Shapes
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: AnimatedBackgroundPainter(
-                    animationValue: _animationController.value,
-                  ),
-                  size: MediaQuery.of(context).size,
+            const Text(
+              'Elective seats in Kenya',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A5C2A),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'UDA fields candidates for every elective position in the country, '
+              'from the presidency to the county assemblies.',
+              style: TextStyle(fontSize: 13, color: context.textMuted),
+            ),
+            const SizedBox(height: 20),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.95,
+              ),
+              itemCount: _positions.length,
+              itemBuilder: (context, index) {
+                final p = _positions[index];
+                return _PositionCard(
+                  title: p['title'] as String,
+                  icon: p['icon'] as IconData,
+                  count: p['count'] as String,
+                  note: p['note'] as String,
                 );
               },
-            ),
-            // Main Content
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Section
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.how_to_vote,
-                          color: Color(0xFFFFCC00),
-                          size: 48,
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          'UDA CANDIDATES 2026',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'KAZI NI KAZI',
-                          style: TextStyle(
-                            color: Color(0xFFFFCC00),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Search Bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade300),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Search candidates...',
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Color(0xFF1A5C2A),
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        // Search functionality
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Candidates Grid
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 1.1,
-                        ),
-                    itemCount: _candidates.length,
-                    itemBuilder: (context, index) {
-                      final candidate = _candidates[index];
-                      return _buildCandidateCard(
-                        title: candidate['title'] as String,
-                        icon: candidate['icon'] as IconData,
-                        count: candidate['count'] as String,
-                        index: index,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCandidateCard({
-    required String title,
-    required IconData icon,
-    required String count,
-    required int index,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        print('👤 $title tapped');
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF1A5C2A), width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // Animated Shimmer Effect on Card
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (context, child) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.transparent,
-                            const Color(0xFF1A5C2A).withOpacity(
-                              0.08 + _animationController.value * 0.15,
-                            ),
-                            Colors.transparent,
-                          ],
-                          stops: [
-                            _animationController.value,
-                            _animationController.value + 0.3,
-                            _animationController.value + 0.6,
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            // Card Content
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFCC00).withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: const Color(0xFF1A5C2A), size: 32),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    count,
-                    style: const TextStyle(
-                      color: Color(0xFF1A5C2A),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Color(0xFF1A5C2A),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            // Small yellow indicator at bottom
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFCC00),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(index % 2 == 0 ? 12 : 0),
-                    bottomRight: Radius.circular(index % 2 == 0 ? 0 : 12),
-                  ),
-                ),
-              ),
             ),
           ],
         ),
@@ -343,50 +110,68 @@ class _UDACandidatesScreenState extends State<UDACandidatesScreen>
   }
 }
 
-// Animated Background Painter
-class AnimatedBackgroundPainter extends CustomPainter {
-  final double animationValue;
+class _PositionCard extends StatelessWidget {
+  const _PositionCard({
+    required this.title,
+    required this.icon,
+    required this.count,
+    required this.note,
+  });
 
-  AnimatedBackgroundPainter({required this.animationValue});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint();
-
-    // Moving circles
-    for (int i = 0; i < 6; i++) {
-      final offset = (animationValue + i * 0.15) % 1.0;
-      final x = size.width * (0.1 + offset * 0.8);
-      final y = size.height * (0.1 + (offset * 0.7 + i * 0.05) % 0.8);
-      final radius = 60.0 + 30.0 * (i % 3);
-
-      paint.color = i % 2 == 0
-          ? const Color(0xFF1A5C2A).withOpacity(0.03)
-          : const Color(0xFFFFCC00).withOpacity(0.03);
-
-      canvas.drawCircle(Offset(x, y), radius, paint);
-    }
-
-    // Moving squares
-    for (int i = 0; i < 4; i++) {
-      final offset = (animationValue * 0.7 + i * 0.25) % 1.0;
-      final x = size.width * (0.05 + offset * 0.9);
-      final y = size.height * (0.05 + (offset * 0.6 + i * 0.08) % 0.9);
-      final size2 = 40.0 + 20.0 * (i % 3);
-
-      paint.color = i % 2 == 0
-          ? const Color(0xFFFFCC00).withOpacity(0.02)
-          : const Color(0xFF1A5C2A).withOpacity(0.02);
-
-      canvas.drawRect(
-        Rect.fromCenter(center: Offset(x, y), width: size2, height: size2),
-        paint,
-      );
-    }
-  }
+  final String title;
+  final IconData icon;
+  final String count;
+  final String note;
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: context.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.hairline),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFCC00).withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: const Color(0xFF1A5C2A), size: 24),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            count,
+            style: const TextStyle(
+              color: Color(0xFF1A5C2A),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: context.textStrong,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(note, style: TextStyle(fontSize: 11, color: context.textMuted)),
+        ],
+      ),
+    );
   }
 }

@@ -1,5 +1,6 @@
 // lib/screens/resource_center/reports_screen.dart
 import 'package:flutter/material.dart';
+import '../../theme/theme_ext.dart';
 
 class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
@@ -7,7 +8,7 @@ class ReportsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'REPORTS',
@@ -41,7 +42,7 @@ class ReportsScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Annual reports, activity reports, and more',
-                      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 13, color: context.textMuted),
                     ),
                   ),
                 ],
@@ -52,26 +53,31 @@ class ReportsScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   _buildReportItem(
+                    context: context,
                     title: 'Annual Activity Report 2023',
                     date: 'January 2024',
                     type: 'Annual',
                   ),
                   _buildReportItem(
+                    context: context,
                     title: 'Election Monitoring Report',
                     date: 'December 2023',
                     type: 'Special',
                   ),
                   _buildReportItem(
+                    context: context,
                     title: 'Membership Growth Report',
                     date: 'November 2023',
                     type: 'Quarterly',
                   ),
                   _buildReportItem(
+                    context: context,
                     title: 'County Performance Report',
                     date: 'October 2023',
                     type: 'Quarterly',
                   ),
                   _buildReportItem(
+                    context: context,
                     title: 'Youth Engagement Report',
                     date: 'September 2023',
                     type: 'Special',
@@ -86,6 +92,7 @@ class ReportsScreen extends StatelessWidget {
   }
 
   Widget _buildReportItem({
+    required BuildContext context,
     required String title,
     required String date,
     required String type,
@@ -103,7 +110,7 @@ class ReportsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -160,7 +167,7 @@ class ReportsScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       date,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: context.textMuted),
                     ),
                   ],
                 ),

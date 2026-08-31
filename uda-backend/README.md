@@ -1,3 +1,38 @@
+# UDA App Backend
+
+Laravel API for the UDA Kenyan app, plus a built-in **admin dashboard** for managing
+content and reviewing data submitted from the app.
+
+## Running
+
+```bash
+php artisan migrate --force
+php artisan db:seed          # creates the default admin + demo content
+php artisan storage:link     # needed once, for uploaded images/files
+php artisan serve --host=0.0.0.0 --port=8000
+```
+
+## Admin dashboard
+
+- URL: `http://<host>:8000/admin`
+- Default login (from the seeder): **admin@uda.ke** / **password** — change it after first sign-in.
+- Create more admins: `php artisan admin:create` (or promote an app user from the *App users* screen).
+
+What it covers:
+
+| Area | Screens |
+|------|---------|
+| **Overview** | Record counts, recent sign-ups, unread messages, unanswered questions |
+| **Inbox** | Contact messages (mark read / delete), Ask-the-President questions (post answers), App users (promote / delete) |
+| **Content (CRUD)** | Events, News, Achievements, Candidates, Fundraisers, Gallery, Resource Center, Leaders |
+| **Community** | Community Groups, TV Stations, Radio Stations, Locations |
+
+Content fields are declared in [`app/Admin/ResourceRegistry.php`](app/Admin/ResourceRegistry.php);
+one generic controller + Blade views (`resources/views/admin/`) render every resource.
+Image/file fields upload to `storage/app/public/uploads/<resource>/` and are saved as absolute URLs.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

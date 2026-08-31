@@ -1,5 +1,6 @@
 // lib/screens/resource_center/downloads_screen.dart
 import 'package:flutter/material.dart';
+import '../../theme/theme_ext.dart';
 
 class DownloadsScreen extends StatelessWidget {
   const DownloadsScreen({super.key});
@@ -40,7 +41,7 @@ class DownloadsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'DOWNLOADS',
@@ -54,17 +55,6 @@ class DownloadsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {
-                print('🔍 Search downloads');
-              },
-            ),
-          ),
-        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +136,7 @@ class DownloadsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -155,7 +145,7 @@ class DownloadsScreen extends StatelessWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade200, width: 1),
+        border: Border.all(color: context.hairline, width: 1),
       ),
       child: Row(
         children: [
@@ -210,7 +200,7 @@ class DownloadsScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       size,
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      style: TextStyle(fontSize: 11, color: context.textMuted),
                     ),
                   ],
                 ),

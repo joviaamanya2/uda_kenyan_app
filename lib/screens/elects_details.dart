@@ -1,5 +1,6 @@
 // lib/screens/elect_details_screen.dart
 import 'package:flutter/material.dart';
+import '../theme/theme_ext.dart';
 
 class ElectDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> elect;
@@ -60,6 +61,22 @@ class ElectDetailsScreen extends StatelessWidget {
     return null;
   }
 
+  Widget _imageFallback(int color, String name) {
+    return Container(
+      color: Color(color),
+      child: Center(
+        child: Text(
+          name.isNotEmpty ? name.substring(0, 1).toUpperCase() : '?',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 80,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
   String _getSafeString(String key, {String defaultValue = ''}) {
     final value = elect[key];
     if (value == null) return defaultValue;
@@ -76,10 +93,14 @@ class ElectDetailsScreen extends StatelessWidget {
     final date = _getSafeString('date', defaultValue: '');
     final constituency = _getSafeString('constituency', defaultValue: '');
     final county = _getSafeString('county', defaultValue: '');
-    final imagePath = findImage(name);
+    // Photos uploaded from the admin dashboard arrive as full URLs; bundled
+    // elects use asset paths resolved by findImage().
+    final rawImage = _getSafeString('image');
+    final isNetworkImage = rawImage.startsWith('http');
+    final imagePath = isNetworkImage ? rawImage : findImage(name);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'ELECT DETAILS',
@@ -135,27 +156,23 @@ class ElectDetailsScreen extends StatelessWidget {
                   children: [
                     // Clear Image
                     if (imagePath != null)
-                      Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Color(color),
-                            child: Center(
-                              child: Text(
-                                name.substring(0, 1).toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 80,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      )
+                      (isNetworkImage
+                          ? Image.network(
+                              imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  _imageFallback(color, name),
+                            )
+                          : Image.asset(
+                              imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  _imageFallback(color, name),
+                            ))
                     else
                       Container(
                         color: Color(color),
@@ -238,7 +255,7 @@ class ElectDetailsScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
                   // No boxShadow
@@ -271,10 +288,10 @@ class ElectDetailsScreen extends StatelessWidget {
                     if (bio.isNotEmpty)
                       Text(
                         bio,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           height: 1.7,
-                          color: Colors.black87,
+                          color: context.textStrong,
                         ),
                       ),
 
@@ -298,6 +315,7 @@ class ElectDetailsScreen extends StatelessWidget {
                     // Position
                     if (position.isNotEmpty)
                       _buildDetailItem(
+                        context: context,
                         icon: Icons.work,
                         label: 'Position',
                         value: position,
@@ -306,6 +324,7 @@ class ElectDetailsScreen extends StatelessWidget {
                     // Constituency
                     if (constituency.isNotEmpty)
                       _buildDetailItem(
+                        context: context,
                         icon: Icons.location_city,
                         label: 'Constituency',
                         value: constituency,
@@ -314,6 +333,7 @@ class ElectDetailsScreen extends StatelessWidget {
                     // County
                     if (county.isNotEmpty)
                       _buildDetailItem(
+                        context: context,
                         icon: Icons.map,
                         label: 'County',
                         value: county,
@@ -322,6 +342,7 @@ class ElectDetailsScreen extends StatelessWidget {
                     // Date
                     if (date.isNotEmpty)
                       _buildDetailItem(
+                        context: context,
                         icon: Icons.calendar_today,
                         label: 'Active Since',
                         value: date,
@@ -339,6 +360,7 @@ class ElectDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildDetailItem({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
@@ -372,9 +394,9 @@ class ElectDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: context.textStrong,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

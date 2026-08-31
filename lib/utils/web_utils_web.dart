@@ -2,6 +2,8 @@
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
+import 'package:flutter/foundation.dart';
+
 // Web-specific implementation
 class WebUtils {
   static bool get isWeb => true;
@@ -23,7 +25,7 @@ class WebUtils {
         return iframe;
       });
     } catch (e) {
-      print('Error registering map view: $e');
+      debugPrint('Error registering map view: $e');
     }
   }
 
@@ -31,7 +33,7 @@ class WebUtils {
     try {
       html.window.open(url, '_blank');
     } catch (e) {
-      print('Error opening map: $e');
+      debugPrint('Error opening map: $e');
     }
   }
 }

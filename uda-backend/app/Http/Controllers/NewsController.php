@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return News::orderBy('published_at', 'desc')->paginate(20);
+        $query = News::orderBy('published_at', 'desc');
+
+        $category = $request->query('category');
+        if ($category && $category !== 'All') {
+            $query->where('category', $category);
+        }
+
+        return $query->paginate(20);
     }
 
     public function show(News $news)
@@ -21,6 +28,7 @@ class NewsController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string',
+            'category' => 'nullable|string',
             'content' => 'required|string',
             'image_path' => 'nullable|string',
             'published_at' => 'nullable|date',
@@ -34,6 +42,7 @@ class NewsController extends Controller
     {
         $data = $request->validate([
             'title' => 'sometimes|required|string',
+            'category' => 'nullable|string',
             'content' => 'sometimes|required|string',
             'image_path' => 'nullable|string',
             'published_at' => 'nullable|date',

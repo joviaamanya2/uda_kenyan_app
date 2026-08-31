@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class CommunityGroup extends Model
 {
     protected $fillable = [
-        'name', 'description', 'location', 'contact_info'
+        'name', 'description', 'location', 'contact_info', 'whatsapp',
     ];
 }

@@ -1,6 +1,7 @@
 // lib/screens/ask_president_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class AskPresidentScreen extends StatefulWidget {
   const AskPresidentScreen({super.key});
@@ -29,7 +30,7 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'ASK THE PRESIDENT',
@@ -97,49 +98,18 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Section
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+              const Text(
+                'Ask the President',
+                style: TextStyle(
+                  color: Color(0xFF1A5C2A),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
-                child: const Column(
-                  children: [
-                    Icon(
-                      Icons.question_answer,
-                      color: Color(0xFFFFCC00),
-                      size: 48,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'ASK THE PRESIDENT',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Please use the form below to send your question or message to the President.',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Use the form below to send your question or message to the President.',
+                style: TextStyle(color: context.textMuted, fontSize: 14),
               ),
               const SizedBox(height: 24),
 
@@ -264,9 +234,9 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: context.surfaceAlt,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: context.hairline),
                 ),
                 child: Row(
                   children: [
@@ -308,7 +278,7 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -330,11 +300,11 @@ class _AskPresidentScreenState extends State<AskPresidentScreen> {
           prefixIcon: Icon(icon, color: const Color(0xFF1A5C2A)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: context.hairline),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

@@ -1,7 +1,7 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:uda_app/utils/web_utils.dart';
-import 'package:uda_app/screens/uda_candidates.dart';
+import '../widgets/nearby_offices_card.dart';
 import 'join_uda.dart';
 import 'fundraise_screen.dart';
 import 'all_elects_screen.dart';
@@ -9,23 +9,24 @@ import 'elects_details.dart';
 import 'achievements_screen.dart';
 import 'Live_tv.dart';
 import 'events.dart';
-import 'gallery.dart';
 import 'news_room.dart';
 import './community/community_screen.dart';
 import 'about_screen.dart';
+import 'info_page_screen.dart';
+import 'settings_screen.dart';
 import 'contact_screen.dart';
-import 'ask_president.dart';
-import 'achievements_details.dart';
+import '../l10n/app_localizations.dart';
 import 'videos_screen.dart';
 import 'president_profile.dart';
+import 'profile_screen.dart';
 import 'general_secretary.dart';
 import 'executive_committe.dart';
-import 'rdcs_and_drdcs.dart';
 import 'uda_leadears.dart';
 import 'uda_candidates.dart';
 import 'language_selection_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 // ========== CUSTOM FEATURE ITEM WIDGET ==========
 class _FeatureItem extends StatefulWidget {
@@ -39,7 +40,6 @@ class _FeatureItem extends StatefulWidget {
     required this.icon,
     required this.isSelected,
     required this.onTap,
-    super.key,
   });
 
   @override
@@ -51,7 +51,6 @@ class _FeatureItemState extends State<_FeatureItem> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isActive = widget.isSelected || _isTapped;
     final Color backgroundColor = widget.isSelected
         ? const Color(0xFFFFCC00)
         : _isTapped
@@ -157,7 +156,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   // fallback; _loadLeaders() replaces it with live data from the backend.
   List<Map<String, dynamic>> elects = [
     {
-      'name': 'William Ruto',
+      'name': 'H.E Dr.William Ruto',
       'position': 'President',
       'color': 0xFF1A5C2A,
       'constituency': 'National',
@@ -382,11 +381,20 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
     try {
       final remote = await ApiService.instance.getList('leaders');
       if (!mounted || remote.isEmpty) return;
+
+      // Only show elects that have a photo. Photo-less entries are added later
+      // from the admin dashboard and appear here once an image is uploaded.
+      final withPhotos = remote.where((item) {
+        final photo = (item['photo_path'] ?? '').toString().trim();
+        return photo.isNotEmpty;
+      }).toList();
+      if (withPhotos.isEmpty) return;
+
       setState(() {
         elects
           ..clear()
           ..addAll(
-            remote.asMap().entries.map((entry) {
+            withPhotos.asMap().entries.map((entry) {
               final item = entry.value;
               return {
                 'name': item['name'] ?? 'UDA Leader',
@@ -397,7 +405,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 'bio': item['bio'] ?? '',
                 'date': item['term_label'] ?? '',
                 'office': item['office'] ?? '',
-                'image': item['photo_path'] ?? 'assets/images/uda_logo.png',
+                'image': item['photo_path'],
                 'isFeatured': item['is_featured'] == true,
               };
             }),
@@ -471,7 +479,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       body: Column(
         children: [
           _buildHeader(context),
@@ -486,6 +494,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   _buildUDAElectsSection(),
                   const SizedBox(height: 16),
                   _buildFeatureBar(),
+                  _buildFeaturePanel(),
                   const SizedBox(height: 16),
                   _buildLatestUpdatesSection(),
                   const SizedBox(height: 16),
@@ -493,7 +502,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   const SizedBox(height: 16),
                   _buildFourCardsGrid(),
                   const SizedBox(height: 16),
-                  _buildUDANearYou(),
+                  const NearbyOfficesCard(),
                   const SizedBox(height: 16),
                   _buildRoadmapAndContact(),
                   const SizedBox(height: 32),
@@ -527,7 +536,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white,
+              color: context.surface,
               border: Border.all(color: const Color(0xFF1A5C2A), width: 2),
               boxShadow: [
                 BoxShadow(
@@ -557,7 +566,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -572,7 +581,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               Text(
                 'United Democratic Alliance',
                 style: TextStyle(
-                  color: Colors.black87,
+                  color: context.textStrong,
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
@@ -594,7 +603,10 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
-              print('👤 Profile tapped');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
             },
             child: const Icon(
               Icons.person_outline,
@@ -604,10 +616,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
           ),
           const SizedBox(width: 8),
           GestureDetector(
-            onTap: () {
-              print('⋮ Menu tapped');
-              _showMenuDialog(context);
-            },
+            onTap: () => _showMenuDialog(context),
             child: const Icon(Icons.more_vert, color: Colors.black, size: 24),
           ),
         ],
@@ -618,7 +627,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   // ========== CAROUSEL CARD ==========
   Widget _buildCarouselCard() {
     return Container(
-      height: 200,
+      height: 300,
       width: double.infinity,
       decoration: BoxDecoration(
         boxShadow: [
@@ -640,6 +649,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               return Image.asset(
                 _carouselImages[index],
                 fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
                 width: double.infinity,
                 height: double.infinity,
                 errorBuilder: (context, error, stackTrace) {
@@ -702,7 +712,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.surface,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -775,6 +785,43 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
   }
 
   // ========== UDA ELECTS SECTION ==========
+  /// Circular elect photo. Accepts a bundled asset path or a network URL
+  /// (uploaded from the admin dashboard); falls back to the name's initial.
+  Widget _electAvatar(String? path, int color, String name) {
+    final initial = Container(
+      color: Color(color),
+      child: Center(
+        child: Text(
+          name.isNotEmpty ? name.substring(0, 1) : '?',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+      ),
+    );
+
+    if (path == null || path.trim().isEmpty) return initial;
+
+    final isNetwork = path.startsWith('http');
+    return isNetwork
+        ? Image.network(
+            path,
+            fit: BoxFit.cover,
+            width: 80,
+            height: 80,
+            errorBuilder: (context, error, stackTrace) => initial,
+          )
+        : Image.asset(
+            path,
+            fit: BoxFit.cover,
+            width: 80,
+            height: 80,
+            errorBuilder: (context, error, stackTrace) => initial,
+          );
+  }
+
   Widget _buildUDAElectsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -815,7 +862,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 120,
+          height: 168,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -838,15 +885,20 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                   );
                 },
                 child: Container(
-                  width: 140,
+                  width: 150,
                   margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.surface,
                     borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: context.hairline),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
                     ],
@@ -855,8 +907,8 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 72,
+                        height: 72,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -865,65 +917,36 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                           ),
                         ),
                         child: ClipOval(
-                          child: imagePath != null
-                              ? Image.asset(
-                                  imagePath,
-                                  fit: BoxFit.cover,
-                                  width: 80,
-                                  height: 80,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Color(elect['color'] as int),
-                                      child: Center(
-                                        child: Text(
-                                          (elect['name'] as String).substring(
-                                            0,
-                                            1,
-                                          ),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )
-                              : Container(
-                                  color: Color(elect['color'] as int),
-                                  child: Center(
-                                    child: Text(
-                                      (elect['name'] as String).substring(0, 1),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                          child: _electAvatar(
+                            imagePath,
+                            elect['color'] as int,
+                            elect['name'] as String,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         elect['name'] as String,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          height: 1.2,
+                          color: context.textStrong,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         elect['position'] as String,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
+                        style: TextStyle(
+                          fontSize: 11,
+                          height: 1.2,
+                          color: context.textMuted,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -944,7 +967,6 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       {'title': 'ACHIEVEMENTS', 'icon': Icons.emoji_events},
       {'title': 'EVENTS', 'icon': Icons.event},
       {'title': 'LIVE TV', 'icon': Icons.live_tv},
-      {'title': 'GALLERY', 'icon': Icons.photo_library},
       {'title': 'VIDEOS', 'icon': Icons.video_library},
       {'title': 'NEWS', 'icon': Icons.article},
       {'title': 'ABOUT UDA', 'icon': Icons.info},
@@ -952,18 +974,8 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
     ];
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      width: double.infinity,
+      color: Colors.black,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -977,9 +989,12 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
               isSelected: _selectedFeature == title,
               onTap: () {
                 setState(() {
-                  _selectedFeature = title;
+                  // Tapping the open tab closes it; HOME just closes any panel.
+                  _selectedFeature =
+                      (_selectedFeature == title || title == 'HOME')
+                      ? 'HOME'
+                      : title;
                 });
-                _navigateToFeature(context, title);
               },
             );
           }).toList(),
@@ -988,62 +1003,86 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
     );
   }
 
-  // ========== NAVIGATION HELPER ==========
-  void _navigateToFeature(BuildContext context, String feature) {
+  // ========== EXPANDING FEATURE PANEL ==========
+  Widget _buildFeaturePanel() {
+    final screen = _featureScreenFor(_selectedFeature);
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      alignment: Alignment.topCenter,
+      child: screen == null
+          ? const SizedBox(width: double.infinity)
+          : Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.72,
+              margin: const EdgeInsets.only(top: 12),
+              decoration: BoxDecoration(
+                color: context.surface,
+                border: Border(
+                  top: BorderSide(color: context.hairline),
+                  bottom: BorderSide(color: context.hairline),
+                ),
+              ),
+              child: ClipRect(child: screen),
+            ),
+    );
+  }
+
+  Widget? _featureScreenFor(String feature) {
     switch (feature) {
-      case 'HOME':
-        break;
       case 'ACHIEVEMENTS':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AchievementsScreen()),
-        );
-        break;
+        return const AchievementsScreen(embedded: true);
       case 'EVENTS':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const EventsScreen()),
-        );
-        break;
+        return const EventsScreen(embedded: true);
       case 'LIVE TV':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const LiveTVScreen()),
-        );
-        break;
-      case 'GALLERY':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const GalleryScreen()),
-        );
-        break;
-      case 'NEWS':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const NewsScreen()),
-        );
-        break;
-      case 'ABOUT UDA':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AboutUDAScreen()),
-        );
-        break;
+        return const LiveTVScreen(embedded: true);
       case 'VIDEOS':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const VideosScreen()),
-        );
-        break;
+        return const VideosScreen(embedded: true);
+      case 'NEWS':
+        return const NewsScreen(embedded: true);
+      case 'ABOUT UDA':
+        return const AboutUDAScreen(embedded: true);
       case 'CONTACT':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ContactScreen()),
-        );
-        break;
+        return const ContactScreen(embedded: true);
       default:
-        break;
+        return null;
     }
+  }
+
+  /// Full-bleed news image. Accepts a bundled asset path or a network URL
+  /// (uploaded from the admin dashboard).
+  Widget _newsImage(String? path) {
+    final fallback = Container(
+      color: context.hairline,
+      child: Center(
+        child: Icon(
+          Icons.image_not_supported,
+          color: Colors.grey[400],
+          size: 40,
+        ),
+      ),
+    );
+
+    if (path == null || path.trim().isEmpty) {
+      return Container(color: Colors.white);
+    }
+
+    return path.startsWith('http')
+        ? Image.network(
+            path,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          )
+        : Image.asset(
+            path,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          );
   }
 
   // ========== LATEST UPDATES SECTION ==========
@@ -1128,27 +1167,7 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        if (imagePath != null)
-                          Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[200],
-                                child: Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey[400],
-                                    size: 40,
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        else
-                          Container(color: Colors.white),
+                        _newsImage(imagePath),
 
                         Container(
                           decoration: BoxDecoration(
@@ -1279,10 +1298,10 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: context.surface,
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -1294,8 +1313,8 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         child: Row(
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 96,
+              height: 96,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFFFFCC00), width: 3),
@@ -1305,31 +1324,35 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 18),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'UDA CHAIRMAN',
                     style: TextStyle(
                       color: Color(0xFFFFCC00),
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 13,
+                      letterSpacing: 0.5,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     'H.E Dr. William Ruto',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 21,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF1A5C2A),
+                      color: context.isDark
+                          ? const Color(0xFF6FCB8A)
+                          : const Color(0xFF1A5C2A),
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     'Party Leader & President of Kenya',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 13, color: context.textMuted),
                   ),
                 ],
               ),
@@ -1364,26 +1387,11 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
         'bgColor': const Color(0xFF2C2C2C),
       },
       {
-        'title': 'Party Manifesto',
-        'color': 0xFF1A5C2A,
-        'screen': const AboutUDAScreen(),
-        'image': 'assets/images/logo.png',
-        'isLogoCard': true,
-        'bgColor': const Color(0xFF1A5C2A),
-      },
-      {
         'title': 'UDA Leaders',
         'color': 0xFFFFCC00,
         'screen': const UDALeadersScreen(),
         'image': 'assets/images/news images/pic3.PNG',
         'bgColor': const Color(0xFF2C2C2C),
-      },
-      {
-        'title': 'RDCS & DRDCS',
-        'color': 0xFF1A5C2A,
-        'screen': const RDCSDRDCSScreen(),
-        'image': 'assets/images/news images/pic6.PNG',
-        'bgColor': const Color(0xFF1A5C2A),
       },
       {
         'title': 'UDA Candidates',
@@ -1542,303 +1550,63 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
     );
   }
 
-  // ========== UDA NEAR YOU ==========
-  Widget _buildUDANearYou() {
-    if (!kIsWeb) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.12),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1A5C2A),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: Color(0xFFFFCC00),
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'UDA NEAR YOU',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          'Find your nearest UDA office',
-                          style: TextStyle(color: Colors.white70, fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 200,
-              width: double.infinity,
-              color: Colors.grey[200],
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.location_on, size: 48, color: Color(0xFF1A5C2A)),
-                    SizedBox(height: 8),
-                    Text(
-                      'UDA Head Office',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A5C2A),
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      'Nairobi, Kenya',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1A5C2A),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.location_on,
-                  color: Color(0xFFFFCC00),
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'UDA NEAR YOU',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Find your nearest UDA office',
-                        style: TextStyle(color: Colors.white70, fontSize: 11),
-                      ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (kIsWeb) {
-                      WebUtils.openMapUrl('https://www.google.com/maps');
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFCC00),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Open Map',
-                          style: TextStyle(
-                            color: Color(0xFF1A5C2A),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Icon(
-                          Icons.open_in_new,
-                          color: Color(0xFF1A5C2A),
-                          size: 14,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(16),
-              bottomRight: Radius.circular(16),
-            ),
-            child: SizedBox(
-              height: 220,
-              width: double.infinity,
-              child: kIsWeb
-                  ? const HtmlElementView(viewType: 'google-maps-uda')
-                  : const SizedBox.shrink(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ========== ROADMAP AND CONTACT US ==========
+  // ========== OUR ROADMAP ==========
   Widget _buildRoadmapAndContact() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                print('🗺️ Political Roadmap tapped');
-              },
-              child: Container(
-                height: 100,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A5C2A),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Icon(Icons.map, color: Color(0xFFFFCC00)),
-                    Text(
-                      'POLITICAL ROADMAP',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      '2024 - 2027 Plan',
-                      style: TextStyle(color: Colors.white70, fontSize: 10),
-                    ),
-                  ],
-                ),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const InfoPageScreen(
+                title: 'Our Roadmap',
+                sections: udaRoadmapSections,
               ),
             ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFCC00),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ContactScreen(),
-                  ),
-                );
-              },
-              child: Container(
-                height: 100,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFCC00),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
+          child: Row(
+            children: const [
+              Icon(Icons.map, color: Color(0xFF1A5C2A)),
+              SizedBox(width: 12),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Icon(Icons.phone, color: Color(0xFF1A5C2A)),
+                  children: [
                     Text(
-                      'CONTACT US',
+                      'OUR ROADMAP',
                       style: TextStyle(
                         color: Color(0xFF1A5C2A),
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: 13,
                       ),
                     ),
+                    SizedBox(height: 2),
                     Text(
-                      'Call +254 720 000 000',
-                      style: TextStyle(color: Color(0xFF1A5C2A), fontSize: 10),
+                      'The Bottom-Up Economic Transformation Agenda (BETA)',
+                      style: TextStyle(color: Color(0xFF1A5C2A), fontSize: 11),
                     ),
                   ],
                 ),
               ),
-            ),
+              Icon(Icons.arrow_forward_ios, color: Color(0xFF1A5C2A), size: 14),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1928,60 +1696,62 @@ class _UDAHomeScreenState extends State<UDAHomeScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.hairline,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 16),
-              Material(
-                color: Colors.transparent,
-                child: ListTile(
-                  leading: const Icon(Icons.person, color: Color(0xFF1A5C2A)),
-                  title: const Text('Profile'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    print('👤 Profile tapped');
-                  },
-                ),
+              _menuTile(
+                context,
+                icon: Icons.person,
+                label: context.l10n('menu_profile'),
+                screen: const ProfileScreen(),
               ),
-              Material(
-                color: Colors.transparent,
-                child: ListTile(
-                  leading: const Icon(Icons.settings, color: Color(0xFF1A5C2A)),
-                  title: const Text('Settings'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    print('⚙️ Settings tapped');
-                  },
-                ),
+              _menuTile(
+                context,
+                icon: Icons.settings,
+                label: context.l10n('menu_settings'),
+                screen: const SettingsScreen(),
               ),
-              Material(
-                color: Colors.transparent,
-                child: ListTile(
-                  leading: const Icon(Icons.help, color: Color(0xFF1A5C2A)),
-                  title: const Text('Help & Support'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    print('❓ Help & Support tapped');
-                  },
-                ),
+              _menuTile(
+                context,
+                icon: Icons.help,
+                label: context.l10n('menu_help'),
+                screen: const ContactScreen(),
               ),
-              Material(
-                color: Colors.transparent,
-                child: ListTile(
-                  leading: const Icon(Icons.info, color: Color(0xFF1A5C2A)),
-                  title: const Text('About UDA'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    print('ℹ️ About UDA tapped');
-                  },
-                ),
+              _menuTile(
+                context,
+                icon: Icons.info,
+                label: context.l10n('menu_about'),
+                screen: const AboutUDAScreen(),
               ),
               const SizedBox(height: 16),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _menuTile(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Widget screen,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: Icon(icon, color: const Color(0xFF1A5C2A)),
+        title: Text(label),
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => screen),
+          );
+        },
+      ),
     );
   }
 }

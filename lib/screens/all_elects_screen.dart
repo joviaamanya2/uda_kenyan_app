@@ -1,6 +1,7 @@
 // lib/screens/all_elects_screen.dart
 import 'package:flutter/material.dart';
 import './elects_details.dart';
+import '../theme/theme_ext.dart';
 
 class AllElectsScreen extends StatefulWidget {
   final List<Map<String, dynamic>> elects;
@@ -13,6 +14,42 @@ class AllElectsScreen extends StatefulWidget {
 
 class _AllElectsScreenState extends State<AllElectsScreen> {
   String _searchQuery = '';
+
+  /// Elect photo: bundled asset path or a network URL (uploaded from the admin
+  /// dashboard); falls back to the name's initial.
+  Widget _electImage(String? path, int color, String name) {
+    final fallback = Container(
+      color: Color(color),
+      child: Center(
+        child: Text(
+          name.isNotEmpty ? name.substring(0, 1).toUpperCase() : '?',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+
+    if (path == null || path.trim().isEmpty) return fallback;
+
+    return path.startsWith('http')
+        ? Image.network(
+            path,
+            fit: BoxFit.cover,
+            width: 60,
+            height: 60,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          )
+        : Image.asset(
+            path,
+            fit: BoxFit.cover,
+            width: 60,
+            height: 60,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          );
+  }
 
   String? findImage(String name) {
     final assets = [
@@ -74,7 +111,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'UDA ELECTS 2026',
@@ -97,9 +134,9 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
             color: const Color(0xFFFFCC00),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: context.hairline),
               ),
               child: TextField(
                 onChanged: (value) {
@@ -166,7 +203,7 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -191,45 +228,11 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                             ),
                           ),
                           child: ClipOval(
-                            child: imagePath != null
-                                ? Image.asset(
-                                    imagePath,
-                                    fit: BoxFit.cover,
-                                    width: 60,
-                                    height: 60,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        color: Color(color),
-                                        child: Center(
-                                          child: Text(
-                                            (elect['name'] as String)
-                                                .substring(0, 1)
-                                                .toUpperCase(),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container(
-                                    color: Color(color),
-                                    child: Center(
-                                      child: Text(
-                                        (elect['name'] as String)
-                                            .substring(0, 1)
-                                            .toUpperCase(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                            child: _electImage(
+                              imagePath,
+                              color,
+                              elect['name'] as String,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -273,9 +276,9 @@ class _AllElectsScreenState extends State<AllElectsScreen> {
                                   elect['bio'] as String,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.black87,
+                                    color: context.textStrong,
                                   ),
                                 ),
                               const SizedBox(height: 4),

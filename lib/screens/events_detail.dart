@@ -1,5 +1,7 @@
 // lib/screens/event_details_screen.dart
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import '../theme/theme_ext.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> event;
@@ -9,7 +11,7 @@ class EventDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'EVENT DETAILS',
@@ -122,6 +124,7 @@ class EventDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildInfoCard(
+                          context: context,
                           icon: Icons.calendar_today,
                           label: 'Date',
                           value: event['date'] as String,
@@ -130,6 +133,7 @@ class EventDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildInfoCard(
+                          context: context,
                           icon: Icons.access_time,
                           label: 'Time',
                           value: event['time'] as String,
@@ -142,6 +146,7 @@ class EventDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildInfoCard(
+                          context: context,
                           icon: Icons.location_on,
                           label: 'Location',
                           value: event['location'] as String,
@@ -150,6 +155,7 @@ class EventDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildInfoCard(
+                          context: context,
                           icon: Icons.place,
                           label: 'Venue',
                           value: event['venue'] as String,
@@ -164,7 +170,7 @@ class EventDetailsScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -188,9 +194,9 @@ class EventDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         Text(
                           event['description'] as String,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
-                            color: Colors.black87,
+                            color: context.textStrong,
                             height: 1.6,
                           ),
                         ),
@@ -204,7 +210,7 @@ class EventDetailsScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -368,6 +374,7 @@ class EventDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildInfoCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
@@ -375,7 +382,7 @@ class EventDetailsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -422,7 +429,7 @@ class EventDetailsScreen extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.hairline,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -493,7 +500,16 @@ class EventDetailsScreen extends StatelessWidget {
   }
 
   void _shareEvent() {
-    // Implement share functionality
-    print('Sharing event: ${event['title']}');
+    SharePlus.instance.share(
+      ShareParams(
+        text: [
+          event['title'] as String? ?? 'UDA Event',
+          if ((event['date'] as String?)?.isNotEmpty ?? false) event['date'],
+          if ((event['time'] as String?)?.isNotEmpty ?? false) event['time'],
+          if ((event['location'] as String?)?.isNotEmpty ?? false)
+            event['location'],
+        ].join('\n'),
+      ),
+    );
   }
 }

@@ -1,6 +1,8 @@
 // lib/screens/president_profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'ask_president.dart';
+import '../theme/theme_ext.dart';
 
 class PresidentProfileScreen extends StatelessWidget {
   const PresidentProfileScreen({super.key});
@@ -8,7 +10,7 @@ class PresidentProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'PRESIDENT PROFILE',
@@ -30,7 +32,13 @@ class PresidentProfileScreen extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.share, color: Colors.black),
               onPressed: () {
-                // Share functionality
+                SharePlus.instance.share(
+                  ShareParams(
+                    text:
+                        'H.E Dr. William Ruto — President of the Republic of '
+                        'Kenya and UDA Party Leader.',
+                  ),
+                );
               },
             ),
           ),
@@ -47,13 +55,7 @@ class PresidentProfileScreen extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   height: 320,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1A5C2A), Color(0xFF2E7D32)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
+                  decoration: const BoxDecoration(color: Color(0xFF1A5C2A)),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -63,7 +65,7 @@ class PresidentProfileScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: Colors.grey[200],
+                            color: context.hairline,
                             child: const Center(
                               child: Icon(
                                 Icons.person,
@@ -175,7 +177,7 @@ class PresidentProfileScreen extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.surface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -206,50 +208,62 @@ class PresidentProfileScreen extends StatelessWidget {
 
                       // Personal Details
                       _buildBioItem(
-                        'Age',
-                        '58 years old (Born 21 December 1966)',
+                        context,
+                        'Date of Birth',
+                        '21 December 1966, Kamagut, Uasin Gishu County',
                       ),
                       _buildBioItem(
+                        context,
                         'Place of Birth',
                         'Kamagut, Uasin Gishu County, Kenya',
                       ),
                       _buildBioItem(
+                        context,
                         'Education',
                         '• University of Nairobi (PhD in Plant Ecology)\n• University of Nairobi (MSc in Environmental Science)\n• University of Nairobi (BSc in Environmental Science)',
                       ),
                       _buildBioItem(
+                        context,
                         'Spouse',
                         'H.E. Rachel Ruto (Married since 1991)',
                       ),
-                      _buildBioItem('Children', '6 Children (1 Boy, 5 Girls)'),
-                      _buildBioItem('Religion', 'Christian (Evangelical)'),
-                      _buildBioItem('Year in Power', '2022 - Present'),
+                      _buildBioItem(
+                        context,
+                        'Children',
+                        '6 Children (1 Boy, 5 Girls)',
+                      ),
+                      _buildBioItem(
+                        context,
+                        'Religion',
+                        'Christian (Evangelical)',
+                      ),
+                      _buildBioItem(context, 'Year in Power', '2022 - Present'),
                       const SizedBox(height: 12),
 
-                      const Text(
+                      Text(
                         'H.E Dr. William Ruto is the President of the Republic of Kenya and the Party Leader of the United Democratic Alliance (UDA). He was elected in 2022 on a platform of economic transformation and inclusive governance.',
                         style: TextStyle(
                           fontSize: 14,
                           height: 1.6,
-                          color: Colors.black87,
+                          color: context.textStrong,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'Prior to his presidency, he served as Deputy President of Kenya from 2013 to 2022. He has been a vocal advocate for the Bottom-Up Economic Transformation Agenda (BETA), focusing on empowering ordinary citizens and creating opportunities for all Kenyans.',
                         style: TextStyle(
                           fontSize: 14,
                           height: 1.6,
-                          color: Colors.black87,
+                          color: context.textStrong,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'As the leader of UDA, President Ruto is committed to uniting Kenyans, promoting peace, and building a prosperous nation for future generations.',
                         style: TextStyle(
                           fontSize: 14,
                           height: 1.6,
-                          color: Colors.black87,
+                          color: context.textStrong,
                         ),
                       ),
                     ],
@@ -263,7 +277,7 @@ class PresidentProfileScreen extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.surface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -297,6 +311,7 @@ class PresidentProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _buildSocialMediaButton(
+                            context: context,
                             icon: Icons.facebook,
                             label: 'Facebook',
                             color: Colors.blue[700]!,
@@ -305,6 +320,7 @@ class PresidentProfileScreen extends StatelessWidget {
                             },
                           ),
                           _buildSocialMediaButton(
+                            context: context,
                             icon: Icons.wallet,
                             label: 'Twitter/X',
                             color: Colors.black,
@@ -313,6 +329,7 @@ class PresidentProfileScreen extends StatelessWidget {
                             },
                           ),
                           _buildSocialMediaButton(
+                            context: context,
                             icon: Icons.discord,
                             label: 'Discord',
                             color: const Color(0xFF5865F2),
@@ -327,6 +344,7 @@ class PresidentProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _buildSocialMediaButton(
+                            context: context,
                             icon: Icons.youtube_searched_for,
                             label: 'YouTube',
                             color: const Color(0xFFFF0000),
@@ -335,6 +353,7 @@ class PresidentProfileScreen extends StatelessWidget {
                             },
                           ),
                           _buildSocialMediaButton(
+                            context: context,
                             icon: Icons.telegram,
                             label: 'Telegram',
                             color: const Color(0xFF0088CC),
@@ -343,6 +362,7 @@ class PresidentProfileScreen extends StatelessWidget {
                             },
                           ),
                           _buildSocialMediaButton(
+                            context: context,
                             icon: Icons.youtube_searched_for,
                             label: 'WhatsApp',
                             color: const Color(0xFF25D366),
@@ -399,11 +419,7 @@ class PresidentProfileScreen extends StatelessWidget {
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFFCC00), Color(0xFFFFD700)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: const Color(0xFFFFCC00),
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
@@ -443,7 +459,7 @@ class PresidentProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBioItem(String label, String value) {
+  Widget _buildBioItem(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -466,10 +482,10 @@ class PresidentProfileScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     height: 1.4,
-                    color: Colors.black87,
+                    color: context.textStrong,
                   ),
                 ),
               ],
@@ -481,6 +497,7 @@ class PresidentProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSocialMediaButton({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required Color color,
@@ -492,9 +509,9 @@ class PresidentProfileScreen extends StatelessWidget {
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: context.surfaceAlt,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: context.hairline),
         ),
         child: Column(
           children: [
@@ -512,7 +529,7 @@ class PresidentProfileScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
+                color: context.textMuted,
               ),
             ),
           ],

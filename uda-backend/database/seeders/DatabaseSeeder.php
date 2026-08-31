@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,10 +25,27 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        // Default admin dashboard login. Change the password after first sign-in
+        // (or run `php artisan admin:create`).
+        User::updateOrCreate(
+            ['email' => 'admin@uda.ke'],
+            [
+                'name' => 'UDA Admin',
+                'password' => Hash::make('password'),
+                'is_admin' => true,
+            ],
+        );
+
         $this->call([
             LeaderSeeder::class,
             NewsSeeder::class,
             EventSeeder::class,
+            LocationSeeder::class,
+            SettingSeeder::class,
+            VideoSeeder::class,
+            CommunityGroupSeeder::class,
+            MediaStationSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

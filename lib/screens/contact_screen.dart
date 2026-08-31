@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'ask_president.dart';
 import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class ContactScreen extends StatefulWidget {
-  const ContactScreen({super.key});
+  final bool embedded;
+  const ContactScreen({super.key, this.embedded = false});
 
   @override
   State<ContactScreen> createState() => _ContactScreenState();
@@ -14,6 +16,45 @@ class _ContactScreenState extends State<ContactScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+
+  // Contact / social details from the admin dashboard (with sensible defaults).
+  String _phone = '020 2020405';
+  String _email = 'hello@uda.ke';
+  String _address = 'Hustler Plaza, Ngong Road, Nairobi';
+  String _hours = 'Mon - Fri: 8:00 AM - 5:00 PM';
+  String _facebook = 'TheUDAKenya';
+  String _twitter = 'UDAKenya';
+  String _instagram = 'theudakenya';
+  String _youtube = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final s = await ApiService.instance.getSettings();
+    if (!mounted || s.isEmpty) return;
+    setState(() {
+      _phone = s['contact_phone']?.trim().isNotEmpty == true
+          ? s['contact_phone']!
+          : _phone;
+      _email = s['contact_email']?.trim().isNotEmpty == true
+          ? s['contact_email']!
+          : _email;
+      _address = s['contact_address']?.trim().isNotEmpty == true
+          ? s['contact_address']!
+          : _address;
+      _hours = s['contact_hours']?.trim().isNotEmpty == true
+          ? s['contact_hours']!
+          : _hours;
+      _facebook = s['social_facebook'] ?? _facebook;
+      _twitter = s['social_twitter'] ?? _twitter;
+      _instagram = s['social_instagram'] ?? _instagram;
+      _youtube = s['social_youtube'] ?? _youtube;
+    });
+  }
 
   @override
   void dispose() {
@@ -107,80 +148,87 @@ class _ContactScreenState extends State<ContactScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFD700), // UDA Gold/Yellow
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFD700),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color(0xFF1A3C6B),
-            size: 24,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            Container(
-              height: 32,
-              width: 32,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF1A3C6B),
-              ),
-              child: const Center(
-                child: Text(
-                  'U',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+      backgroundColor: widget.embedded
+          ? context.pageBg
+          : const Color(0xFFFFD700), // UDA Gold/Yellow
+      appBar: widget.embedded
+          ? null
+          : AppBar(
+              backgroundColor: const Color(0xFFFFD700),
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Color(0xFF1A3C6B),
+                  size: 24,
                 ),
+                onPressed: () => Navigator.pop(context),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Contact UDA',
-              style: TextStyle(
-                color: Color(0xFF1A3C6B),
-                fontWeight: FontWeight.w900,
-                fontSize: 20,
-              ),
-            ),
-          ],
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Color(0xFF1A3C6B)),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text(
-                    'Need Help?',
-                    style: TextStyle(color: Color(0xFF1A3C6B)),
-                  ),
-                  content: const Text(
-                    'For immediate assistance, please call our support line:\n\n📞 +254 720 000 000\n📧 support@uda.co.ke',
-                    style: TextStyle(height: 1.8),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Close',
-                        style: TextStyle(color: Color(0xFF1A3C6B)),
+              title: Row(
+                children: [
+                  Container(
+                    height: 32,
+                    width: 32,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF1A3C6B),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'U',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                  ],
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Contact UDA',
+                    style: TextStyle(
+                      color: Color(0xFF1A3C6B),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              centerTitle: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.help_outline,
+                    color: Color(0xFF1A3C6B),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text(
+                          'Need Help?',
+                          style: TextStyle(color: Color(0xFF1A3C6B)),
+                        ),
+                        content: Text(
+                          'For immediate assistance, please contact the UDA National Office:\n\n📞 $_phone\n📧 $_email\n📍 $_address',
+                          style: const TextStyle(height: 1.8),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Close',
+                              style: TextStyle(color: Color(0xFF1A3C6B)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ],
+            ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -202,7 +250,7 @@ class _ContactScreenState extends State<ContactScreen> {
                   const SizedBox(height: 6),
                   Text(
                     'We\'re here to help you connect with UDA.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 14, color: context.textMuted),
                   ),
                 ],
               ),
@@ -242,15 +290,17 @@ class _ContactScreenState extends State<ContactScreen> {
                               'Contact UDA Office',
                               style: TextStyle(color: Color(0xFF1A3C6B)),
                             ),
-                            content: const Column(
+                            content: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('📞 +254 720 000 000'),
-                                SizedBox(height: 8),
-                                Text('📞 +254 733 000 000'),
-                                SizedBox(height: 8),
-                                Text('🕐 Mon-Fri: 8:00 AM - 5:00 PM'),
+                                Text('📞 $_phone'),
+                                const SizedBox(height: 8),
+                                Text('📧 $_email'),
+                                const SizedBox(height: 8),
+                                Text('📍 $_address'),
+                                const SizedBox(height: 8),
+                                Text('🕐 $_hours'),
                               ],
                             ),
                             actions: [
@@ -298,7 +348,7 @@ class _ContactScreenState extends State<ContactScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -311,21 +361,13 @@ class _ContactScreenState extends State<ContactScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildContactInfoItem(
-                          Icons.email,
-                          'Email',
-                          'support@uda.co.ke',
-                        ),
+                        _buildContactInfoItem(Icons.email, 'Email', _email),
                         _buildContactInfoItem(
                           Icons.location_on,
                           'Address',
-                          'Nairobi, Kenya',
+                          _address,
                         ),
-                        _buildContactInfoItem(
-                          Icons.access_time,
-                          'Hours',
-                          '8AM - 5PM',
-                        ),
+                        _buildContactInfoItem(Icons.phone, 'Phone', _phone),
                       ],
                     ),
                   ),
@@ -350,7 +392,7 @@ class _ContactScreenState extends State<ContactScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -384,7 +426,7 @@ class _ContactScreenState extends State<ContactScreen> {
             const SizedBox(height: 2),
             Text(
               subtitle,
-              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 10, color: context.textMuted),
               textAlign: TextAlign.center,
             ),
           ],
@@ -406,51 +448,44 @@ class _ContactScreenState extends State<ContactScreen> {
             color: Color(0xFF1A3C6B),
           ),
         ),
-        Text(value, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+        Text(value, style: TextStyle(fontSize: 10, color: context.textMuted)),
       ],
     );
   }
 
   Widget _buildFollowUDACard() {
     final socials = [
-      {
-        'name': 'YouTube',
-        'icon': Icons.play_arrow_rounded,
-        'color': const Color(0xFFE50914),
-      },
-      {
-        'name': 'Facebook',
-        'icon': Icons.facebook,
-        'color': const Color(0xFF1877F2),
-      },
-      {
-        'name': 'Instagram',
-        'icon': Icons.camera_alt,
-        'color': const Color(0xFFE4405F),
-      },
-      {
-        'name': 'Twitter/X',
-        'icon': Icons.flutter_dash,
-        'color': const Color(0xFF1DA1F2),
-      },
-      {'name': 'TikTok', 'icon': Icons.music_note, 'color': Colors.black},
-      {
-        'name': 'LinkedIn',
-        'icon': Icons.work,
-        'color': const Color(0xFF0A66C2),
-      },
-      {
-        'name': 'WhatsApp',
-        'icon': Icons.chat,
-        'color': const Color(0xFF25D366),
-      },
+      if (_facebook.trim().isNotEmpty)
+        {
+          'name': _facebook,
+          'icon': Icons.facebook,
+          'color': const Color(0xFF1877F2),
+        },
+      if (_twitter.trim().isNotEmpty)
+        {
+          'name': _twitter,
+          'icon': Icons.flutter_dash,
+          'color': const Color(0xFF1DA1F2),
+        },
+      if (_instagram.trim().isNotEmpty)
+        {
+          'name': _instagram,
+          'icon': Icons.camera_alt,
+          'color': const Color(0xFFE4405F),
+        },
+      if (_youtube.trim().isNotEmpty)
+        {
+          'name': 'YouTube',
+          'icon': Icons.play_circle_fill,
+          'color': const Color(0xFFE50914),
+        },
     ];
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -522,9 +557,9 @@ class _ContactScreenState extends State<ContactScreen> {
                         height: 46,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white,
+                          color: context.surface,
                           border: Border.all(
-                            color: Colors.grey[200]!,
+                            color: context.hairline,
                             width: 1.5,
                           ),
                           boxShadow: [
@@ -545,7 +580,7 @@ class _ContactScreenState extends State<ContactScreen> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
+                          color: context.textMuted,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -565,7 +600,7 @@ class _ContactScreenState extends State<ContactScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -615,7 +650,7 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: BorderSide(color: context.hairline),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -653,7 +688,7 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: BorderSide(color: context.hairline),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -692,7 +727,7 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: BorderSide(color: context.hairline),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -742,7 +777,7 @@ class _ContactScreenState extends State<ContactScreen> {
             '* All fields are required',
             style: TextStyle(
               fontSize: 11,
-              color: Colors.grey[500],
+              color: context.textMuted,
               fontStyle: FontStyle.italic,
             ),
           ),

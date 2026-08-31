@@ -1,5 +1,7 @@
 // lib/screens/news_details.dart
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import '../theme/theme_ext.dart';
 
 class NewsDetailsScreen extends StatelessWidget {
   final String title;
@@ -15,10 +17,14 @@ class NewsDetailsScreen extends StatelessWidget {
     required this.content,
   });
 
+  void _share() {
+    SharePlus.instance.share(ShareParams(text: '$title\n\n$content'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'UDA NEWS',
@@ -37,9 +43,7 @@ class NewsDetailsScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.share, color: Colors.black),
-            onPressed: () {
-              print('📤 Share tapped');
-            },
+            onPressed: _share,
           ),
         ],
       ),
@@ -136,9 +140,7 @@ class NewsDetailsScreen extends StatelessWidget {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () {
-                    print('📤 Share article');
-                  },
+                  onTap: _share,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -175,35 +177,13 @@ class NewsDetailsScreen extends StatelessWidget {
             // Content
             Text(
               content,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 height: 1.8,
-                color: Colors.black87,
+                color: context.textStrong,
               ),
             ),
             const SizedBox(height: 24),
-
-            // Related Articles
-            const Text(
-              'Related Articles',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1A5C2A),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildRelatedArticle(
-              title: 'UDA Youth League Announces 5,000 Jobs Initiative',
-              date: 'Fri, 26 Jul 2026',
-            ),
-            const SizedBox(height: 8),
-            _buildRelatedArticle(
-              title:
-                  'UDA Women\'s League Partners with NGOs for Skills Training',
-              date: 'Thu, 25 Jul 2026',
-            ),
-            const SizedBox(height: 16),
 
             // Back button
             SizedBox(
@@ -227,59 +207,6 @@ class NewsDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRelatedArticle({required String title, required String date}) {
-    return GestureDetector(
-      onTap: () {
-        print('📰 Related article tapped: $title');
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A5C2A),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    date,
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Color(0xFFFFCC00),
-              size: 16,
-            ),
           ],
         ),
       ),

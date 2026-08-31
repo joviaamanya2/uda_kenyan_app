@@ -1,5 +1,6 @@
 // lib/screens/resource_center/financial_statements_screen.dart
 import 'package:flutter/material.dart';
+import '../../theme/theme_ext.dart';
 
 class FinancialStatementsScreen extends StatelessWidget {
   const FinancialStatementsScreen({super.key});
@@ -7,7 +8,7 @@ class FinancialStatementsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'FINANCIAL STATEMENTS',
@@ -28,23 +29,16 @@ class FinancialStatementsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFFFFCC00).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: const Color(0xFFFFCC00)),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.account_balance, color: Color(0xFF1A5C2A)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Party financial reports and statements',
-                      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
-                    ),
-                  ),
-                ],
+              child: Text(
+                'Party financial reports and statements',
+                style: TextStyle(fontSize: 13, color: context.textMuted),
               ),
             ),
             const SizedBox(height: 16),
@@ -52,30 +46,35 @@ class FinancialStatementsScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   _buildFinancialItem(
+                    context: context,
                     title: 'Annual Financial Report 2023',
                     year: '2023',
                     type: 'Annual Report',
                     size: '4.2 MB',
                   ),
                   _buildFinancialItem(
+                    context: context,
                     title: 'Audited Accounts 2022',
                     year: '2022',
                     type: 'Audited Accounts',
                     size: '3.8 MB',
                   ),
                   _buildFinancialItem(
+                    context: context,
                     title: 'Quarterly Report Q4 2023',
                     year: '2023',
                     type: 'Quarterly Report',
                     size: '1.5 MB',
                   ),
                   _buildFinancialItem(
+                    context: context,
                     title: 'Budget Summary 2024',
                     year: '2024',
                     type: 'Budget',
                     size: '2.1 MB',
                   ),
                   _buildFinancialItem(
+                    context: context,
                     title: 'Audited Accounts 2021',
                     year: '2021',
                     type: 'Audited Accounts',
@@ -91,6 +90,7 @@ class FinancialStatementsScreen extends StatelessWidget {
   }
 
   Widget _buildFinancialItem({
+    required BuildContext context,
     required String title,
     required String year,
     required String type,
@@ -100,7 +100,7 @@ class FinancialStatementsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -112,19 +112,6 @@ class FinancialStatementsScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A5C2A).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.account_balance,
-              color: Color(0xFF1A5C2A),
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,8 +124,11 @@ class FinancialStatementsScreen extends StatelessWidget {
                     color: Color(0xFF1A5C2A),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Row(
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -158,40 +148,33 @@ class FinancialStatementsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       year,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: context.textMuted),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       size,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: context.textMuted),
                     ),
                   ],
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
               color: const Color(0xFF1A5C2A),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Row(
-              children: [
-                Icon(Icons.download, color: Colors.white, size: 16),
-                SizedBox(width: 4),
-                Text(
-                  'View',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            child: const Text(
+              'View',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

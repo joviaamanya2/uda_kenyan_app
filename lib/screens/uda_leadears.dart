@@ -1,6 +1,7 @@
 // lib/screens/uda_leaders_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
 class UDALeadersScreen extends StatefulWidget {
   const UDALeadersScreen({super.key});
@@ -11,92 +12,72 @@ class UDALeadersScreen extends StatefulWidget {
 
 class _UDALeadersScreenState extends State<UDALeadersScreen> {
   static const _sectionOrder = [
+    'Party Leader',
+    'Deputy Party Leader',
     'National Chairperson',
     'Secretary General',
     'National Treasurer',
-    'Electoral Commission',
-    'National Secretariat Directors',
   ];
 
   final Map<String, bool> _expandedSections = {
+    'Party Leader': false,
+    'Deputy Party Leader': false,
     'National Chairperson': false,
     'Secretary General': false,
     'National Treasurer': false,
-    'Electoral Commission': false,
-    'National Secretariat Directors': false,
   };
 
   // Bundled offline fallback; _loadLeaders() replaces it with live data from
   // the backend (leaders with category=party_leadership, grouped by section).
   Map<String, List<Map<String, String>>> _leadersData = {
+    'Party Leader': [
+      {
+        'name': 'H.E Dr. William Samoei Ruto',
+        'title': 'Party Leader - UDA / President of the Republic of Kenya',
+        'image': '',
+      },
+    ],
+    'Deputy Party Leader': [
+      {
+        'name': 'Prof. Kithure Kindiki',
+        'title': 'Deputy Party Leader / Deputy President of Kenya',
+        'image': '',
+      },
+      {
+        'name': 'H.E Issa Timamy',
+        'title': 'Deputy Party Leader / Governor, Lamu County',
+        'image': '',
+      },
+    ],
     'National Chairperson': [
       {
-        'name': 'H.E Dr. William Ruto',
-        'title': 'Chairman - UDA',
-        'image': 'https://via.placeholder.com/50x50/1A5C2A/FFCC00?text=WR',
+        'name': 'H.E Cecily Mbarire',
+        'title': 'National Chairperson / Governor, Embu County',
+        'image': '',
+      },
+      {
+        'name': 'Mr. Kelvin Lunani',
+        'title': 'National Vice-Chairperson',
+        'image': '',
       },
     ],
     'Secretary General': [
       {
-        'name': 'Hon. Cleophas Malala',
+        'name': 'Sen. Hassan Omar',
         'title': 'Secretary General - UDA',
-        'image': 'https://via.placeholder.com/50x50/FFCC00/1A5C2A?text=CM',
+        'image': '',
       },
       {
-        'name': 'Hon. Mary Kiguru',
-        'title': 'Deputy Secretary General',
-        'image': 'https://via.placeholder.com/50x50/1A5C2A/FFCC00?text=MK',
+        'name': 'Hon. Omboko Milemba',
+        'title': 'Deputy Secretary General / MP, Emuhaya Constituency',
+        'image': '',
       },
     ],
     'National Treasurer': [
       {
-        'name': 'Hon. Esther Mwangi',
-        'title': 'National Treasurer',
-        'image': 'https://via.placeholder.com/50x50/FFCC00/1A5C2A?text=EM',
-      },
-      {
-        'name': 'Hon. Julius Kipyegon',
-        'title': 'Deputy National Treasurer',
-        'image': 'https://via.placeholder.com/50x50/1A5C2A/FFCC00?text=JK',
-      },
-    ],
-    'Electoral Commission': [
-      {
-        'name': 'Hon. Githinji Njoroge',
-        'title': 'Chairperson - Electoral Commission',
-        'image': 'https://via.placeholder.com/50x50/FFCC00/1A5C2A?text=GN',
-      },
-      {
-        'name': 'Hon. Grace Akinyi',
-        'title': 'Vice Chairperson - Electoral Commission',
-        'image': 'https://via.placeholder.com/50x50/1A5C2A/FFCC00?text=GA',
-      },
-      {
-        'name': 'Hon. John Mwangi',
-        'title': 'Commissioner - Electoral Commission',
-        'image': 'https://via.placeholder.com/50x50/FFCC00/1A5C2A?text=JM',
-      },
-    ],
-    'National Secretariat Directors': [
-      {
-        'name': 'Hon. David Were',
-        'title': 'Director - Administration',
-        'image': 'https://via.placeholder.com/50x50/1A5C2A/FFCC00?text=DW',
-      },
-      {
-        'name': 'Hon. Caroline Omondi',
-        'title': 'Director - Finance',
-        'image': 'https://via.placeholder.com/50x50/FFCC00/1A5C2A?text=CO',
-      },
-      {
-        'name': 'Hon. Mohammed Hassan',
-        'title': 'Director - Communications',
-        'image': 'https://via.placeholder.com/50x50/1A5C2A/FFCC00?text=MH',
-      },
-      {
-        'name': 'Hon. Sarah Lokenyo',
-        'title': 'Director - Research & Policy',
-        'image': 'https://via.placeholder.com/50x50/FFCC00/1A5C2A?text=SL',
+        'name': 'Hon. Japheth Nyakundi',
+        'title': 'National Treasurer - UDA',
+        'image': '',
       },
     ],
   };
@@ -141,7 +122,7 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'UDA LEADERS',
@@ -157,17 +138,6 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {
-                print('🔍 Search leaders');
-              },
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -206,7 +176,7 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -280,74 +250,69 @@ class _UDALeadersScreenState extends State<UDALeadersScreen> {
     required String title,
     required String image,
   }) {
-    return GestureDetector(
-      onTap: () {
-        print('👤 $name tapped');
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade200, width: 1),
-        ),
-        child: Row(
-          children: [
-            // Avatar
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF1A5C2A),
-                border: Border.all(color: const Color(0xFFFFCC00), width: 2),
-              ),
-              child: Center(
-                child: Text(
-                  name
-                      .split(' ')
-                      .map((word) => word[0])
-                      .join('')
-                      .substring(0, 2)
-                      .toUpperCase(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: context.surfaceAlt,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: context.hairline, width: 1),
+      ),
+      child: Row(
+        children: [
+          // Avatar
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF1A5C2A),
+              border: Border.all(color: const Color(0xFFFFCC00), width: 2),
+            ),
+            child: Center(
+              child: Text(
+                name
+                    .split(' ')
+                    .map((word) => word[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(width: 12),
-            // Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A5C2A),
-                    ),
+          ),
+          const SizedBox(width: 12),
+          // Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A5C2A),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                ),
+              ],
             ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Color(0xFFFFCC00),
-              size: 14,
-            ),
-          ],
-        ),
+          ),
+          const Icon(
+            Icons.arrow_forward_ios,
+            color: Color(0xFFFFCC00),
+            size: 14,
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,7 @@
 // lib/screens/general_secretary_profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import '../theme/theme_ext.dart';
 
 class GeneralSecretaryProfileScreen extends StatelessWidget {
   const GeneralSecretaryProfileScreen({super.key});
@@ -7,7 +9,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'GENERAL SECRETARY',
@@ -29,7 +31,13 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.share, color: Colors.black),
               onPressed: () {
-                // Share functionality
+                SharePlus.instance.share(
+                  ShareParams(
+                    text:
+                        'Sen. Hassan Omar — Secretary General, United '
+                        'Democratic Alliance (UDA).',
+                  ),
+                );
               },
             ),
           ),
@@ -124,7 +132,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -176,7 +184,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -204,21 +212,21 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                     color: const Color(0xFFFFCC00),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'Hon. Sen. Hassan Omar is a distinguished Kenyan politician and the Secretary General of the United Democratic Alliance (UDA) party. He is also a Member of the East African Legislative Assembly (EALA), representing Kenya with distinction.',
                     style: TextStyle(
                       fontSize: 14,
                       height: 1.6,
-                      color: Colors.black87,
+                      color: context.textStrong,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'With a strong background in law and governance, Senator Hassan Omar has been at the forefront of political transformation in Kenya. He is known for his eloquence, strategic thinking, and commitment to democratic principles.',
                     style: TextStyle(
                       fontSize: 14,
                       height: 1.6,
-                      color: Colors.black87,
+                      color: context.textStrong,
                     ),
                   ),
                 ],
@@ -232,7 +240,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -261,36 +269,43 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.person,
                     'Full Name',
                     'Hon. Sen. Hassan Omar',
                   ),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.work,
                     'Position',
                     'Secretary General, UDA',
                   ),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.location_city,
                     'Constituency',
                     'National',
                   ),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.location_on,
                     'County',
                     'Nairobi',
                   ),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.email,
                     'Email',
                     'hassan.omar@uda.go.ke',
                   ),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.phone,
                     'Phone',
                     '+254 700 000 005',
                   ),
                   _buildPersonalInfoItem(
+                    context,
                     Icons.calendar_today,
                     'Active Since',
                     '2021',
@@ -306,7 +321,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -338,6 +353,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildSocialMediaButton(
+                        context: context,
                         icon: Icons.facebook,
                         label: 'Facebook',
                         color: Colors.blue[700]!,
@@ -346,6 +362,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                         },
                       ),
                       _buildSocialMediaButton(
+                        context: context,
                         icon: Icons.cabin,
                         label: 'Twitter/X',
                         color: Colors.black,
@@ -354,6 +371,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                         },
                       ),
                       _buildSocialMediaButton(
+                        context: context,
                         icon: Icons.yard,
                         label: 'Instagram',
                         color: const Color(0xFFE4405F),
@@ -368,6 +386,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildSocialMediaButton(
+                        context: context,
                         icon: Icons.youtube_searched_for,
                         label: 'YouTube',
                         color: const Color(0xFFFF0000),
@@ -376,6 +395,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                         },
                       ),
                       _buildSocialMediaButton(
+                        context: context,
                         icon: Icons.telegram,
                         label: 'Telegram',
                         color: const Color(0xFF0088CC),
@@ -384,6 +404,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                         },
                       ),
                       _buildSocialMediaButton(
+                        context: context,
                         icon: Icons.youtube_searched_for,
                         label: 'WhatsApp',
                         color: const Color(0xFF25D366),
@@ -423,54 +444,12 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAchievementItem(String emoji, String title, String description) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFCC00).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 20)),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A5C2A),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPersonalInfoItem(IconData icon, String label, String value) {
+  Widget _buildPersonalInfoItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -500,9 +479,9 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: context.textStrong,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -515,6 +494,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSocialMediaButton({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required Color color,
@@ -526,9 +506,9 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: context.surfaceAlt,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: context.hairline),
         ),
         child: Column(
           children: [
@@ -546,7 +526,7 @@ class GeneralSecretaryProfileScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
+                color: context.textMuted,
               ),
             ),
           ],

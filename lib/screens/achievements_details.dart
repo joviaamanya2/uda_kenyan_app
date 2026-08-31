@@ -1,5 +1,6 @@
 // lib/screens/achievement_details_screen.dart
 import 'package:flutter/material.dart';
+import '../theme/theme_ext.dart';
 
 class AchievementSection {
   final String title;
@@ -10,18 +11,31 @@ class AchievementSection {
 
 class AchievementDetailsScreen extends StatelessWidget {
   final String title;
+
+  /// Structured sections (used by the bundled achievements).
   final List<AchievementSection> sections;
+
+  /// Free-text body (used by achievements added from the dashboard).
+  final String? description;
+
+  /// Header image: a bundled asset path or a network URL.
+  final String? imagePath;
+
+  final String? date;
 
   const AchievementDetailsScreen({
     super.key,
     required this.title,
-    required this.sections,
+    this.sections = const [],
+    this.description,
+    this.imagePath,
+    this.date,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: Text(
           title,
@@ -36,9 +50,7 @@ class AchievementDetailsScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
@@ -48,74 +60,86 @@ class AchievementDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header Image
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: DecorationImage(
-                  image: NetworkImage(
-                    'https://via.placeholder.com/400x200/1A5C2A/FFCC00?text=$title',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: _headerImage(),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // Section Title
             Row(
               children: [
-                Container(width: 4, height: 24, color: const Color(0xFFFFCC00)),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A5C2A),
+                Container(width: 4, height: 18, color: const Color(0xFFFFCC00)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A5C2A),
+                    ),
                   ),
                 ),
               ],
             ),
+            if (date != null && date!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                date!,
+                style: TextStyle(fontSize: 12, color: context.textMuted),
+              ),
+            ],
             const SizedBox(height: 8),
             Container(height: 3, width: 50, color: const Color(0xFFFFCC00)),
             const SizedBox(height: 16),
 
-            // Sections
-            ...sections.map((section) => _buildDetailSection(section)).toList(),
+            if (sections.isNotEmpty)
+              ...sections.map((s) => _buildDetailSection(context, s))
+            else
+              Text(
+                (description == null || description!.isEmpty)
+                    ? 'More details coming soon.'
+                    : description!,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.6,
+                  color: context.textStrong,
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailSection(AchievementSection section) {
+  Widget _headerImage() {
+    final path = imagePath ?? '';
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A5C2A)),
+      );
+    }
+    if (path.isNotEmpty) {
+      return Image.asset(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A5C2A)),
+      );
+    }
+    return Container(color: const Color(0xFF1A5C2A));
+  }
+
+  Widget _buildDetailSection(BuildContext context, AchievementSection section) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section title with bullet point
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -133,7 +157,7 @@ class AchievementDetailsScreen extends StatelessWidget {
               child: Text(
                 section.title,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1A5C2A),
                 ),
@@ -146,15 +170,15 @@ class AchievementDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.only(left: 20),
           child: Text(
             section.content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               height: 1.6,
-              color: Colors.black87,
+              color: context.textStrong,
             ),
           ),
         ),
         const SizedBox(height: 16),
-        Container(height: 1, color: Colors.grey.shade300),
+        Container(height: 1, color: context.hairline),
         const SizedBox(height: 16),
       ],
     );

@@ -1,6 +1,7 @@
 // lib/screens/signup_screen.dart
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'info_page_screen.dart';
 import 'login_screen.dart';
 import '../services/api_service.dart';
 
@@ -108,7 +109,10 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   @override
   Widget build(BuildContext context) {
-    final bannerHeight = MediaQuery.of(context).size.height * 0.38;
+    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+    final keyboardOpen = keyboardInset > 0;
+    final bannerHeight =
+        MediaQuery.of(context).size.height * (keyboardOpen ? 0.20 : 0.38);
 
     return Scaffold(
       backgroundColor: const Color(0xFF1B1D20),
@@ -137,6 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: keyboardInset),
               child: Column(
                 children: [
                   Stack(
@@ -181,31 +186,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                       ),
 
                       Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: bannerHeight / 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                const Color.fromARGB(
-                                  255,
-                                  115,
-                                  116,
-                                  117,
-                                ).withOpacity(0.85),
-                                const Color.fromARGB(255, 106, 107, 109),
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Positioned(
                         bottom: 10,
                         left: 0,
                         right: 0,
@@ -236,9 +216,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                   ),
 
                   Transform.translate(
-                    offset: const Offset(0, -25),
+                    offset: const Offset(0, -35),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
@@ -394,7 +374,16 @@ class _SignUpScreenState extends State<SignUpScreen>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const InfoPageScreen(
+                                        title: 'Terms & Conditions',
+                                        lastUpdated: 'August 2026',
+                                        sections: udaTermsSections,
+                                      ),
+                                    ),
+                                  ),
                                   child: const Text(
                                     'Terms and conditions',
                                     style: TextStyle(
@@ -405,7 +394,16 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const InfoPageScreen(
+                                        title: 'Privacy Policy',
+                                        lastUpdated: 'August 2026',
+                                        sections: udaPrivacyPolicySections,
+                                      ),
+                                    ),
+                                  ),
                                   child: const Text(
                                     'Privacy',
                                     style: TextStyle(

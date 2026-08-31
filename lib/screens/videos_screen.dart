@@ -1,589 +1,357 @@
 // lib/screens/videos_screen.dart
 import 'package:flutter/material.dart';
-import '../widgets/floating_buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class VideosScreen extends StatelessWidget {
-  const VideosScreen({super.key});
+import '../services/api_service.dart';
+import '../theme/theme_ext.dart';
 
-  final List<Map<String, dynamic>> videos = const [
+class VideosScreen extends StatefulWidget {
+  final bool embedded;
+  const VideosScreen({super.key, this.embedded = false});
+
+  @override
+  State<VideosScreen> createState() => _VideosScreenState();
+}
+
+class _VideosScreenState extends State<VideosScreen> {
+  static const _green = Color(0xFF1A5C2A);
+  static const _yellow = Color(0xFFFFCC00);
+  static const _categories = [
+    'All',
+    'Speeches',
+    'Interviews',
+    'Rallies',
+    'Highlights',
+  ];
+  static const _monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  String _selectedCategory = 'All';
+  bool _loading = true;
+
+  // Bundled offline fallback; replaced by _load() with dashboard-managed videos.
+  List<Map<String, dynamic>> _videos = const [
     {
       'title':
-          'ADDRESS BY H.E. PRESIDENT RUTO AT UDA NATIONAL DELEGATES CONVENTION',
-      'date': 'Tue, 9 Jun 2026',
+          'Address by H.E. President Ruto at the UDA National Delegates Convention',
       'description':
-          'President William Ruto Addresses UDA Delegates at KICC, Nairobi',
+          'President William Ruto addresses UDA delegates at KICC, Nairobi.',
+      'url': 'https://www.youtube.com/@UDAKenya',
+      'category': 'Speeches',
       'duration': '45:22',
-      'views': '125K',
+      'date': '9 Jun 2026',
+      'thumbnail': '',
     },
     {
-      'title': 'STATE OF THE NATION ADDRESS BY H.E. PRESIDENT WILLIAM RUTO',
-      'date': 'Thu, 4 Jun 2026',
+      'title': 'UDA Party Leaders meet on the Economic Transformation Agenda',
       'description':
-          'President Ruto Delivers State of the Nation Address at Parliament',
-      'duration': '1:12:45',
-      'views': '230K',
-    },
-    {
-      'title': 'UDA PARTY LEADERS MEET ON ECONOMIC TRANSFORMATION AGENDA',
-      'date': 'Fri, 22 May 2026',
-      'description':
-          'UDA Leaders Hold Strategic Meeting on Bottom-Up Economic Agenda',
+          'UDA leaders hold a strategic meeting on the Bottom-Up Economic Agenda.',
+      'url': 'https://www.youtube.com/@UDAKenya',
+      'category': 'Highlights',
       'duration': '28:15',
-      'views': '89K',
-    },
-    {
-      'title': 'PRESIDENT RUTO ADDRESSES NATIONAL SECURITY CONFERENCE',
-      'date': 'Fri, 22 May 2026',
-      'description': 'President Ruto Outlines Security Priorities for Kenya',
-      'duration': '52:30',
-      'views': '156K',
-    },
-    {
-      'title': 'UDA YOUTH LEAGUE LEADERSHIP FORUM 2026',
-      'date': 'Thu, 21 May 2026',
-      'description': 'Youth Leaders Discuss Employment and Innovation',
-      'duration': '38:00',
-      'views': '67K',
-    },
-    {
-      'title': 'SWEARING-IN AND INAUGURATION OF UDA COUNTY OFFICIALS',
-      'date': 'Wed, 20 May 2026',
-      'description':
-          'Inauguration Ceremony for Newly Elected UDA County Officials',
-      'duration': '2:15:30',
-      'views': '342K',
+      'date': '22 May 2026',
+      'thumbnail': '',
     },
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final remote = await ApiService.instance.getList('videos');
+      if (mounted && remote.isNotEmpty) {
+        setState(() {
+          _videos = remote.map((v) {
+            return {
+              'title': (v['title'] ?? 'UDA Video').toString(),
+              'description': (v['description'] ?? '').toString(),
+              'url': (v['url'] ?? '').toString(),
+              'category': (v['category'] ?? '').toString(),
+              'duration': (v['duration'] ?? '').toString(),
+              'date': _formatDate(v['published_at']),
+              'thumbnail': (v['thumbnail_path'] ?? '').toString(),
+            };
+          }).toList();
+        });
+      }
+    } catch (_) {
+      // keep bundled fallback
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _formatDate(dynamic raw) {
+    if (raw == null) return '';
+    final d = DateTime.tryParse(raw.toString());
+    if (d == null) return raw.toString();
+    return '${d.day} ${_monthNames[d.month - 1]} ${d.year}';
+  }
+
+  List<Map<String, dynamic>> get _visible {
+    if (_selectedCategory == 'All') return _videos;
+    return _videos
+        .where(
+          (v) =>
+              (v['category'] as String).toLowerCase() ==
+              _selectedCategory.toLowerCase(),
+        )
+        .toList();
+  }
+
+  Future<void> _play(String url) async {
+    if (url.isEmpty) return;
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the video.')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        title: const Text(
-          'UDA VIDEOS',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: const Color(0xFFFFCC00),
-        foregroundColor: Colors.black,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {
-                print('🔍 Search videos');
-              },
+      backgroundColor: context.pageBg,
+      appBar: widget.embedded
+          ? null
+          : AppBar(
+              title: const Text(
+                'UDA VIDEOS',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: _yellow,
+              foregroundColor: Colors.black,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Category Tabs
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildCategoryTab('All', true),
-                  const SizedBox(width: 8),
-                  _buildCategoryTab('Speeches', false),
-                  const SizedBox(width: 8),
-                  _buildCategoryTab('Interviews', false),
-                  const SizedBox(width: 8),
-                  _buildCategoryTab('Rallies', false),
-                  const SizedBox(width: 8),
-                  _buildCategoryTab('Highlights', false),
+                  for (final c in _categories) ...[
+                    _tab(c),
+                    const SizedBox(width: 8),
+                  ],
                 ],
               ),
             ),
             const SizedBox(height: 16),
-
-            // Featured Video
-            _buildFeaturedVideo(context),
-            const SizedBox(height: 16),
-
-            // Video List
-            ...videos
-                .map(
-                  (video) => _buildVideoCard(
-                    context: context,
-                    title: video['title'] as String,
-                    date: video['date'] as String,
-                    description: video['description'] as String,
-                    duration: video['duration'] as String,
-                    views: video['views'] as String,
+            if (_loading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 48),
+                child: Center(child: CircularProgressIndicator(color: _green)),
+              )
+            else if (_visible.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: Center(
+                  child: Text(
+                    'No $_selectedCategory videos yet.',
+                    style: const TextStyle(color: Colors.grey),
                   ),
-                )
-                .toList(),
+                ),
+              )
+            else
+              ..._visible.map(_videoCard),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCategoryTab(String label, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFFFCC00) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSelected ? const Color(0xFFFFCC00) : Colors.grey.shade300,
-        ),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? const Color(0xFF1A5C2A) : Colors.grey[600],
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          fontSize: 12,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFeaturedVideo(BuildContext context) {
+  Widget _tab(String label) {
+    final selected = _selectedCategory == label;
     return GestureDetector(
-      onTap: () {
-        print('▶️ Featured video played: UDA National Delegates Convention');
-        _showVideoDialog(
-          context,
-          'UDA National Delegates Convention 2026',
-          'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA+TV',
-        );
-      },
-      child: Container(
+      onTap: () => setState(() => _selectedCategory = label),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: selected ? _yellow : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: selected ? _yellow : context.hairline),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-                  child: Image.network(
-                    'https://via.placeholder.com/400x200/1A5C2A/FFCC00?text=UDA+TV',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 200,
-                        color: const Color(0xFF1A5C2A),
-                        child: const Center(
-                          child: Icon(
-                            Icons.video_library,
-                            color: Colors.white54,
-                            size: 64,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? _green : context.textMuted,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _videoCard(Map<String, dynamic> v) {
+    final thumb = v['thumbnail'] as String;
+    final duration = v['duration'] as String;
+    final date = v['date'] as String;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GestureDetector(
+        onTap: () => _play(v['url'] as String),
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.surface,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
+                ),
+                child: SizedBox(
+                  width: 120,
+                  height: 84,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      thumb.startsWith('http')
+                          ? Image.network(
+                              thumb,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, e, s) =>
+                                  Container(color: _green),
+                            )
+                          : Container(color: _green),
+                      Center(
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: const BoxDecoration(
+                            color: _yellow,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: _green,
+                            size: 18,
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                // Play button overlay
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFCC00),
-                        shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: Color(0xFF1A5C2A),
-                        size: 36,
-                      ),
-                    ),
-                  ),
-                ),
-                // Duration badge
-                Positioned(
-                  bottom: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      '1:12:45',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFCC00),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'FEATURED',
-                      style: TextStyle(
-                        color: Color(0xFF1A5C2A),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'UDA National Delegates Convention 2026',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A5C2A),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'President William Ruto Addresses UDA Delegates at KICC',
-                    style: TextStyle(fontSize: 13, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_today,
-                        size: 12,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'Sun, 9 Jun 2026',
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
-                      ),
-                      const SizedBox(width: 16),
-                      const Icon(
-                        Icons.visibility,
-                        size: 12,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        '230K views',
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
-                      ),
+                      if (duration.isNotEmpty)
+                        Positioned(
+                          bottom: 4,
+                          right: 4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              duration,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildVideoCard({
-    required BuildContext context,
-    required String title,
-    required String date,
-    required String description,
-    required String duration,
-    required String views,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        print('▶️ Video played: $title');
-        _showVideoDialog(
-          context,
-          title,
-          'https://via.placeholder.com/400x200/FFCC00/1A5C2A?text=UDA',
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail
-            Stack(
-              children: [
-                Container(
-                  width: 120,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A5C2A),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      bottomLeft: Radius.circular(16),
-                    ),
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                        'https://via.placeholder.com/120x80/1A5C2A/FFCC00?text=UDA',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: Container(
-                      width: 28,
-                      height: 28,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFCC00),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: Color(0xFF1A5C2A),
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 4,
-                  right: 4,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    child: Text(
-                      duration,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Video details
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A5C2A),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      description,
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 11,
-                          color: Colors.grey,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        v['title'] as String,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: _green,
                         ),
-                        const SizedBox(width: 4),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if ((v['description'] as String).isNotEmpty) ...[
+                        const SizedBox(height: 2),
                         Text(
-                          date,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey,
+                          v['description'] as String,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: context.textMuted,
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Icon(
-                          Icons.visibility,
-                          size: 11,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          views,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey,
-                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showVideoDialog(BuildContext context, String title, String image) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        content: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  Image.network(
-                    image,
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 200,
-                        color: const Color(0xFF1A5C2A),
-                        child: const Center(
-                          child: Icon(
-                            Icons.video_library,
-                            color: Colors.white54,
-                            size: 64,
-                          ),
+                      if (date.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today,
+                              size: 11,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              date,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ],
+                    ],
                   ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFFCC00),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.play_arrow,
-                          color: Color(0xFF1A5C2A),
-                          size: 36,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A5C2A),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'This video is currently being processed. Please check back later.',
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFCC00),
-                          foregroundColor: const Color(0xFF1A5C2A),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'CLOSE',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],

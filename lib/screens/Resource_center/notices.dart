@@ -1,5 +1,6 @@
 // lib/screens/resource_center/notices_screen.dart
 import 'package:flutter/material.dart';
+import '../../theme/theme_ext.dart';
 
 class NoticesScreen extends StatelessWidget {
   const NoticesScreen({super.key});
@@ -7,7 +8,7 @@ class NoticesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: context.pageBg,
       appBar: AppBar(
         title: const Text(
           'NOTICES',
@@ -41,7 +42,7 @@ class NoticesScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Latest official notices and announcements from UDA',
-                      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 13, color: context.textMuted),
                     ),
                   ),
                 ],
@@ -52,6 +53,7 @@ class NoticesScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   _buildNoticeItem(
+                    context: context,
                     title: 'Party National Delegates Conference',
                     date: '15 March 2024',
                     description:
@@ -59,6 +61,7 @@ class NoticesScreen extends StatelessWidget {
                     isUrgent: true,
                   ),
                   _buildNoticeItem(
+                    context: context,
                     title: 'Membership Registration Drive',
                     date: '10 March 2024',
                     description:
@@ -66,6 +69,7 @@ class NoticesScreen extends StatelessWidget {
                     isUrgent: false,
                   ),
                   _buildNoticeItem(
+                    context: context,
                     title: 'County Elections Announcement',
                     date: '5 March 2024',
                     description:
@@ -73,6 +77,7 @@ class NoticesScreen extends StatelessWidget {
                     isUrgent: false,
                   ),
                   _buildNoticeItem(
+                    context: context,
                     title: 'Policy Review Workshop',
                     date: '28 February 2024',
                     description:
@@ -80,6 +85,7 @@ class NoticesScreen extends StatelessWidget {
                     isUrgent: false,
                   ),
                   _buildNoticeItem(
+                    context: context,
                     title: 'Financial Reporting Deadline',
                     date: '20 February 2024',
                     description:
@@ -96,6 +102,7 @@ class NoticesScreen extends StatelessWidget {
   }
 
   Widget _buildNoticeItem({
+    required BuildContext context,
     required String title,
     required String date,
     required String description,
@@ -105,10 +112,10 @@ class NoticesScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isUrgent ? Colors.red.shade200 : Colors.grey.shade200,
+          color: isUrgent ? Colors.red.shade200 : context.hairline,
           width: isUrgent ? 2 : 1,
         ),
         boxShadow: [
@@ -162,14 +169,14 @@ class NoticesScreen extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 date,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 12, color: context.textMuted),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             description,
-            style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+            style: TextStyle(fontSize: 13, color: context.textMuted),
           ),
         ],
       ),

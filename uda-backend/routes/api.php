@@ -1,25 +1,36 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\NewsController;
 use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\CommunityGroupController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\FundraiserController;
 use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\ResourceController;
-use App\Http\Controllers\CommunityGroupController;
-use App\Http\Controllers\TVStationController;
-use App\Http\Controllers\RadioStationController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\QuestionController;
-use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\RadioStationController;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TVStationController;
+use App\Http\Controllers\VideoController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
+// Public "Join UDA" membership form (Flutter app).
+Route::post('members', [MemberController::class, 'store']);
+
+// Public "Fundraise / Donate" form (Flutter app).
+Route::post('donations', [DonationController::class, 'store']);
 
 // Public read endpoints are consumed by the Flutter app. Content management
 // writes remain behind Sanctum when Sanctum is installed in the deployment.
@@ -40,6 +51,14 @@ Route::get('radio-stations', [RadioStationController::class, 'index']);
 Route::get('locations', [LocationController::class, 'index']);
 Route::get('leaders', [LeaderController::class, 'index']);
 Route::get('leaders/{leader}', [LeaderController::class, 'show']);
+Route::get('videos', [VideoController::class, 'index']);
+Route::get('videos/{video}', [VideoController::class, 'show']);
+Route::get('settings', [SettingController::class, 'index']);
+
+// Community feed — reads are public, writes require a token.
+Route::get('posts', [PostController::class, 'index']);
+Route::get('posts/{post}/comments', [PostController::class, 'comments']);
+Route::post('posts/{post}/share', [PostController::class, 'share']);
 
 Route::middleware('api.token')->group(function () {
     // ->except(['index', 'show']) is required: Laravel's route collection keys
@@ -52,6 +71,7 @@ Route::middleware('api.token')->group(function () {
     Route::apiResource('achievements', AchievementController::class)->except(['index', 'show']);
     Route::apiResource('candidates', CandidateController::class)->except(['index', 'show']);
     Route::apiResource('leaders', LeaderController::class)->except(['index', 'show']);
+    Route::apiResource('videos', VideoController::class)->except(['index', 'show']);
     // These only have a public index above, so 'show' stays here (auth-protected).
     Route::apiResource('fundraisers', FundraiserController::class)->except(['index']);
     Route::apiResource('gallery', GalleryController::class)->except(['index']);
@@ -65,6 +85,16 @@ Route::middleware('api.token')->group(function () {
     Route::get('questions', [QuestionController::class, 'index']);
     Route::post('questions/{question}/answer', [QuestionController::class, 'answer']);
     Route::post('contacts/{contact}/read', [ContactController::class, 'markRead']);
+
+    // Authenticated user profile (Flutter app).
+    Route::get('me', [ProfileController::class, 'show']);
+    Route::post('me', [ProfileController::class, 'update']);
+
+    // Community feed writes.
+    Route::post('posts', [PostController::class, 'store']);
+    Route::delete('posts/{post}', [PostController::class, 'destroy']);
+    Route::post('posts/{post}/like', [PostController::class, 'toggleLike']);
+    Route::post('posts/{post}/comments', [PostController::class, 'addComment']);
 });
 
 // Public endpoints
